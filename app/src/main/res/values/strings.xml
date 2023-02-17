@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">doetempo</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="cpf">CPF</string>
+    <string name="cep">CEP</string>
+    <string name="state">State</string>
+    <string name="city">City</string>
+    <string name="street">Street</string>
+    <string name="neighborhood">Neighborhood</string>
+    <string name="number">Number</string>
+    <string name="enviar">Enviar</string>
+</resources>
