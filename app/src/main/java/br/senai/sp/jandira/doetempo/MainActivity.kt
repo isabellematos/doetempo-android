@@ -1,21 +1,25 @@
 package br.senai.sp.jandira.doetempo
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.widget.ScrollView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,14 +60,43 @@ fun CadastroUser() {
         mutableStateOf("")
     }
 
+    var emailState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var passwordState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var cpfState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var cepState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var stateState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var cityState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var numberState by rememberSaveable() {
+        mutableStateOf("")
+    }
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(79, 121, 254)),
+
         verticalArrangement = Arrangement.Top,
 
-
-    ) {
+        ) {
         Image(painter = painterResource(id = R.drawable.headerwave), contentDescription = "wave")
         Column(//header
             modifier = Modifier
@@ -80,13 +113,15 @@ fun CadastroUser() {
         // Form
         Column(
             modifier = Modifier
+                .verticalScroll(scrollState)
                 .fillMaxWidth()
                 .padding(start = 32.dp, end = 32.dp)
         ) {
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = nameState,
+                onValueChange = { nameState = it },
                 modifier = Modifier.fillMaxWidth(),
+
                 label = {
                     Text(
                         text = stringResource(id = R.string.name),
@@ -94,6 +129,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -102,8 +138,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = emailState,
+                onValueChange = { emailState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -112,6 +148,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -120,8 +157,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = passwordState,
+                onValueChange = { passwordState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -130,6 +167,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -138,8 +176,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = cpfState,
+                onValueChange = { cpfState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -148,6 +186,8 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -156,8 +196,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = cepState,
+                onValueChange = { cepState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -166,6 +206,8 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -174,8 +216,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = stateState,
+                onValueChange = { stateState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -184,6 +226,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -192,8 +235,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = cityState,
+                onValueChange = { cityState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -202,6 +245,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -210,8 +254,8 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = numberState,
+                onValueChange = { numberState = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(
@@ -220,6 +264,8 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White.copy(),
@@ -227,10 +273,28 @@ fun CadastroUser() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-        }
-    }
-}
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.fillMaxWidth()
+                    .fillMaxHeight(2f)
+                    .padding(bottom = 24.dp),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp, bottomEnd = 32.dp, bottomStart = 32.dp),
+                colors = ButtonDefaults.buttonColors(
+                    Color(red = 79, green = 254, blue = 199, alpha = 255)
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.send),
+                    fontSize = 18.sp,
+                    color = Color(red = 79, green = 121, blue = 254, alpha = 255)
 
+                )
+            }
+        }
+
+    }
+
+}
 
 @Preview(
     showBackground = true,
