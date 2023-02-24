@@ -11,4 +11,8 @@
     <string name="neighborhood">Neighborhood</string>
     <string name="number">Number</string>
     <string name="send">Send</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="forgotPassword">Esqueci minha senha</string>
+    <string name="enter">Entrar</string>
+    <string name="user">Usuário</string>
 </resources>

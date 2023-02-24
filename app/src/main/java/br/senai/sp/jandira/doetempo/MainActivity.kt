@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.widget.ScrollView
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -87,6 +89,40 @@ fun CadastroUser() {
     var numberState by rememberSaveable() {
         mutableStateOf("")
     }
+
+    var isNameError by remember {
+        mutableStateOf(false)
+    }
+
+    var isEmailError by remember {
+        mutableStateOf(false)
+    }
+
+    var isPasswordError by remember {
+        mutableStateOf(false)
+    }
+
+    var isCpfError by remember {
+        mutableStateOf(false)
+    }
+
+    var isCepError by remember {
+        mutableStateOf(false)
+    }
+
+    var isStateError by remember {
+        mutableStateOf(false)
+    }
+
+    var isCityError by remember {
+        mutableStateOf(false)
+    }
+
+    var isNumberError by remember {
+        mutableStateOf(false)
+    }
+
+
     val scrollState = rememberScrollState()
 
     Column(
@@ -119,8 +155,20 @@ fun CadastroUser() {
         ) {
             OutlinedTextField(
                 value = nameState,
-                onValueChange = { nameState = it },
+                onValueChange = { newName ->
+                     if (newName.length == 0) {
+                        isNameError = true
+                        newName
+                    } else {
+                        newName.get(newName.length - 1)
+                        isNameError = false
+                    }
+                    nameState = newName
+                 },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isNameError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
 
                 label = {
                     Text(
@@ -129,6 +177,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                isError = isNameError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -139,8 +188,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = emailState,
-                onValueChange = { emailState = it },
+                onValueChange = { newEmail ->
+                    if (newEmail.length == 0) {
+                        isEmailError = true
+                        newEmail
+                    } else {
+                        newEmail.get(newEmail.length - 1)
+                        isEmailError = false
+                    }
+                    emailState = newEmail },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isEmailError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.email),
@@ -148,6 +208,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                isError = isEmailError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -158,8 +219,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = passwordState,
-                onValueChange = { passwordState = it },
+                onValueChange = { newPassword ->
+                    if (newPassword.length == 0) {
+                        isPasswordError = true
+                        newPassword
+                    } else {
+                        newPassword.get(newPassword.length - 1)
+                        isPasswordError = false
+                    }
+                    passwordState = newPassword },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isPasswordError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.password),
@@ -167,6 +239,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                isError = isPasswordError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -177,8 +250,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = cpfState,
-                onValueChange = { cpfState = it },
+                onValueChange = { newCpf ->
+                    if (newCpf.length == 0) {
+                        isCpfError = true
+                        newCpf
+                    } else {
+                        newCpf.get(newCpf.length - 1)
+                        isCpfError = false
+                    }
+                    cpfState = newCpf },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isCpfError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.cpf),
@@ -187,6 +271,7 @@ fun CadastroUser() {
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = isCpfError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -197,8 +282,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = cepState,
-                onValueChange = { cepState = it },
+                onValueChange = { newCep ->
+                    if (newCep.length == 0) {
+                        isCepError = true
+                        newCep
+                    } else {
+                        newCep.get(newCep.length - 1)
+                        isCepError = false
+                    }
+                    cepState = newCep },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isCepError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.cep),
@@ -207,6 +303,7 @@ fun CadastroUser() {
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = isCepError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -217,8 +314,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = stateState,
-                onValueChange = { stateState = it },
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isStateError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isStateError = false
+                    }
+                    stateState = newState },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isStateError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.state),
@@ -226,6 +334,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                isError = isStateError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -236,8 +345,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = cityState,
-                onValueChange = { cityState = it },
+                onValueChange = { newCity ->
+                    if (newCity.length == 0) {
+                        isCityError = true
+                        newCity
+                    } else {
+                        newCity.get(newCity.length - 1)
+                        isCityError = false
+                    }
+                    cityState = newCity },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isCityError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.city),
@@ -245,6 +365,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                isError = isCityError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -255,8 +376,19 @@ fun CadastroUser() {
 
             OutlinedTextField(
                 value = numberState,
-                onValueChange = { numberState = it },
+                onValueChange = { newNumber ->
+                    if (newNumber.length == 0) {
+                        isNumberError = true
+                        newNumber
+                    } else {
+                        newNumber.get(newNumber.length - 1)
+                        isNumberError = false
+                    }
+                    numberState = newNumber },
                 modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isNumberError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
                 label = {
                     Text(
                         text = stringResource(id = R.string.number),
@@ -265,6 +397,7 @@ fun CadastroUser() {
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = isNumberError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -273,8 +406,23 @@ fun CadastroUser() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            val context = LocalContext.current
             Button(
-                onClick = { /*TODO*/ },
+               onClick = { isNameError = nameState.length == 0
+                    isEmailError = emailState.length == 0
+                    isPasswordError = passwordState.length == 0
+                    isCpfError = cpfState.length == 0
+                    isCepError = cepState.length == 0
+                    isStateError = stateState.length == 0
+                    isCityError = cityState.length == 0
+                    isNumberError = numberState.length == 0
+
+                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                        
+                    }else{
+                        context.startActivity(Intent(context, LoginActivity::class.java))
+                    }
+          },
                 modifier = Modifier.fillMaxWidth()
                     .fillMaxHeight(2f)
                     .padding(bottom = 24.dp),
