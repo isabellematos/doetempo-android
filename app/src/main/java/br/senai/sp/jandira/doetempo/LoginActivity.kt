@@ -36,7 +36,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    UserLogin()
+                    Login()
                 }
             }
         }
@@ -46,7 +46,7 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 @Preview(showBackground = true)
-fun UserLogin() {
+fun Login() {
 
     var userState by rememberSaveable {
         mutableStateOf("")

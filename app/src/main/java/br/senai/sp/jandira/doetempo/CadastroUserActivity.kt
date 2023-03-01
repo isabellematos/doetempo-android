@@ -1,17 +1,11 @@
 package br.senai.sp.jandira.doetempo
 
-import android.content.Intent
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.widget.ScrollView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,13 +21,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 
-class MainActivity : ComponentActivity() {
+class CadastroUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -70,6 +68,10 @@ fun CadastroUser() {
         mutableStateOf("")
     }
 
+    var birthDateState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
     var cpfState by rememberSaveable() {
         mutableStateOf("")
     }
@@ -102,6 +104,10 @@ fun CadastroUser() {
         mutableStateOf(false)
     }
 
+    var isBirthDateError by remember {
+        mutableStateOf(false)
+    }
+
     var isCpfError by remember {
         mutableStateOf(false)
     }
@@ -122,6 +128,41 @@ fun CadastroUser() {
         mutableStateOf(false)
     }
 
+    class DateTransformation() : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            return dateFilter(text)
+
+        }
+
+        fun dateFilter(text: AnnotatedString): TransformedText {
+
+            val trimmed = if (text.text.length >= 8) text.text.substring(0..7) else text.text
+            var out = ""
+            for (i in trimmed.indices) {
+                out += trimmed[i]
+                if (i % 2 == 1 && i < 4) out += "/"
+            }
+
+            val numberOffsetTranslator = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 1) return offset
+                    if (offset <= 3) return offset + 1
+                    if (offset <= 8) return offset + 2
+                    return 10
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 2) return offset
+                    if (offset <= 5) return offset - 1
+                    if (offset <= 10) return offset - 2
+                    return 8
+                }
+            }
+
+
+            return TransformedText(AnnotatedString(out), numberOffsetTranslator)
+        }
+    }
 
     val scrollState = rememberScrollState()
 
@@ -240,6 +281,39 @@ fun CadastroUser() {
                     )
                 },
                 isError = isPasswordError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = birthDateState,
+                onValueChange = { newBirthDate ->
+                    if (newBirthDate.length == 0) {
+                        isBirthDateError = true
+                        newBirthDate
+                    } else {
+                        newBirthDate.get(newBirthDate.length - 1)
+                        isBirthDateError = false
+                    }
+                    birthDateState = newBirthDate },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isBirthDateError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.birthdate),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        fontSize = 18.sp,
+                    )
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                isError = isBirthDateError,
+                visualTransformation = DateTransformation(),
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -406,21 +480,21 @@ fun CadastroUser() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            val context = LocalContext.current
             Button(
                onClick = { isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
                     isCpfError = cpfState.length == 0
+                    isBirthDateError = birthDateState.length == 0
                     isCepError = cepState.length == 0
                     isStateError = stateState.length == 0
                     isCityError = cityState.length == 0
                     isNumberError = numberState.length == 0
 
-                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true  && isBirthDateError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
                         
                     }else{
-                        context.startActivity(Intent(context, LoginActivity::class.java))
+
                     }
           },
                 modifier = Modifier.fillMaxWidth()
@@ -435,13 +509,10 @@ fun CadastroUser() {
                     text = stringResource(id = R.string.send),
                     fontSize = 18.sp,
                     color = Color(red = 79, green = 121, blue = 254, alpha = 255)
-
                 )
             }
         }
-
     }
-
 }
 
 @Preview(

@@ -12,6 +12,21 @@
         android:theme="@style/Theme.Doetempo"
         tools:targetApi="31">
         <activity
+            android:name=".CadastroOngActivity"
+            android:exported="false"
+            android:label="@string/title_activity_cadastro_ong"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
+            android:name=".SelectionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_selection"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
+            android:name=".FirstPage"
+            android:exported="false"
+            android:label="@string/title_activity_first_page"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false"
             android:label="@string/title_activity_login"
