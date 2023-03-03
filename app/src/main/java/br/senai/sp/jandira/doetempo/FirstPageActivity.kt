@@ -22,8 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 
-
-class FirstPage : ComponentActivity() {
+class FirstPageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,9 +85,7 @@ fun selection() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = {context.startActivity(Intent(context, SelectionActivity::class.java))
-                    context.startActivity(Intent(context, CadastroOngActivity::class.java))
-                          },
+                onClick = {context.startActivity(Intent(context, CadastroOngActivity::class.java)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 38.dp, end = 38.dp)
@@ -99,13 +96,13 @@ fun selection() {
             {
                 Text(
                     text = stringResource(id = R.string.ong),
+                    color = Color.Black,
                     fontSize = 18.sp
                 )
             }
             Spacer(modifier = Modifier.padding(12.dp))
             Button(
-                onClick = {context.startActivity(Intent(context, SelectionActivity::class.java))
-                    context.startActivity(Intent(context, SelectionActivity::class.java)) },
+                onClick = {context.startActivity(Intent(context, CadastroUserActivity::class.java)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 38.dp, end = 38.dp)
@@ -116,7 +113,9 @@ fun selection() {
             {
                 Text(
                     text = stringResource(id = R.string.volunteer),
+                    color = Color.Black,
                     fontSize = 18.sp
+
                 )
             }
         }

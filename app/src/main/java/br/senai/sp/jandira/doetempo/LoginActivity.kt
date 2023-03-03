@@ -148,15 +148,12 @@ fun Login() {
                         modifier = Modifier.zIndex(1f),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black
-
                     )
                 },
-
                 shape = RoundedCornerShape(20.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent.copy()
                 )
-
             )
             Text(
                 text = stringResource(id = R.string.forgotPassword),

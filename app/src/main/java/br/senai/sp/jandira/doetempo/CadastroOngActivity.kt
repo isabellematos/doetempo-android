@@ -341,7 +341,7 @@ fun CadastroOng() {
                 },
                 label = {
                     Text(
-                        text = stringResource(id = R.string.cpf),
+                        text = stringResource(id = R.string.cnpj),
                         modifier = Modifier.padding(bottom = 8.dp),
                         fontSize = 18.sp,
                     )

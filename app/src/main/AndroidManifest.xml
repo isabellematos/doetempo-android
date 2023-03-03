@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,12 +19,12 @@
             android:label="@string/title_activity_cadastro_ong"
             android:theme="@style/Theme.Doetempo" />
         <activity
-            android:name=".SelectionActivity"
+            android:name=".CadastroUserActivity"
             android:exported="false"
-            android:label="@string/title_activity_selection"
+            android:label="@string/title_activity_cadastro_ong"
             android:theme="@style/Theme.Doetempo" />
         <activity
-            android:name=".FirstPage"
+            android:name=".FirstPageActivity"
             android:exported="false"
             android:label="@string/title_activity_first_page"
             android:theme="@style/Theme.Doetempo" />
@@ -32,9 +34,9 @@
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Doetempo" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SelectionActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_selection"
             android:theme="@style/Theme.Doetempo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

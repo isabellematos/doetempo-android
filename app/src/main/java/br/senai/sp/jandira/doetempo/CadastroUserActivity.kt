@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
@@ -29,6 +32,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.doetempo.model.CadastroUser
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 
 class CadastroUserActivity : ComponentActivity() {
@@ -40,7 +44,6 @@ class CadastroUserActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
-
                 ) {
                     CadastroUser()
                 }
@@ -53,6 +56,7 @@ class CadastroUserActivity : ComponentActivity() {
     showBackground = true,
     showSystemUi = true
 )
+@Preview
 @Composable
 fun CadastroUser() {
 
@@ -215,6 +219,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.name),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.Black,
                         fontSize = 18.sp,
                     )
                 },
@@ -222,7 +227,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.White,
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -257,6 +262,8 @@ fun CadastroUser() {
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
+
+
 
             OutlinedTextField(
                 value = passwordState,
@@ -308,6 +315,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.birthdate),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.Black,
                         fontSize = 18.sp,
                     )
                 },
@@ -321,6 +329,7 @@ fun CadastroUser() {
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
+
 
             OutlinedTextField(
                 value = cpfState,
@@ -352,6 +361,43 @@ fun CadastroUser() {
                     backgroundColor = Color.White.copy(),
                 )
             )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(text = stringResource(id = R.string.gender),
+                modifier = Modifier.padding(bottom = 8.dp),
+                fontSize = 24.sp,
+                color = Color.White)
+
+            val radioOptions = listOf("Masculino", "Feminino", "Prefiro não informar")
+            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
+            Column (Modifier.selectableGroup()) {
+                radioOptions.forEach { text ->
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .selectable(
+                                selected = (text == selectedOption),
+                                onClick = { onOptionSelected(text) },
+                                role = Role.RadioButton
+                            )
+                            .padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (text == selectedOption),
+                            onClick = null
+                        )
+                        Text(
+                            text = text,
+                            style = MaterialTheme.typography.body1.merge(),
+                            modifier = Modifier.padding(start = 6.dp),
+                            color = Color.White
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -497,7 +543,8 @@ fun CadastroUser() {
 
                     }
           },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .fillMaxHeight(2f)
                     .padding(bottom = 24.dp),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp, bottomEnd = 32.dp, bottomStart = 32.dp),
@@ -519,8 +566,8 @@ fun CadastroUser() {
     showBackground = true,
     showSystemUi = true
 )
-
+@Preview
 @Composable
-fun CadastroUserPreview() {
+fun CadastroUserPreview(){
     CadastroUser()
 }

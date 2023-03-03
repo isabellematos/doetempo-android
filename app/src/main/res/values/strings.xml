@@ -3,6 +3,7 @@
     <string name="name">Nome</string>
     <string name="email">Email</string>
     <string name="password">Senha</string>
+    <string name="gender">Sexo:</string>
     <string name="cpf">CPF</string>
     <string name="cnpj">CNPJ</string>
     <string name="birthdate">Data de nascimento</string>

@@ -97,7 +97,7 @@ fun choose() {
         ) {
             val context = LocalContext.current
             Button(
-                onClick = {},
+                onClick = {context.startActivity(Intent(context, FirstPageActivity::class.java))},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 38.dp, end = 38.dp)
@@ -108,6 +108,7 @@ fun choose() {
             {
                 Text(
                     text = stringResource(id = R.string.cadastroEmail),
+                    color = Color.Black,
                     fontSize = 18.sp
                 )
             }
@@ -131,6 +132,7 @@ fun choose() {
 
                 Text(
                     text = stringResource(id = R.string.googleLogin),
+                    color = Color.Black,
                     fontSize = 18.sp
                 )
             }
@@ -139,6 +141,7 @@ fun choose() {
 
             Text(
                 text = stringResource(id = R.string.haveAccount),
+                color = Color.Black,
                 fontSize = 16.sp
             )
 
