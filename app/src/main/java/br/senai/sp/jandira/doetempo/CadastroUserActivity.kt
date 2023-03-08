@@ -20,7 +20,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -32,8 +31,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.model.CadastroUser
+import br.senai.sp.jandira.doetempo.model.Contact
+import br.senai.sp.jandira.doetempo.services.ContactCall
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CadastroUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +49,7 @@ class CadastroUserActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CadastroUser()
+                    Contact()
                 }
             }
         }
@@ -59,6 +63,25 @@ class CadastroUserActivity : ComponentActivity() {
 @Preview
 @Composable
 fun CadastroUser() {
+
+    val retrofit = RetrofitFactory.getRetrofit()
+    val contactsCall = retrofit.create(ContactCall::class.java)
+    val call = contactsCall.getAll()
+
+    var contacts by remember {
+        mutableStateOf(listOf<Contact>())
+    }
+
+    call.enqueue(object : Callback<List<Contact>> {
+        override fun onResponse(call: Call<List<Contact>>, response: Response<List<Contact>>) {
+            contacts = response.body()!!
+        }
+
+        override fun onFailure(call: Call<List<Contact>>, t: Throwable) {
+            //  Log.i("ds3m", t.message.toString())
+        }
+
+    })
 
     var nameState by rememberSaveable() {
         mutableStateOf("")
@@ -137,7 +160,6 @@ fun CadastroUser() {
             return dateFilter(text)
 
         }
-
         fun dateFilter(text: AnnotatedString): TransformedText {
 
             val trimmed = if (text.text.length >= 8) text.text.substring(0..7) else text.text
@@ -219,7 +241,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.name),
                         modifier = Modifier.padding(bottom = 8.dp),
-                        color = Color.Black,
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -227,7 +249,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -251,6 +273,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.email),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -258,7 +281,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -284,6 +307,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.password),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -291,7 +315,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -315,7 +339,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.birthdate),
                         modifier = Modifier.padding(bottom = 8.dp),
-                        color = Color.Black,
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -325,7 +349,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -350,6 +374,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.cpf),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -358,7 +383,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
 
@@ -419,6 +444,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.cep),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -427,7 +453,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -451,6 +477,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.state),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -458,7 +485,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -482,6 +509,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.city),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -489,7 +517,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -513,6 +541,7 @@ fun CadastroUser() {
                     Text(
                         text = stringResource(id = R.string.number),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -521,7 +550,7 @@ fun CadastroUser() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy(),
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -569,5 +598,5 @@ fun CadastroUser() {
 @Preview
 @Composable
 fun CadastroUserPreview(){
-    CadastroUser()
+    Contact()
 }

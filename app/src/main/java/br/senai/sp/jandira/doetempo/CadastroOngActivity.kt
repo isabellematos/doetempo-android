@@ -216,6 +216,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.name),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -223,7 +224,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -247,6 +248,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.email),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -254,7 +256,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -278,6 +280,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.password),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -286,7 +289,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -310,6 +313,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.creationdate),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -319,7 +323,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -343,6 +347,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.cnpj),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -351,7 +356,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -375,6 +380,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.cep),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -383,7 +389,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -407,6 +413,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.state),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -414,7 +421,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -438,6 +445,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.city),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -445,7 +453,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -469,6 +477,7 @@ fun CadastroOng() {
                     Text(
                         text = stringResource(id = R.string.number),
                         modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
                         fontSize = 18.sp,
                     )
                 },
@@ -477,7 +486,7 @@ fun CadastroOng() {
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White.copy(),
+                    backgroundColor = Color.Transparent.copy()
                 )
             )
             Spacer(modifier = Modifier.height(32.dp))
