@@ -11,14 +11,15 @@ class RetrofitFactory {
 
         // :: é pra pegar a instancia do objeto
         fun getRetrofit(): Retrofit {
-            if (!::instance.isInitialized)
+            if (!::instance.isInitialized) {
                 instance = Retrofit
                     .Builder()
                     .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
+           }
 
-            return instance
+           return  instance
         }
     }
 }

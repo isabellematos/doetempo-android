@@ -1,6 +1,8 @@
 package br.senai.sp.jandira.doetempo
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -20,6 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -31,8 +34,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.model.Contact
-import br.senai.sp.jandira.doetempo.services.ContactCall
+import br.senai.sp.jandira.doetempo.model.User
+import br.senai.sp.jandira.doetempo.model.UserList
+import br.senai.sp.jandira.doetempo.services.UserCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
@@ -49,7 +53,7 @@ class CadastroUserActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Contact()
+                    CadastroUser()
                 }
             }
         }
@@ -64,24 +68,6 @@ class CadastroUserActivity : ComponentActivity() {
 @Composable
 fun CadastroUser() {
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val contactsCall = retrofit.create(ContactCall::class.java)
-    val call = contactsCall.getAll()
-
-    var contacts by remember {
-        mutableStateOf(listOf<Contact>())
-    }
-
-    call.enqueue(object : Callback<List<Contact>> {
-        override fun onResponse(call: Call<List<Contact>>, response: Response<List<Contact>>) {
-            contacts = response.body()!!
-        }
-
-        override fun onFailure(call: Call<List<Contact>>, t: Throwable) {
-            //  Log.i("ds3m", t.message.toString())
-        }
-
-    })
 
     var nameState by rememberSaveable() {
         mutableStateOf("")
@@ -155,11 +141,31 @@ fun CadastroUser() {
         mutableStateOf(false)
     }
 
+
+    val retrofit = RetrofitFactory.getRetrofit()
+    val userCall = retrofit.create(UserCall::class.java)
+    val call = userCall.getAll()
+
+    var usersState by remember {
+        mutableStateOf(UserList(listOf()))
+    }
+
+    call.enqueue(object: Callback<UserList>{
+        override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
+            Log.i("ds3m", response.body()!!.users[0].name)
+        }
+
+        override fun onFailure(call: Call<UserList>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+    })
     class DateTransformation() : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             return dateFilter(text)
 
         }
+
         fun dateFilter(text: AnnotatedString): TransformedText {
 
             val trimmed = if (text.text.length >= 8) text.text.substring(0..7) else text.text
@@ -223,7 +229,7 @@ fun CadastroUser() {
             OutlinedTextField(
                 value = nameState,
                 onValueChange = { newName ->
-                     if (newName.length == 0) {
+                    if (newName.length == 0) {
                         isNameError = true
                         newName
                     } else {
@@ -231,10 +237,13 @@ fun CadastroUser() {
                         isNameError = false
                     }
                     nameState = newName
-                 },
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isNameError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isNameError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
 
                 label = {
@@ -264,10 +273,14 @@ fun CadastroUser() {
                         newEmail.get(newEmail.length - 1)
                         isEmailError = false
                     }
-                    emailState = newEmail },
+                    emailState = newEmail
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isEmailError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isEmailError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -298,10 +311,14 @@ fun CadastroUser() {
                         newPassword.get(newPassword.length - 1)
                         isPasswordError = false
                     }
-                    passwordState = newPassword },
+                    passwordState = newPassword
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isPasswordError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isPasswordError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -330,10 +347,14 @@ fun CadastroUser() {
                         newBirthDate.get(newBirthDate.length - 1)
                         isBirthDateError = false
                     }
-                    birthDateState = newBirthDate },
+                    birthDateState = newBirthDate
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isBirthDateError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isBirthDateError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -365,10 +386,14 @@ fun CadastroUser() {
                         newCpf.get(newCpf.length - 1)
                         isCpfError = false
                     }
-                    cpfState = newCpf },
+                    cpfState = newCpf
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCpfError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCpfError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -389,14 +414,16 @@ fun CadastroUser() {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Text(text = stringResource(id = R.string.gender),
+            Text(
+                text = stringResource(id = R.string.gender),
                 modifier = Modifier.padding(bottom = 8.dp),
                 fontSize = 24.sp,
-                color = Color.White)
+                color = Color.White
+            )
 
             val radioOptions = listOf("Masculino", "Feminino", "Prefiro não informar")
-            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
-            Column (Modifier.selectableGroup()) {
+            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+            Column(Modifier.selectableGroup()) {
                 radioOptions.forEach { text ->
                     Row(
                         Modifier
@@ -435,10 +462,14 @@ fun CadastroUser() {
                         newCep.get(newCep.length - 1)
                         isCepError = false
                     }
-                    cepState = newCep },
+                    cepState = newCep
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCepError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCepError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -468,10 +499,14 @@ fun CadastroUser() {
                         newState.get(newState.length - 1)
                         isStateError = false
                     }
-                    stateState = newState },
+                    stateState = newState
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isStateError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isStateError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -500,10 +535,14 @@ fun CadastroUser() {
                         newCity.get(newCity.length - 1)
                         isCityError = false
                     }
-                    cityState = newCity },
+                    cityState = newCity
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCityError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCityError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -532,10 +571,14 @@ fun CadastroUser() {
                         newNumber.get(newNumber.length - 1)
                         isNumberError = false
                     }
-                    numberState = newNumber },
+                    numberState = newNumber
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isNumberError)Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isNumberError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -555,8 +598,11 @@ fun CadastroUser() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            val context = LocalContext.current
+
             Button(
-               onClick = { isNameError = nameState.length == 0
+                onClick = {
+                    isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
                     isCpfError = cpfState.length == 0
@@ -566,17 +612,50 @@ fun CadastroUser() {
                     isCityError = cityState.length == 0
                     isNumberError = numberState.length == 0
 
-                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true  && isBirthDateError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
-                        
-                    }else{
+                    val text = "Todos os campos são necessarios"
+                    val duration = Toast.LENGTH_SHORT
 
+
+                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true && isBirthDateError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                        val toast = Toast.makeText(context, text, duration)
+                        toast.show()
+                    } else {
+                        val contact = User(
+                            name = nameState,
+                            email = emailState,
+                            password = passwordState,
+                            cpf = cpfState,
+                            birthdate = birthDateState,
+                            postal_code = cepState,
+                            number = numberState,
+                            //gender = radioOptions,
+                        )
+                        val callContactPost = userCall.save(contact)
+
+                        callContactPost.enqueue(object : Callback<User> {
+                            override fun onResponse(
+                                call: Call<User>,
+                                response: Response<User>
+                            ) {
+                                Log.i("ds3m", response.body()!!.toString())
+                            }
+
+                            override fun onFailure(call: Call<User>, t: Throwable) {
+                                Log.i("ds3m", t.message.toString())
+                            }
+                        })
                     }
-          },
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(2f)
                     .padding(bottom = 24.dp),
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp, bottomEnd = 32.dp, bottomStart = 32.dp),
+                shape = RoundedCornerShape(
+                    topStart = 32.dp,
+                    topEnd = 32.dp,
+                    bottomEnd = 32.dp,
+                    bottomStart = 32.dp
+                ),
                 colors = ButtonDefaults.buttonColors(
                     Color(red = 79, green = 254, blue = 199, alpha = 255)
                 )
@@ -597,6 +676,6 @@ fun CadastroUser() {
 )
 @Preview
 @Composable
-fun CadastroUserPreview(){
-    Contact()
+fun CadastroUserPreview() {
+    CadastroUser()
 }
