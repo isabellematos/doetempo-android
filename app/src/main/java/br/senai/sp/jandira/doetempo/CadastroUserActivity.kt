@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.doetempo.model.Gender
 import br.senai.sp.jandira.doetempo.model.User
 import br.senai.sp.jandira.doetempo.model.UserList
 import br.senai.sp.jandira.doetempo.services.UserCall
@@ -421,7 +422,7 @@ fun CadastroUser() {
                 color = Color.White
             )
 
-            val radioOptions = listOf("Masculino", "Feminino", "Prefiro não informar")
+            val radioOptions = listOf<Gender>()
             val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
             Column(Modifier.selectableGroup()) {
                 radioOptions.forEach { text ->
@@ -440,12 +441,6 @@ fun CadastroUser() {
                         RadioButton(
                             selected = (text == selectedOption),
                             onClick = null
-                        )
-                        Text(
-                            text = text,
-                            style = MaterialTheme.typography.body1.merge(),
-                            modifier = Modifier.padding(start = 6.dp),
-                            color = Color.White
                         )
                     }
                 }
@@ -628,7 +623,7 @@ fun CadastroUser() {
                             birthdate = birthDateState,
                             postal_code = cepState,
                             number = numberState,
-                            //gender = radioOptions,
+                            gender = radioOptions
                         )
                         val callContactPost = userCall.save(contact)
 

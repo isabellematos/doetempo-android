@@ -9,7 +9,7 @@ data class User(
     var birthdate: String = "",
     var postal_code: String = "",
     var number: String = "",
-    //var gender: Gender,
+    var gender: List<Gender>,
 ){
     override fun toString(): String {
         return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf', birthdate='$birthdate', postal_code='$postal_code', number='$number')"
