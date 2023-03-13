@@ -1,5 +1,7 @@
 package br.senai.sp.jandira.doetempo.model
 
+import com.google.gson.annotations.SerializedName
+
 data class User(
     var id: String = "",
     var name: String = "",
@@ -7,12 +9,11 @@ data class User(
     var password: String = "",
     var cpf: String = "",
     var birthdate: String = "",
-    var postal_code: String = "",
-    var number: String = "",
-    var gender: List<Gender>,
+    var address: Address?,
+    @SerializedName("id_gender") var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
 ){
     override fun toString(): String {
-        return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf', birthdate='$birthdate', postal_code='$postal_code', number='$number')"
+       return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf', birthdate='$birthdate')" //postal_code='$postal_code', number='$number'
     }
 }
 

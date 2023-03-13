@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -34,15 +35,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.model.Gender
-import br.senai.sp.jandira.doetempo.model.User
-import br.senai.sp.jandira.doetempo.model.UserList
+import br.senai.sp.jandira.doetempo.model.*
+import br.senai.sp.jandira.doetempo.services.GenderCall
 import br.senai.sp.jandira.doetempo.services.UserCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.util.Date
 
 class CadastroUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +63,7 @@ class CadastroUserActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -151,7 +154,7 @@ fun CadastroUser() {
         mutableStateOf(UserList(listOf()))
     }
 
-    call.enqueue(object: Callback<UserList>{
+    call.enqueue(object : Callback<UserList> {
         override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
             Log.i("ds3m", response.body()!!.users[0].name)
         }
@@ -422,29 +425,53 @@ fun CadastroUser() {
                 color = Color.White
             )
 
-            val radioOptions = listOf<Gender>()
-            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-            Column(Modifier.selectableGroup()) {
-                radioOptions.forEach { text ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .selectable(
+            var genderList by remember {
+                mutableStateOf(listOf<GenderList>())
+            }
+
+            val retrofit = RetrofitFactory.getRetrofit()
+            val genderCreateCall = retrofit.create(GenderCall::class.java)
+            val genderCall = genderCreateCall.getAll()
+
+            genderCall.enqueue(object : Callback<Gender> {
+                override fun onResponse(call: Call<Gender>, response: Response<Gender>) {
+                    Log.i("ds3m", response.body()!!.genders[0].name)
+                    genderList = response.body()!!.genders
+                }
+
+                override fun onFailure(call: Call<Gender>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                }
+
+            })
+
+//            val radioOptions = listOf<Gender>()
+            if (!genderList.isEmpty()) {
+                val (selectedOption, onOptionSelected) = remember { mutableStateOf(genderList[0]) }
+                Column(Modifier.selectableGroup()) {
+                    genderList.forEach { text ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .selectable(
+                                    selected = (text == selectedOption),
+                                    onClick = { onOptionSelected(text) },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
                                 selected = (text == selectedOption),
-                                onClick = { onOptionSelected(text) },
-                                role = Role.RadioButton
+                                onClick = null
                             )
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = (text == selectedOption),
-                            onClick = null
-                        )
+                            Text(text = text.name)
+                        }
                     }
                 }
             }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -620,25 +647,46 @@ fun CadastroUser() {
                             email = emailState,
                             password = passwordState,
                             cpf = cpfState,
-                            birthdate = birthDateState,
-                            postal_code = cepState,
-                            number = numberState,
-                            gender = radioOptions
+                            birthdate = "2005-01-01",
+                            address = Address(
+                                number = numberState,
+                                postalCode = cepState,
+                                complement = null
+                            ),
+                            gender = "e180d522-f176-4c44-9005-160aa1d9ecf1"
                         )
+
+                        Log.i("ds3m", LocalDate.parse(birthDateState).toString())
+
                         val callContactPost = userCall.save(contact)
 
-                        callContactPost.enqueue(object : Callback<User> {
+                        callContactPost.enqueue(object : Callback<CreatedUser> {
                             override fun onResponse(
-                                call: Call<User>,
-                                response: Response<User>
+                                call: Call<CreatedUser>,
+                                response: Response<CreatedUser>
                             ) {
                                 Log.i("ds3m", response.body()!!.toString())
                             }
 
-                            override fun onFailure(call: Call<User>, t: Throwable) {
+                            override fun onFailure(call: Call<CreatedUser>, t: Throwable) {
                                 Log.i("ds3m", t.message.toString())
                             }
                         })
+
+//                        val callGenderPost = genderCreateCall.save(contact)
+//
+//                        callGenderPost.enqueue(object : Callback<GenderList> {
+//                            override fun onResponse(
+//                                call: Call<GenderList>,
+//                                response: Response<GenderList>
+//                            ) {
+//                                Log.i("ds3m", response.body()!!.toString())
+//                            }
+//
+//                            override fun onFailure(call: Call<GenderList>, t: Throwable) {
+//                                Log.i("ds3m", t.message.toString())
+//                            }
+//                        })
                     }
                 },
                 modifier = Modifier
@@ -664,6 +712,7 @@ fun CadastroUser() {
         }
     }
 }
+
 
 @Preview(
     showBackground = true,
