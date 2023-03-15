@@ -1,7 +1,8 @@
 package br.senai.sp.jandira.doetempo
 
 import android.os.Bundle
-import android.service.autofill.DateTransformation
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -30,7 +31,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.doetempo.model.*
+import br.senai.sp.jandira.doetempo.services.OngCall
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CadastroOngActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +136,21 @@ fun CadastroOng() {
     }
 
 
+    val retrofit = RetrofitFactory.getRetrofit()
+    val ongCall = retrofit.create(OngCall::class.java)
+    val call = ongCall.getAll()
+
+    call.enqueue(object : Callback<OngList> {
+        override fun onResponse(call: Call<OngList>, response: Response<OngList>) {
+            Log.i("ds3m", response.body()!!.ngos[0].name)
+        }
+
+        override fun onFailure(call: Call<OngList>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+    })
+
     class DateTransformation() : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             return dateFilter(text)
@@ -209,7 +231,10 @@ fun CadastroOng() {
                 },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isNameError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isNameError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
 
                 label = {
@@ -239,10 +264,14 @@ fun CadastroOng() {
                         newEmail.get(newEmail.length - 1)
                         isEmailError = false
                     }
-                    emailState = newEmail },
+                    emailState = newEmail
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isEmailError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isEmailError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -271,10 +300,14 @@ fun CadastroOng() {
                         newPassword.get(newPassword.length - 1)
                         isPasswordError = false
                     }
-                    passwordState = newPassword },
+                    passwordState = newPassword
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isPasswordError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isPasswordError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -304,10 +337,14 @@ fun CadastroOng() {
                         newCreationDate.get(newCreationDate.length - 1)
                         isCreationDateError = false
                     }
-                    creationDateState = newCreationDate },
+                    creationDateState = newCreationDate
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCreationDateError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCreationDateError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -338,10 +375,14 @@ fun CadastroOng() {
                         newCnpj.get(newCnpj.length - 1)
                         isCnpjError = false
                     }
-                    cnpjState = newCnpj },
+                    cnpjState = newCnpj
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCnpjError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCnpjError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -371,10 +412,14 @@ fun CadastroOng() {
                         newCep.get(newCep.length - 1)
                         isCepError = false
                     }
-                    cepState = newCep },
+                    cepState = newCep
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCepError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCepError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -404,10 +449,14 @@ fun CadastroOng() {
                         newState.get(newState.length - 1)
                         isStateError = false
                     }
-                    stateState = newState },
+                    stateState = newState
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isStateError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isStateError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -436,10 +485,14 @@ fun CadastroOng() {
                         newCity.get(newCity.length - 1)
                         isCityError = false
                     }
-                    cityState = newCity },
+                    cityState = newCity
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isCityError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isCityError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -468,10 +521,14 @@ fun CadastroOng() {
                         newNumber.get(newNumber.length - 1)
                         isNumberError = false
                     }
-                    numberState = newNumber },
+                    numberState = newNumber
+                },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
-                    if (isNumberError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                    if (isNumberError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
                 },
                 label = {
                     Text(
@@ -491,20 +548,42 @@ fun CadastroOng() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            val context = LocalContext.current
+
+
             Button(
-                onClick = { isNameError = nameState.length == 0
+                onClick = {
+                    isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
-                    isCreationDateError = cnpjState.length ==0
+                    isCreationDateError = creationDateState.length == 0
                     isCnpjError = cnpjState.length == 0
                     isCepError = cepState.length == 0
                     isStateError = stateState.length == 0
                     isCityError = cityState.length == 0
                     isNumberError = numberState.length == 0
 
-                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCreationDateError == true && isCnpjError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                    val text = "Todos os campos são necessarios"
+                    val duration = Toast.LENGTH_SHORT
 
-                    }else{
+                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCreationDateError == true && isCnpjError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                        val toast = Toast.makeText(context, text, duration)
+                        toast.show()
+                    } else {
+                        val contact = Ong(
+                            name = nameState,
+                            email = emailState,
+                            password = passwordState,
+                            cnpj = cnpjState,
+                            foundation_date = "2005-01-01",
+                            address = Address(
+                                number = numberState,
+                                postalCode = cepState,
+                                complement = null
+                            ),
+                        )
+
+                        // Log.i("ds3m", LocalDate.parse().toString())
 
                     }
                 },
@@ -512,7 +591,12 @@ fun CadastroOng() {
                     .fillMaxWidth()
                     .fillMaxHeight(2f)
                     .padding(bottom = 24.dp),
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp, bottomEnd = 32.dp, bottomStart = 32.dp),
+                shape = RoundedCornerShape(
+                    topStart = 32.dp,
+                    topEnd = 32.dp,
+                    bottomEnd = 32.dp,
+                    bottomStart = 32.dp
+                ),
                 colors = ButtonDefaults.buttonColors(
                     Color(red = 79, green = 254, blue = 199, alpha = 255)
                 )

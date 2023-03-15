@@ -1,11 +1,13 @@
 package br.senai.sp.jandira.doetempo
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -122,6 +126,7 @@ fun Login() {
 
                         )
                 },
+                singleLine = true,
                 shape = RoundedCornerShape(20.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent.copy()
@@ -150,6 +155,8 @@ fun Login() {
                         color = Color.Black
                     )
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true,
                 shape = RoundedCornerShape(20.dp),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.Transparent.copy()
@@ -165,7 +172,24 @@ fun Login() {
                 textDecoration = TextDecoration.Underline,
                 color = Color.Blue
             )
-            Button(onClick = { /*TODO*/ },
+
+            val context = LocalContext.current
+
+            Button(onClick = {
+                isUserError = userState.length == 0
+                isPasswordError = passwordState.length == 0
+
+                val text = "Todos os campos são necessarios"
+                val duration = Toast.LENGTH_SHORT
+
+                if ( isUserError == true && isPasswordError == true ){
+                    val toast = Toast.makeText(context, text, duration)
+                    toast.show()
+            } else {
+
+            }
+
+                             },
                 modifier = Modifier
                     .width(280.dp)
                     .align(alignment = CenterHorizontally)

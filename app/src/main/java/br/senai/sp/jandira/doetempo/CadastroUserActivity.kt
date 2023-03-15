@@ -1,8 +1,10 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +47,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
-import java.util.Date
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CadastroUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +61,12 @@ class CadastroUserActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     CadastroUser()
+                    }
                 }
             }
         }
     }
-}
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Preview(
@@ -85,9 +90,9 @@ fun CadastroUser() {
         mutableStateOf("")
     }
 
-    var birthDateState by rememberSaveable() {
-        mutableStateOf("")
-    }
+    //var birthDateState by rememberSaveable() {
+    //    mutableStateOf("")
+    // }
 
     var cpfState by rememberSaveable() {
         mutableStateOf("")
@@ -199,6 +204,13 @@ fun CadastroUser() {
             return TransformedText(AnnotatedString(out), numberOffsetTranslator)
         }
     }
+
+
+    // Creating a composable function to
+// create two Images and a spacer between them
+// Calling this function as content
+// in the above function
+
 
     val scrollState = rememberScrollState()
 
@@ -332,6 +344,7 @@ fun CadastroUser() {
                         fontSize = 18.sp,
                     )
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 isError = isPasswordError,
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
@@ -339,44 +352,69 @@ fun CadastroUser() {
                     backgroundColor = Color.Transparent.copy(),
                 )
             )
+
             Spacer(modifier = Modifier.height(32.dp))
 
-            OutlinedTextField(
-                value = birthDateState,
-                onValueChange = { newBirthDate ->
-                    if (newBirthDate.length == 0) {
-                        isBirthDateError = true
-                        newBirthDate
-                    } else {
-                        newBirthDate.get(newBirthDate.length - 1)
-                        isBirthDateError = false
-                    }
-                    birthDateState = newBirthDate
-                },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    if (isBirthDateError) Icon(
-                        imageVector = Icons.Rounded.Warning,
-                        contentDescription = ""
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.birthdate),
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        color = Color.White,
-                        fontSize = 18.sp,
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = isBirthDateError,
-                visualTransformation = DateTransformation(),
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent.copy(),
+
+                // Fetching the Local Context
+                val mContext = LocalContext.current
+
+                // Declaring integer values
+                // for year, month and day
+                val mYear: Int
+                val mMonth: Int
+                val mDay: Int
+
+                // Initializing a Calendar
+                val mCalendar = Calendar.getInstance()
+
+                // Fetching current year, month and day
+                mYear = mCalendar.get(Calendar.YEAR)
+                mMonth = mCalendar.get(Calendar.MONTH)
+                mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+                mCalendar.time = Date()
+
+                // Declaring a string value to
+                // store date in string format
+                val birthDateState = remember { mutableStateOf("") }
+
+                // Declaring DatePickerDialog and setting
+                // initial values as current values (present year, month and day)
+                val mDatePickerDialog = DatePickerDialog(
+                    mContext,
+                    { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                        birthDateState.value = "$mYear-${mMonth + 1}-$mDayOfMonth"
+                    }, mYear, mMonth, mDay
                 )
-            )
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    // Creating a button that on
+                    // click displays/shows the DatePickerDialog
+                    Button(onClick = {
+                        mDatePickerDialog.show()
+                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
+                        Text(text = "Insira sua data de nascimento", color = Color.Black)
+                    }
+
+                    // Adding a space of 100dp height
+                    Spacer(modifier = Modifier.size(10.dp))
+
+                    // Displaying the mDate value in the Text
+                    Text(
+                        text = "Data Selecionada: ${birthDateState.value}",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center
+
+                    )
+                }
+
             Spacer(modifier = Modifier.height(32.dp))
 
 
@@ -445,7 +483,10 @@ fun CadastroUser() {
 
             })
 
-//            val radioOptions = listOf<Gender>()
+            var genderState by remember {
+                mutableStateOf("")
+            }
+
             if (!genderList.isEmpty()) {
                 val (selectedOption, onOptionSelected) = remember { mutableStateOf(genderList[0]) }
                 Column(Modifier.selectableGroup()) {
@@ -464,7 +505,7 @@ fun CadastroUser() {
                         ) {
                             RadioButton(
                                 selected = (text == selectedOption),
-                                onClick = null
+                                onClick = { genderState = text.id }
                             )
                             Text(text = text.name)
                         }
@@ -624,11 +665,12 @@ fun CadastroUser() {
 
             Button(
                 onClick = {
+                    Log.i("date", LocalDate.parse(birthDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString())
                     isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
                     isCpfError = cpfState.length == 0
-                    isBirthDateError = birthDateState.length == 0
+                    //isBirthDateError = birthDateState.length == 0
                     isCepError = cepState.length == 0
                     isStateError = stateState.length == 0
                     isCityError = cityState.length == 0
@@ -646,17 +688,18 @@ fun CadastroUser() {
                             name = nameState,
                             email = emailState,
                             password = passwordState,
+                            birthdate = LocalDate.parse(birthDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString(),
                             cpf = cpfState,
-                            birthdate = "2005-01-01",
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
                                 complement = null
                             ),
-                            gender = "e180d522-f176-4c44-9005-160aa1d9ecf1"
+                            gender = genderState
+
                         )
 
-                        Log.i("ds3m", LocalDate.parse(birthDateState).toString())
+                        // Log.i("ds3m", LocalDate.parse(birthDateState).toString())
 
                         val callContactPost = userCall.save(contact)
 

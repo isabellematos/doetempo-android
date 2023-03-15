@@ -1,6 +1,9 @@
 package br.senai.sp.jandira.doetempo.model
 
+import androidx.compose.runtime.MutableState
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDate
+import java.util.Date
 
 data class User(
     var id: String = "",
@@ -8,12 +11,12 @@ data class User(
     var email: String = "",
     var password: String = "",
     var cpf: String = "",
-    var birthdate: String = "",
+    var birthdate: String,
     var address: Address?,
     @SerializedName("id_gender") var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
 ){
     override fun toString(): String {
-       return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf', birthdate='$birthdate')" //postal_code='$postal_code', number='$number'
+       return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf')"
     }
 }
 
