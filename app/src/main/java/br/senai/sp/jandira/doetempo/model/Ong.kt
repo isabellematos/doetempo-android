@@ -8,7 +8,7 @@ data class Ong(
     var email: String = "",
     var password: String = "",
     var cnpj: String = "",
-    @SerializedName("creation_date") var foundation_date: String = "",
+    @SerializedName("crestionDateState") var foundation_date: String ,
     val address: Address
 ){
     override fun toString(): String {

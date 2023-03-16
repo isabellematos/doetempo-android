@@ -1,7 +1,9 @@
 package br.senai.sp.jandira.doetempo
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +41,9 @@ import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CadastroOngActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,10 +78,6 @@ fun CadastroOng() {
     }
 
     var passwordState by rememberSaveable() {
-        mutableStateOf("")
-    }
-
-    var creationDateState by rememberSaveable() {
         mutableStateOf("")
     }
 
@@ -327,42 +329,55 @@ fun CadastroOng() {
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            OutlinedTextField(
-                value = creationDateState,
-                onValueChange = { newCreationDate ->
-                    if (newCreationDate.length == 0) {
-                        isCreationDateError = true
-                        newCreationDate
-                    } else {
-                        newCreationDate.get(newCreationDate.length - 1)
-                        isCreationDateError = false
-                    }
-                    creationDateState = newCreationDate
-                },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    if (isCreationDateError) Icon(
-                        imageVector = Icons.Rounded.Warning,
-                        contentDescription = ""
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(id = R.string.creationdate),
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        color = Color.White,
-                        fontSize = 18.sp,
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = isCreationDateError,
-                visualTransformation = DateTransformation(),
-                singleLine = true,
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent.copy()
-                )
+            val mContext = LocalContext.current
+
+
+            val mYear: Int
+            val mMonth: Int
+            val mDay: Int
+
+
+            val mCalendar = Calendar.getInstance()
+
+            mYear = mCalendar.get(Calendar.YEAR)
+            mMonth = mCalendar.get(Calendar.MONTH)
+            mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+            mCalendar.time = Date()
+
+            val creationDateState = remember { mutableStateOf("") }
+
+            val mDatePickerDialog = DatePickerDialog(
+                mContext,
+                { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                    creationDateState.value = "$mYear-${mMonth + 1}-$mDayOfMonth"
+                }, mYear, mMonth, mDay
             )
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Button(onClick = {
+                    mDatePickerDialog.show()
+                }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
+                    Text(text = "Insira sua data de nascimento", color = Color.Black)
+                }
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(
+                    text = "Data Selecionada: ${creationDateState.value}",
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -556,7 +571,7 @@ fun CadastroOng() {
                     isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
-                    isCreationDateError = creationDateState.length == 0
+                   // isCreationDateError = creationDateState.length == 0
                     isCnpjError = cnpjState.length == 0
                     isCepError = cepState.length == 0
                     isStateError = stateState.length == 0
@@ -575,16 +590,27 @@ fun CadastroOng() {
                             email = emailState,
                             password = passwordState,
                             cnpj = cnpjState,
-                            foundation_date = "2005-01-01",
+                            foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString(),
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
                                 complement = null
                             ),
                         )
+                        val callContactPost = ongCall.save(contact)
 
-                        // Log.i("ds3m", LocalDate.parse().toString())
+                        callContactPost.enqueue(object : Callback<CreatedOng> {
+                            override fun onResponse(
+                                call: Call<CreatedOng>,
+                                response: Response<CreatedOng>
+                            ) {
+                                Log.i("ds3m", response.body()!!.toString())
+                            }
 
+                            override fun onFailure(call: Call<CreatedOng>, t: Throwable) {
+                                Log.i("ds3m", t.message.toString())
+                            }
+                        })
                     }
                 },
                 modifier = Modifier

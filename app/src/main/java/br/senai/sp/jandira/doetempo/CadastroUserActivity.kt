@@ -90,10 +90,6 @@ fun CadastroUser() {
         mutableStateOf("")
     }
 
-    //var birthDateState by rememberSaveable() {
-    //    mutableStateOf("")
-    // }
-
     var cpfState by rememberSaveable() {
         mutableStateOf("")
     }
@@ -204,12 +200,6 @@ fun CadastroUser() {
             return TransformedText(AnnotatedString(out), numberOffsetTranslator)
         }
     }
-
-
-    // Creating a composable function to
-// create two Images and a spacer between them
-// Calling this function as content
-// in the above function
 
 
     val scrollState = rememberScrollState()
@@ -356,31 +346,24 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
 
-                // Fetching the Local Context
                 val mContext = LocalContext.current
 
-                // Declaring integer values
-                // for year, month and day
+
                 val mYear: Int
                 val mMonth: Int
                 val mDay: Int
 
-                // Initializing a Calendar
+
                 val mCalendar = Calendar.getInstance()
 
-                // Fetching current year, month and day
                 mYear = mCalendar.get(Calendar.YEAR)
                 mMonth = mCalendar.get(Calendar.MONTH)
                 mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
                 mCalendar.time = Date()
 
-                // Declaring a string value to
-                // store date in string format
                 val birthDateState = remember { mutableStateOf("") }
 
-                // Declaring DatePickerDialog and setting
-                // initial values as current values (present year, month and day)
                 val mDatePickerDialog = DatePickerDialog(
                     mContext,
                     { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
@@ -394,18 +377,14 @@ fun CadastroUser() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // Creating a button that on
-                    // click displays/shows the DatePickerDialog
                     Button(onClick = {
                         mDatePickerDialog.show()
                     }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
                         Text(text = "Insira sua data de nascimento", color = Color.Black)
                     }
 
-                    // Adding a space of 100dp height
                     Spacer(modifier = Modifier.size(10.dp))
 
-                    // Displaying the mDate value in the Text
                     Text(
                         text = "Data Selecionada: ${birthDateState.value}",
                         color = Color.White,
@@ -715,21 +694,6 @@ fun CadastroUser() {
                                 Log.i("ds3m", t.message.toString())
                             }
                         })
-
-//                        val callGenderPost = genderCreateCall.save(contact)
-//
-//                        callGenderPost.enqueue(object : Callback<GenderList> {
-//                            override fun onResponse(
-//                                call: Call<GenderList>,
-//                                response: Response<GenderList>
-//                            ) {
-//                                Log.i("ds3m", response.body()!!.toString())
-//                            }
-//
-//                            override fun onFailure(call: Call<GenderList>, t: Throwable) {
-//                                Log.i("ds3m", t.message.toString())
-//                            }
-//                        })
                     }
                 },
                 modifier = Modifier
