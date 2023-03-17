@@ -347,10 +347,10 @@ fun CadastroOng() {
 
             val creationDateState = remember { mutableStateOf("") }
 
-            val mDatePickerDialog = DatePickerDialog(
+            var mDatePickerDialog = DatePickerDialog(
                 mContext,
                 { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                    creationDateState.value = "$mYear-${mMonth + 1}-$mDayOfMonth"
+                    creationDateState.value = "$mYear-${if(mMonth+ 1 < 10) "0" + (mMonth + 1) else (mMonth+ 1)}-${if(mDayOfMonth < 10) "0" + mDayOfMonth else mDayOfMonth}"
                 }, mYear, mMonth, mDay
             )
 
@@ -363,7 +363,7 @@ fun CadastroOng() {
                 Button(onClick = {
                     mDatePickerDialog.show()
                 }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
-                    Text(text = "Insira sua data de nascimento", color = Color.Black)
+                    Text(text = "Insira a data de criação da sua ONG", color = Color.Black)
                 }
 
                 Spacer(modifier = Modifier.size(10.dp))
@@ -571,7 +571,7 @@ fun CadastroOng() {
                     isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
-                   // isCreationDateError = creationDateState.length == 0
+                    // isCreationDateError = creationDateState.length == 0
                     isCnpjError = cnpjState.length == 0
                     isCepError = cepState.length == 0
                     isStateError = stateState.length == 0
@@ -590,21 +590,21 @@ fun CadastroOng() {
                             email = emailState,
                             password = passwordState,
                             cnpj = cnpjState,
-                            foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString(),
+                            foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
                                 complement = null
                             ),
                         )
-                        val callContactPost = ongCall.save(contact)
+                        val callContactOngPost = ongCall.save(contact)
 
-                        callContactPost.enqueue(object : Callback<CreatedOng> {
+                        callContactOngPost.enqueue(object : Callback<CreatedOng> {
                             override fun onResponse(
                                 call: Call<CreatedOng>,
                                 response: Response<CreatedOng>
                             ) {
-                                Log.i("ds3m", response.body()!!.toString())
+                                 Log.i("ds3m", response.body()!!.toString())
                             }
 
                             override fun onFailure(call: Call<CreatedOng>, t: Throwable) {

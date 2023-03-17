@@ -17,9 +17,9 @@ class RetrofitFactory {
                     .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-           }
+            }
 
-           return  instance
+            return instance
         }
     }
 }

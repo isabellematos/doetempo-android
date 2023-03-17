@@ -46,6 +46,7 @@ import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -61,11 +62,11 @@ class CadastroUserActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     CadastroUser()
-                    }
                 }
             }
         }
     }
+}
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -346,53 +347,54 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
 
-                val mContext = LocalContext.current
+            val mContext = LocalContext.current
 
 
-                val mYear: Int
-                val mMonth: Int
-                val mDay: Int
+            val mYear: Int
+            val mMonth: Int
+            val mDay: Int
 
 
-                val mCalendar = Calendar.getInstance()
+            val mCalendar = Calendar.getInstance()
 
-                mYear = mCalendar.get(Calendar.YEAR)
-                mMonth = mCalendar.get(Calendar.MONTH)
-                mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+            mYear = mCalendar.get(Calendar.YEAR)
+            mMonth = mCalendar.get(Calendar.MONTH)
+            mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
-                mCalendar.time = Date()
+            mCalendar.time = Date()
 
-                val birthDateState = remember { mutableStateOf("") }
+            val birthDateState = remember { mutableStateOf("") }
 
-                val mDatePickerDialog = DatePickerDialog(
-                    mContext,
-                    { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                        birthDateState.value = "$mYear-${mMonth + 1}-$mDayOfMonth"
-                    }, mYear, mMonth, mDay
-                )
+            var mDatePickerDialog = DatePickerDialog(
+                mContext,
+                { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                    birthDateState.value =
+                        "$mYear-${if (mMonth + 1 < 10) "0" + (mMonth + 1) else (mMonth + 1)}-${if (mDayOfMonth < 10) "0" + mDayOfMonth else mDayOfMonth}"
+                }, mYear, mMonth, mDay
+            )
 
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                    Button(onClick = {
-                        mDatePickerDialog.show()
-                    }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
-                        Text(text = "Insira sua data de nascimento", color = Color.Black)
-                    }
-
-                    Spacer(modifier = Modifier.size(10.dp))
-
-                    Text(
-                        text = "Data Selecionada: ${birthDateState.value}",
-                        color = Color.White,
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Center
-
-                    )
+                Button(onClick = {
+                    mDatePickerDialog.show()
+                }, colors = ButtonDefaults.buttonColors(backgroundColor = Color(79, 254, 199))) {
+                    Text(text = "Insira sua data de nascimento", color = Color.Black)
                 }
+
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(
+                    text = "Data Selecionada: ${birthDateState.value}",
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+
+                )
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -476,7 +478,11 @@ fun CadastroUser() {
                                 .height(40.dp)
                                 .selectable(
                                     selected = (text == selectedOption),
-                                    onClick = { onOptionSelected(text) },
+                                    onClick = {
+                                        onOptionSelected(text)
+                                        genderState = text.id
+                                        Log.i("ds3m", genderState)
+                                    },
                                     role = Role.RadioButton
                                 )
                                 .padding(horizontal = 16.dp),
@@ -644,7 +650,6 @@ fun CadastroUser() {
 
             Button(
                 onClick = {
-                    Log.i("date", LocalDate.parse(birthDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString())
                     isNameError = nameState.length == 0
                     isEmailError = emailState.length == 0
                     isPasswordError = passwordState.length == 0
@@ -659,7 +664,7 @@ fun CadastroUser() {
                     val duration = Toast.LENGTH_SHORT
 
 
-                    if (isNameError == true && isEmailError == true && isPasswordError == true && isCpfError == true && isBirthDateError == true && isCepError == true && isStateError == true && isCityError == true && isNumberError == true) {
+                    if (isNameError || isEmailError || isPasswordError || isCpfError || isBirthDateError || isCepError || isStateError || isCityError || isNumberError) {
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
                     } else {
@@ -667,7 +672,10 @@ fun CadastroUser() {
                             name = nameState,
                             email = emailState,
                             password = passwordState,
-                            birthdate = LocalDate.parse(birthDateState.value, DateTimeFormatter.ofPattern("yyyy-M-dd")).toString(),
+                            birthdate = LocalDate.parse(
+                                birthDateState.value,
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                            ).toString(),
                             cpf = cpfState,
                             address = Address(
                                 number = numberState,
@@ -675,10 +683,8 @@ fun CadastroUser() {
                                 complement = null
                             ),
                             gender = genderState
-
                         )
 
-                        // Log.i("ds3m", LocalDate.parse(birthDateState).toString())
 
                         val callContactPost = userCall.save(contact)
 
