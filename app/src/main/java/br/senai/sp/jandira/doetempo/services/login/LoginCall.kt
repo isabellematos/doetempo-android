@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.login
 
 import retrofit2.http.Body
 import retrofit2.http.POST

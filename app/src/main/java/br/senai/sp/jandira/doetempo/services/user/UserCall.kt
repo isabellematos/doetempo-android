@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.user
 
 import br.senai.sp.jandira.doetempo.model.*
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.cep
 
 import br.senai.sp.jandira.doetempo.model.Cep
 import retrofit2.Call

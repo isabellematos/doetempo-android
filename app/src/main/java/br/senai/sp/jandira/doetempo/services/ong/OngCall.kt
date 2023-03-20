@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.ong
 
 import br.senai.sp.jandira.doetempo.model.CreatedOng
 import br.senai.sp.jandira.doetempo.model.Ong

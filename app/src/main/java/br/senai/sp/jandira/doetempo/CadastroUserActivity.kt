@@ -39,15 +39,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.model.*
-import br.senai.sp.jandira.doetempo.services.GenderCall
-import br.senai.sp.jandira.doetempo.services.UserCall
+import br.senai.sp.jandira.doetempo.services.gender.GenderCall
+import br.senai.sp.jandira.doetempo.services.user.UserCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
-import br.senai.sp.jandira.doetempo.services.buscarCep
+import br.senai.sp.jandira.doetempo.services.cep.buscarCep
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -545,7 +544,6 @@ fun CadastroUser() {
                         buscarCep(cepState) { result ->
                             Log.i("ds3m", result.toString())
                         }.toString()
-
                     }
                     cepState = newCep
                 },

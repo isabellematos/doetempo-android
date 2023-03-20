@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.gender
 
 import br.senai.sp.jandira.doetempo.model.Gender
 import br.senai.sp.jandira.doetempo.model.GenderList

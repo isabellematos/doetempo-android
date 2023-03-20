@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.cep
 
 import android.util.Log
 import br.senai.sp.jandira.doetempo.model.Cep
@@ -16,13 +16,13 @@ fun buscarCep(cep: String, onComplete: (String) -> Unit){
 
     call.enqueue(object: Callback<Cep> {
         override fun onResponse(call: Call<Cep>, response: Response<Cep>) {
-            logradouro =  response.body()!!.logradouro ?: "Cep não encontrado"
             Log.i("ds3m", response.body()!!.toString())
+            logradouro =  response.body()!!.logradouro ?: "Cep não encontrado"
             onComplete.invoke(logradouro)
         }//quanto terminar de ser executado o oncomplete invoca o logradouro
 
         override fun onFailure(call: Call<Cep>, t: Throwable) {
-            TODO("Not yet implemented")
+            Log.i("ds3m", t.message.toString())
         }
 
     })
