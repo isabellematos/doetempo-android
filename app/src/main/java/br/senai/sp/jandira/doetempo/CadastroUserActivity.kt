@@ -42,6 +42,7 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.GenderCall
 import br.senai.sp.jandira.doetempo.services.UserCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.buscarCep
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,6 +104,18 @@ fun CadastroUser() {
         mutableStateOf("")
     }
 
+    var logradouroState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var bairroState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var complementoState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
     var cityState by rememberSaveable() {
         mutableStateOf("")
     }
@@ -131,11 +144,23 @@ fun CadastroUser() {
         mutableStateOf(false)
     }
 
+    var isBairroError by remember {
+        mutableStateOf(false)
+    }
+
     var isCepError by remember {
         mutableStateOf(false)
     }
 
     var isStateError by remember {
+        mutableStateOf(false)
+    }
+
+    var isLogradouroError by remember {
+        mutableStateOf(false)
+    }
+
+    var isComplementoError by remember {
         mutableStateOf(false)
     }
 
@@ -145,6 +170,10 @@ fun CadastroUser() {
 
     var isNumberError by remember {
         mutableStateOf(false)
+    }
+
+    var resultState by remember {
+        mutableStateOf("")
     }
 
 
@@ -510,6 +539,14 @@ fun CadastroUser() {
                         newCep.get(newCep.length - 1)
                         isCepError = false
                     }
+
+                    if (newCep.length == 8) {
+                        Log.i("ds3m", newCep)
+                        buscarCep(cepState) { result ->
+                            Log.i("ds3m", result.toString())
+                        }.toString()
+
+                    }
                     cepState = newCep
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -535,6 +572,7 @@ fun CadastroUser() {
                     backgroundColor = Color.Transparent.copy(),
                 )
             )
+
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -610,6 +648,114 @@ fun CadastroUser() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
+                value = logradouroState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isLogradouroError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isLogradouroError = false
+                    }
+                    logradouroState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isLogradouroError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.street),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isLogradouroError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = bairroState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isBairroError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isBairroError = false
+                    }
+                    bairroState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isBairroError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.bairro),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isBairroError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = complementoState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isComplementoError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isComplementoError = false
+                    }
+                    complementoState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isComplementoError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.complemento),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isComplementoError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
                 value = numberState,
                 onValueChange = { newNumber ->
                     if (newNumber.length == 0) {
@@ -664,6 +810,7 @@ fun CadastroUser() {
                     val duration = Toast.LENGTH_SHORT
 
 
+
                     if (isNameError || isEmailError || isPasswordError || isCpfError || isBirthDateError || isCepError || isStateError || isCityError || isNumberError) {
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
@@ -684,7 +831,6 @@ fun CadastroUser() {
                             ),
                             gender = genderState
                         )
-
 
                         val callContactPost = userCall.save(contact)
 

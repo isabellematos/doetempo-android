@@ -6,19 +6,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitFactoryCep {
 
-    companion object {
-        private lateinit var instanceCep: Retrofit
-        fun getRetrofitCep(): Retrofit {
-            if (!::instanceCep.isInitialized) {
-                instanceCep = Retrofit
-                    .Builder()
-                    .baseUrl(Constants.CEP_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-            }
+    val URL = "https://viacep.com.br/ws/"
 
-            return instanceCep
-        }
+    val retrofitFactory = Retrofit
+        .Builder()
+        .baseUrl(URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    fun retrofitService(): CepRetrofitService{
+        return retrofitFactory.create(CepRetrofitService::class.java)
     }
-
 }

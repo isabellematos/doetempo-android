@@ -12,7 +12,6 @@
     <string name="state">Estado</string>
     <string name="city">Cidade</string>
     <string name="street">Rua</string>
-    <string name="neighborhood">Bairro</string>
     <string name="number">Numero</string>
     <string name="send">Enviar</string>
     <string name="title_activity_login">LoginActivity</string>
@@ -28,4 +27,6 @@
     <string name="ong">Sou uma ONG</string>
     <string name="volunteer">Quero ser um voluntário</string>
     <string name="title_activity_cadastro_ong">CadastroOngActivity</string>
+    <string name="complemento">Complemento</string>
+    <string name="bairro">Bairro</string>
 </resources>
