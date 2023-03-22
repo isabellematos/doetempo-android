@@ -331,11 +331,9 @@ fun CadastroOng() {
 
             val mContext = LocalContext.current
 
-
             val mYear: Int
             val mMonth: Int
             val mDay: Int
-
 
             val mCalendar = Calendar.getInstance()
 
@@ -591,6 +589,7 @@ fun CadastroOng() {
                             password = passwordState,
                             cnpj = cnpjState,
                             foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
+                            id_type = null,
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,

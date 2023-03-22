@@ -9,7 +9,8 @@ data class Ong(
     var password: String = "",
     var cnpj: String = "",
     var foundation_date: String,
-    val address: Address
+    val address: Address,
+    var id_type: String?
 ){
     override fun toString(): String {
         return "Ong(id='$id', name='$name', email='$email', password='$password', cnpj='$cnpj', foundation_date='$foundation_date')"
