@@ -39,15 +39,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.model.*
-import br.senai.sp.jandira.doetempo.services.GenderCall
-import br.senai.sp.jandira.doetempo.services.UserCall
+import br.senai.sp.jandira.doetempo.services.gender.GenderCall
+import br.senai.sp.jandira.doetempo.services.user.UserCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
-import br.senai.sp.jandira.doetempo.services.buscarCep
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import buscarCep
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -187,11 +186,11 @@ fun CadastroUser() {
 
     call.enqueue(object : Callback<UserList> {
         override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
-            Log.i("ds3m", response.body()!!.users[0].name)
+//            Log.i("ds3m", response.body()!!.users[0].name)
         }
 
         override fun onFailure(call: Call<UserList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
+//            Log.i("ds3m", t.message.toString())
         }
 
     })
@@ -483,12 +482,12 @@ fun CadastroUser() {
 
             genderCall.enqueue(object : Callback<Gender> {
                 override fun onResponse(call: Call<Gender>, response: Response<Gender>) {
-                    Log.i("ds3m", response.body()!!.genders[0].name)
+//                    Log.i("ds3m", response.body()!!.genders[0].name)
                     genderList = response.body()!!.genders
                 }
 
                 override fun onFailure(call: Call<Gender>, t: Throwable) {
-                    Log.i("ds3m", t.message.toString())
+//                    Log.i("ds3m", t.message.toString())
                 }
 
             })
@@ -510,7 +509,7 @@ fun CadastroUser() {
                                     onClick = {
                                         onOptionSelected(text)
                                         genderState = text.id
-                                        Log.i("ds3m", genderState)
+//                                        Log.i("ds3m", genderState)
                                     },
                                     role = Role.RadioButton
                                 )
@@ -540,14 +539,17 @@ fun CadastroUser() {
                         isCepError = false
                     }
 
-                    if (newCep.length == 8) {
-                        Log.i("ds3m", newCep)
-                        buscarCep(cepState) { result ->
-                            Log.i("ds3m", result.toString())
-                        }.toString()
-
-                    }
                     cepState = newCep
+                    if (newCep.length == 8) {
+//                        Log.i("ds3m", newCep)
+                        buscarCep(newCep) {
+                            cityState = it.cidade
+                            logradouroState = it.logradouro
+                            stateState = it.estado
+                            bairroState = it.bairro
+                            cepState = it.cep
+                        }.toString()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
@@ -832,6 +834,8 @@ fun CadastroUser() {
                             gender = genderState
                         )
 
+                        Log.i("ds3m", contact.birthdate.toString())
+
                         val callContactPost = userCall.save(contact)
 
                         callContactPost.enqueue(object : Callback<CreatedUser> {
@@ -840,6 +844,7 @@ fun CadastroUser() {
                                 response: Response<CreatedUser>
                             ) {
                                 Log.i("ds3m", response.body()!!.toString())
+                                Toast.makeText(context, response.body()!!.message, Toast.LENGTH_SHORT).show()
                             }
 
                             override fun onFailure(call: Call<CreatedUser>, t: Throwable) {

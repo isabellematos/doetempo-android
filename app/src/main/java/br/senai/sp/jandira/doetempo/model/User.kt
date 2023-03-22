@@ -6,14 +6,16 @@ import java.time.LocalDate
 import java.util.Date
 
 data class User(
-    var id: String = "",
+    var id: String? = "",
     var name: String = "",
     var email: String = "",
     var password: String = "",
     var cpf: String = "",
     var birthdate: String,
     var address: Address?,
-    @SerializedName("id_gender") var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
+    var rg: String? = "",
+    var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
+    @SerializedName("id_type") var idType: String? = ""
 ){
     override fun toString(): String {
        return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf')"

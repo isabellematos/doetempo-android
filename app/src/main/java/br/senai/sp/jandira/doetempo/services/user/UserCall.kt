@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.user
 
 import br.senai.sp.jandira.doetempo.model.*
 import retrofit2.Call
@@ -10,7 +10,7 @@ interface UserCall {
     @GET("test/users")
     fun getAll(): Call<UserList>
 
-    @POST("user")
+    @POST("user/")
     fun save(@Body contact: User): Call<CreatedUser>
 
     @DELETE("user/{id}")

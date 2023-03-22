@@ -1,6 +1,5 @@
-package br.senai.sp.jandira.doetempo.services
+package br.senai.sp.jandira.doetempo.services.cep
 
-import br.senai.sp.jandira.doetempo.constants.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -14,7 +13,7 @@ class RetrofitFactoryCep {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun retrofitService(): CepRetrofitService{
+    fun retrofitService(): CepRetrofitService {
         return retrofitFactory.create(CepRetrofitService::class.java)
     }
 }
