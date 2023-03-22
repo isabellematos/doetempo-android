@@ -9,6 +9,13 @@ interface CepRetrofitService {
 
     //https://viacep.com.br/ws/06626420/json/
     @GET("{cep}/json/")
-    fun getCep(@Path("cep") cep: String): Call<Cep> // ele sabe q cep eh o valor a ser substituido, Call = chamar arquivo na model, cep ou qualquer outro
+    fun getCep(@Path("cep") cep: String): Call<Cep>
 
+
+    @GET("{uf}/{cidade}/{logradouro}/json/")
+    fun getByAddress(
+        @Path("uf") uf: String,
+        @Path("cidade") cidade: String,
+        @Path("logradouro") logradouro: String
+    ): Call<List<Cep>>
 }

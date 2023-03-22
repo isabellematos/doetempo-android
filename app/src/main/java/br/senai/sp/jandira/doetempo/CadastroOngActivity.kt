@@ -590,7 +590,7 @@ fun CadastroOng() {
                             email = emailState,
                             password = passwordState,
                             cnpj = cnpjState,
-                            foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
+                            foundationDate = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
