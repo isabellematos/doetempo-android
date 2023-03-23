@@ -38,6 +38,7 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import buscarCep
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -97,6 +98,18 @@ fun CadastroOng() {
         mutableStateOf("")
     }
 
+    var logradouroState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var bairroState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var complementoState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
     var numberState by rememberSaveable() {
         mutableStateOf("")
     }
@@ -122,6 +135,18 @@ fun CadastroOng() {
     }
 
     var isCepError by remember {
+        mutableStateOf(false)
+    }
+
+    var isLogradouroError by remember {
+        mutableStateOf(false)
+    }
+
+    var isBairroError by remember {
+        mutableStateOf(false)
+    }
+
+    var isComplementoError by remember {
         mutableStateOf(false)
     }
 
@@ -425,7 +450,18 @@ fun CadastroOng() {
                         newCep.get(newCep.length - 1)
                         isCepError = false
                     }
+
                     cepState = newCep
+                    if (newCep.length == 8) {
+//                        Log.i("ds3m", newCep)
+                        buscarCep(newCep) {
+                            cityState = it.cidade
+                            logradouroState = it.logradouro
+                            stateState = it.estado
+                            bairroState = it.bairro
+                            //cepState = it.cep
+                        }.toString()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
@@ -525,6 +561,114 @@ fun CadastroOng() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
+                value = logradouroState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isLogradouroError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isLogradouroError = false
+                    }
+                    logradouroState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isLogradouroError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.street),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isLogradouroError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = bairroState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isBairroError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isBairroError = false
+                    }
+                    bairroState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isBairroError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.bairro),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isBairroError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = complementoState,
+                onValueChange = { newState ->
+                    if (newState.length == 0) {
+                        isComplementoError = true
+                        newState
+                    } else {
+                        newState.get(newState.length - 1)
+                        isComplementoError = false
+                    }
+                    complementoState = newState
+                },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (isComplementoError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.complemento),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = Color.White,
+                        fontSize = 18.sp,
+                    )
+                },
+                isError = isComplementoError,
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.Transparent.copy(),
+                )
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
                 value = numberState,
                 onValueChange = { newNumber ->
                     if (newNumber.length == 0) {
@@ -588,8 +732,7 @@ fun CadastroOng() {
                             email = emailState,
                             password = passwordState,
                             cnpj = cnpjState,
-                            foundation_date = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
-                            id_type = null,
+                            foundationDate = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
