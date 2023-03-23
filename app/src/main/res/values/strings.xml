@@ -29,4 +29,5 @@
     <string name="title_activity_cadastro_ong">CadastroOngActivity</string>
     <string name="complemento">Complemento</string>
     <string name="bairro">Bairro</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

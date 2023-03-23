@@ -1,5 +1,7 @@
 package br.senai.sp.jandira.doetempo
 
+
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,15 +26,20 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import br.senai.sp.jandira.doetempo.model.Login
+import br.senai.sp.jandira.doetempo.services.login.LoginDao
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             DoetempoTheme {
                 // A surface container using the 'background' color from the theme
@@ -47,9 +54,40 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
+@Database(entities = [(Login::class)], version = 1, exportSchema = false)
+abstract class EmployeeRoomDatabase : RoomDatabase() {
+
+    abstract fun loginDao(): LoginDao
+
+    companion object {
+        /*The value of a volatile variable will never be cached, and all writes and reads will be done to and from the main memory.
+        This helps make sure the value of INSTANCE is always up-to-date and the same for all execution threads.
+        It means that changes made by one thread to INSTANCE are visible to all other threads immediately.*/
+        @Volatile
+        private var INSTANCE: EmployeeRoomDatabase? = null
+
+        fun getInstance(context: Context): EmployeeRoomDatabase {
+            // only one thread of execution at a time can enter this block of code
+            synchronized(this) {
+                var instance = INSTANCE
+
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        EmployeeRoomDatabase::class.java,
+                        "employee_database"
+                    ).fallbackToDestructiveMigration()
+                        .build()
+
+                    INSTANCE = instance
+                }
+                return instance
+            }
+        }
+    }
+}
 
 @Composable
-@Preview(showBackground = true)
 fun Login() {
 
     var userState by rememberSaveable {
@@ -70,6 +108,7 @@ fun Login() {
     var isPasswordError by remember {
         mutableStateOf(false)
     }
+
 
 
     //Content
@@ -118,7 +157,7 @@ fun Login() {
                     .padding(top = 80.dp),
                 label = {
                     Text(
-                        text = stringResource(id = R.string.user),
+                        text = stringResource(id = R.string.email),
                         modifier = Modifier.zIndex(1f),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black,
@@ -134,7 +173,7 @@ fun Login() {
             )
             OutlinedTextField(
                 value = passwordState,
-                onValueChange = {newPassword ->
+                onValueChange = { newPassword ->
                     if (newPassword.length == 0) {
                         isPasswordError = true
                         newPassword
@@ -175,21 +214,26 @@ fun Login() {
 
             val context = LocalContext.current
 
-            Button(onClick = {
-                isUserError = userState.length == 0
-                isPasswordError = passwordState.length == 0
+            Button(
+                onClick = {
+                    isUserError = userState.length == 0
+                    isPasswordError = passwordState.length == 0
 
-                val text = "Todos os campos são necessarios"
-                val duration = Toast.LENGTH_SHORT
+                   val text = "Todos os campos são necessarios"
+                    val duration = Toast.LENGTH_SHORT
 
-                if ( isUserError == true && isPasswordError == true ){
-                    val toast = Toast.makeText(context, text, duration)
-                    toast.show()
-            } else {
+                    if (isUserError == true && isPasswordError == true) {
+                        val toast = Toast.makeText(context, text, duration)
+                        toast.show()
+                    } else {
+                        val contact = Login(
+                            email = userState,
+                            password = passwordState
+                        )
+                       // val callContactLogin = LoginCall.getAll(contact)
+                    }
 
-            }
-
-                             },
+                },
                 modifier = Modifier
                     .width(280.dp)
                     .align(alignment = CenterHorizontally)
