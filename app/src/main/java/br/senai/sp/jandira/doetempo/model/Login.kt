@@ -1,12 +1,14 @@
 package br.senai.sp.jandira.doetempo.model
 
-import android.os.Parcelable
-import androidx.annotation.NonNull
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import retrofit2.http.POST
+import com.google.gson.annotations.SerializedName
 
+data class LoginDto(
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String
+)
+data class TokenDto(
+    @SerializedName("accessToken") val accessTokenVerify: String
+)
 //data class Login(
 //    var email: String = "",
 //    var password: String = "",
@@ -17,20 +19,3 @@ import retrofit2.http.POST
 //    }
 //}
 
-@Entity(tableName = "login")
- data class Login(
-
-    @PrimaryKey(autoGenerate = false)
-    @NonNull
-    @ColumnInfo(name = "id")
-    var id: Int,
-
-    @ColumnInfo(name = "userId")
-    var userId: Long,
-
-    @ColumnInfo(name = "userEmail")
-    var email: String,
-
-    @ColumnInfo(name = "userPassword")
-    var password: String,
-)

@@ -3,6 +3,7 @@ package br.senai.sp.jandira.doetempo
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,12 +29,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import br.senai.sp.jandira.doetempo.model.Login
-import br.senai.sp.jandira.doetempo.services.login.LoginDao
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import br.senai.sp.jandira.doetempo.services.login.RetrofitFactoryLogin
+import br.senai.sp.jandira.doetempo.model.LoginDto
+import br.senai.sp.jandira.doetempo.model.TokenDto
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : ComponentActivity() {
@@ -54,38 +63,6 @@ class LoginActivity : ComponentActivity() {
     }
 }
 
-@Database(entities = [(Login::class)], version = 1, exportSchema = false)
-abstract class EmployeeRoomDatabase : RoomDatabase() {
-
-    abstract fun loginDao(): LoginDao
-
-    companion object {
-        /*The value of a volatile variable will never be cached, and all writes and reads will be done to and from the main memory.
-        This helps make sure the value of INSTANCE is always up-to-date and the same for all execution threads.
-        It means that changes made by one thread to INSTANCE are visible to all other threads immediately.*/
-        @Volatile
-        private var INSTANCE: EmployeeRoomDatabase? = null
-
-        fun getInstance(context: Context): EmployeeRoomDatabase {
-            // only one thread of execution at a time can enter this block of code
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        EmployeeRoomDatabase::class.java,
-                        "employee_database"
-                    ).fallbackToDestructiveMigration()
-                        .build()
-
-                    INSTANCE = instance
-                }
-                return instance
-            }
-        }
-    }
-}
 
 @Composable
 fun Login() {
@@ -109,7 +86,46 @@ fun Login() {
         mutableStateOf(false)
     }
 
-
+    class LoginViewModel : ViewModel() {
+        val isSuccessLoading = mutableStateOf(value = false)
+        val imageErrorAuth = mutableStateOf(value = false)
+        val progressBar = mutableStateOf(value = false)
+        private val loginRequestLiveData = MutableLiveData<Boolean>()
+        fun login(emailState: String, passwordState: String) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    progressBar.value = true
+                    val authService = RetrofitFactoryLogin.RetrofitHelper.getAuthService()
+                    val responseService =
+                        authService.getLogin(
+                            LoginDto(
+                                email = emailState,
+                                password = passwordState
+                            )
+                        )
+                    if (responseService.isSuccessful) {
+                        delay(1500L)
+                        isSuccessLoading.value = true
+                        responseService.body()?.let { tokenDto ->
+                            Log.d("Logging", "Response TokenDto:$tokenDto")
+                        }
+                    } else {
+                        responseService.errorBody()?.let { error ->
+                            imageErrorAuth.value = true
+                            delay(1500L)
+                            imageErrorAuth.value = false
+                            error.close()
+                        }
+                    }
+                    loginRequestLiveData.postValue(responseService.isSuccessful)
+                    progressBar.value = false
+                } catch (e: Exception) {
+                    Log.d("Logging", "Error Authentication", e)
+                    progressBar.value = false
+                }
+            }
+        }
+    }
 
     //Content
     Column(
@@ -212,6 +228,37 @@ fun Login() {
                 color = Color.Blue
             )
 
+            fun NavigationScreen(viewModel: LoginViewModel) {
+                val navController = rememberNavController()
+                val loadingProgressBar = viewModel.progressBar.value
+                val imageError = viewModel.imageErrorAuth.value
+                NavHost(
+                    navController = navController,
+                    startDestination = ComposeNavigator.Destination.getStartDestination()
+                ) {
+                    composable(route = ComposeNavigator.Destination.Login.route) {
+                        if (viewModel.isSuccessLoading.value) {
+                            LaunchedEffect(key1 = Unit) {
+                                navController.navigate(route =
+                                ComposeNavigator.Destination.CampanhaDetailsActivity.route) {
+                                    popUpTo(route = ComposeNavigator.Destination.Login.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        } else {
+                            Login(
+                                password = passwordState,
+                                email = emailState
+                            )
+                        }
+                    }
+                    composable(route = ComposeNavigator.Destination.CampanhaDetailsActivity.route) {
+                        CampanhaDetailsActivity()
+                    }
+                }
+            }
+
             val context = LocalContext.current
 
             Button(
@@ -219,18 +266,14 @@ fun Login() {
                     isUserError = userState.length == 0
                     isPasswordError = passwordState.length == 0
 
-                   val text = "Todos os campos são necessarios"
+                    val text = "Todos os campos são necessarios"
                     val duration = Toast.LENGTH_SHORT
 
                     if (isUserError == true && isPasswordError == true) {
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
                     } else {
-                        val contact = Login(
-                            email = userState,
-                            password = passwordState
-                        )
-                       // val callContactLogin = LoginCall.getAll(contact)
+
                     }
 
                 },
