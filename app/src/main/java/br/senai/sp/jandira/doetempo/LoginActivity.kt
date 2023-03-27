@@ -1,8 +1,9 @@
 package br.senai.sp.jandira.doetempo
 
 
-import android.content.Context
+import RetrofitFactoryLogin
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -30,23 +31,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import br.senai.sp.jandira.doetempo.services.login.RetrofitFactoryLogin
+import androidx.core.content.ContextCompat.startActivity
 import br.senai.sp.jandira.doetempo.model.LoginDto
 import br.senai.sp.jandira.doetempo.model.TokenDto
+import br.senai.sp.jandira.doetempo.services.login.AuthApiService
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-//import kotlinx.coroutines.flow.internal.NoOpContinuation.context
-import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.internal.http2.Settings
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 //import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 
@@ -184,8 +178,6 @@ fun Login() {
                         modifier = Modifier.zIndex(1f),
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black,
-
-
                         )
                 },
                 singleLine = true,
@@ -281,37 +273,68 @@ fun Login() {
                     }
                     else {
 
-                        fun authenticate(email: String, password: String) {
-                            val url = "http://10.0.2.2:3333/auth/"
-                            val body = "grant_type=password&username=${email}&password=${password}"
-                            val request = Request.Builder()
-                                .url(url)
-                                .post(body)
-                                .build()
-                            val client = OkHttpClient()
-                            val response = client.newCall(request).execute()
-                            val responseBody = response.body?.string()
+                        val loginDto = LoginDto(email = userState, password = passwordState)
 
-                            if (responseBody != null) {
-                                if (responseBody.contains("authentication successful")) {
-                                    context.startActivity(Intent(context, CampanhaDetailsActivity::class.java))
-                                } else {
-                                    Log.d("Logging", "Error Authentication")
+                        val retrofit = RetrofitFactoryLogin.getRetrofit()
+                        val authCall = retrofit.create(AuthApiService::class.java)
+                        val authToken = authCall.getLogin(loginDto)
+
+                        authToken.enqueue(object: Callback<TokenDto> {
+                            override fun onResponse(
+                                call: Call<TokenDto>,
+                                response: Response<TokenDto>
+                            ) {
+                                Log.i("ds3m", response.body().toString())
+
+                                if (response.body()?.accessTokenVerify.isNullOrEmpty()) {
+                                    Toast.makeText(context, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show()
+                                    Log.i("ds3m", "Login inválido!")
+                                }
+
+                                if (response.body()?.dataUser?.type == "ONG") {
+                                    // Home da ong
+                                    val newActivity = Intent(context, FirstPageActivity::class.java).putExtra("key", response.body()!!.accessTokenVerify)
+                                    startActivity(context, newActivity, Bundle.EMPTY)
                                 }
                             }
-                        }
 
-                        val email = userState.onSave { email: String? ->
-                            if (email != null) {
-                                authenticate(email)
+                            override fun onFailure(call: Call<TokenDto>, t: Throwable) {
+                                TODO("Not yet implemented")
                             }
-                        }
 
-                        val password = passwordState.onSave { password: String? ->
-                            if (password != null) {
-                                authenticate(password)
-                            }
-                        }
+                        })
+
+//                        fun authenticate(email: String, password: String) {
+//                            val url = "http://10.0.2.2:3333/auth/"
+//                            val body = "grant_type=password&username=${email}&password=${password}"
+//                            val request = Request.Builder()
+//                                .url(url)
+//                                .post(body)
+//                                .build()
+//                            val client = OkHttpClient()
+//                            val response = client.newCall(request).execute()
+//                            val responseBody = response.body?.string()
+//
+//                            if (responseBody != null) {
+//                                if (responseBody.contains("authentication successful")) {
+//                                    context.startActivity(Intent(context, CampanhaDetailsActivity::class.java))
+//                                } else {
+//                                    Log.d("Logging", "Error Authentication")
+//                                }
+//                            }
+//                        }
+//
+//                        val email = userState.onSave { email: String? ->
+//                            if (email != null) {
+//                                authenticate(email)
+//                            }
+//                        }
+//
+//                        val password = passwordState.onSave { password: String? ->
+//                            if (password != null) {
+//                                authenticate(password)
+//                            }
+//                        }
                     }
 
                 },
