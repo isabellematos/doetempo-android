@@ -7,7 +7,8 @@ data class LoginDto(
     @SerializedName("password") val password: String
 )
 data class TokenDto(
-    @SerializedName("accessToken") val accessTokenVerify: String
+    @SerializedName("token") val accessTokenVerify: String,
+    @SerializedName("data") val dataUser: LoginData?
 )
 //data class Login(
 //    var email: String = "",
