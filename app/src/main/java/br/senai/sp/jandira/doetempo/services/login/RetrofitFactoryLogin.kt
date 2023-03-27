@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.services.login
 
-import br.senai.sp.jandira.doetempo.BuildConfig
+//import br.senai.sp.jandira.doetempo.BuildConfig
+import br.senai.sp.jandira.doetempo.constants.Constants
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -16,7 +17,7 @@ class RetrofitFactoryLogin {
         init {
             val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
                 val builder = Retrofit.Builder()
-                .baseUrl(BuildConfig.API_BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
             val loggingInterceptor = HttpLoggingInterceptor()
