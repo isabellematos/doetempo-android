@@ -10,4 +10,9 @@ interface CampanhaCall {
 
     @GET("/campaign/")
     fun getAll(): Call<CampanhaList>
+
+    @GET("/campaign/")
+    fun get(): Call<Campanha>
+
+
 }
