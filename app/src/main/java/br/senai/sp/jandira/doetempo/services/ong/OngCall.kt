@@ -13,6 +13,9 @@ interface OngCall {
     @GET("/ngo/")
     fun getAll(): Call<OngList>
 
+    @GET("/ngo/{id}")
+    fun getById(): Call<OngList>
+
     @POST("/ngo/")
     fun save(@Body contact: Ong): Call<CreatedOng>
 }

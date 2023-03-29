@@ -1,3 +1,4 @@
+import android.util.Log
 import br.senai.sp.jandira.doetempo.model.Cep
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.cep.RetrofitFactoryCep
@@ -22,7 +23,7 @@ fun buscarCep(cep: String, onComplete: (Cep) -> Unit) {
         }
 
         override fun onFailure(call: Call<Cep>, t: Throwable) {
-            TODO("Not yet implemented")
+            Log.i("ds3m", t.message.toString())
         }
     })
 }

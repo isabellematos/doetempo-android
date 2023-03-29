@@ -17,11 +17,7 @@
         android:theme="@style/Theme.Doetempo"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Doetempo" />
+
         <activity
             android:name=".CadastroOngActivity"
             android:exported="false"
@@ -36,6 +32,11 @@
             android:name=".FirstPageActivity"
             android:exported="false"
             android:label="@string/title_activity_first_page"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_home_activity"
             android:theme="@style/Theme.Doetempo" />
         <activity
             android:name=".LoginActivity"

@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.DatePicker
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
@@ -373,7 +375,8 @@ fun CadastroOng() {
             var mDatePickerDialog = DatePickerDialog(
                 mContext,
                 { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                    creationDateState.value = "$mYear-${if(mMonth+ 1 < 10) "0" + (mMonth + 1) else (mMonth+ 1)}-${if(mDayOfMonth < 10) "0" + mDayOfMonth else mDayOfMonth}"
+                    creationDateState.value =
+                        "$mYear-${if (mMonth + 1 < 10) "0" + (mMonth + 1) else (mMonth + 1)}-${if (mDayOfMonth < 10) "0" + mDayOfMonth else mDayOfMonth}"
                 }, mYear, mMonth, mDay
             )
 
@@ -732,13 +735,17 @@ fun CadastroOng() {
                             email = emailState,
                             password = passwordState,
                             cnpj = cnpjState,
-                            foundationDate = LocalDate.parse(creationDateState.value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString(),
+                            foundationDate = LocalDate.parse(
+                                creationDateState.value,
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                            ).toString(),
                             address = Address(
                                 number = numberState,
                                 postalCode = cepState,
                                 complement = null
                             ),
                         )
+
                         val callContactOngPost = ongCall.save(contact)
 
                         callContactOngPost.enqueue(object : Callback<CreatedOng> {
@@ -746,9 +753,16 @@ fun CadastroOng() {
                                 call: Call<CreatedOng>,
                                 response: Response<CreatedOng>
                             ) {
-                                 Log.i("ds3m", response.body()!!.toString())
-                            }
+                                Log.i("ds3m", response.body()!!.toString())
 
+                                val newActivity =
+                                    Intent(context, HomeActivity::class.java).putExtra(
+                                        "name",
+                                        response.body()!!.payload.name
+                                    )
+
+                                ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
+                            }
                             override fun onFailure(call: Call<CreatedOng>, t: Throwable) {
                                 Log.i("ds3m", t.message.toString())
                             }

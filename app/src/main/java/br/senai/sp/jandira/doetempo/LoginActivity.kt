@@ -86,48 +86,6 @@ fun Login() {
     }
 
 
-
-//    class LoginViewModel : ViewModel() {
-//        val isSuccessLoading = mutableStateOf(value = false)
-//        val imageErrorAuth = mutableStateOf(value = false)
-//        val progressBar = mutableStateOf(value = false)
-//        private val loginRequestLiveData = MutableLiveData<Boolean>()
-//        fun login(emailState: String, passwordState: String) {
-//            viewModelScope.launch(Dispatchers.IO) {
-//                try {
-//                    progressBar.value = true
-//                    val authService = RetrofitFactoryLogin.RetrofitHelper.getAuthService()
-//                    val responseService =
-//                        authService.getLogin(
-//                            LoginDto(
-//                                email = emailState,
-//                                password = passwordState
-//                            )
-//                        )
-//                    if (responseService.isSuccessful) {
-//                        delay(1500L)
-//                        isSuccessLoading.value = true
-//                        responseService.body()?.let { tokenDto ->
-//                            Log.d("Logging", "Response TokenDto:$tokenDto")
-//                        }
-//                    } else {
-//                        responseService.errorBody()?.let { error ->
-//                            imageErrorAuth.value = true
-//                            delay(1500L)
-//                            imageErrorAuth.value = false
-//                            error.close()
-//                        }
-//                    }
-//                    loginRequestLiveData.postValue(responseService.isSuccessful)
-//                    progressBar.value = false
-//                } catch (e: Exception) {
-//                    Log.d("Logging", "Error Authentication", e)
-//                    progressBar.value = false
-//                }
-//            }
-//        }
-//    }
-
     //Content
     Column(
         modifier = Modifier
@@ -227,37 +185,6 @@ fun Login() {
                 color = Color.Blue
             )
 
-//            fun NavigationScreen(viewModel: LoginViewModel) {
-//                val navController = rememberNavController()
-//                val loadingProgressBar = viewModel.progressBar.value
-//                val imageError = viewModel.imageErrorAuth.value
-//                NavHost(
-//                    navController = navController,
-//                    startDestination = ComposeNavigator.Destination.getStartDestination()
-//                ) {
-//                    composable(route = ComposeNavigator.Destination.Login.route) {
-//                        if (viewModel.isSuccessLoading.value) {
-//                            LaunchedEffect(key1 = Unit) {
-//                                navController.navigate(route =
-//                                ComposeNavigator.Destination.CampanhaDetailsActivity.route) {
-//                                    popUpTo(route = ComposeNavigator.Destination.Login.route) {
-//                                        inclusive = true
-//                                    }
-//                                }
-//                            }
-//                        } else {
-//                            Login(
-//
-//                            )
-//                        }
-//                    }
-//                    composable(route = ComposeNavigator.Destination.CampanhaDetailsActivity.route) {
-//                        CampanhaDetailsActivity()
-//                    }
-//                }
-//            }
-
-
             val context = LocalContext.current
             Button(
                 onClick = {
@@ -293,8 +220,13 @@ fun Login() {
 
                                 if (response.body()?.dataUser?.type == "ONG") {
                                     // Home da ong
-                                    val newActivity = Intent(context, FirstPageActivity::class.java).putExtra("key", response.body()!!.accessTokenVerify)
+                                    val newActivity = Intent(context, HomeActivity::class.java).putExtra("key", response.body()!!.accessTokenVerify)
+                                    newActivity.putExtra("name",
+                                    response.body()!!.dataUser?.name
+                                    )
+
                                     startActivity(context, newActivity, Bundle.EMPTY)
+
                                 }
                             }
 
@@ -303,40 +235,7 @@ fun Login() {
                             }
 
                         })
-
-//                        fun authenticate(email: String, password: String) {
-//                            val url = "http://10.0.2.2:3333/auth/"
-//                            val body = "grant_type=password&username=${email}&password=${password}"
-//                            val request = Request.Builder()
-//                                .url(url)
-//                                .post(body)
-//                                .build()
-//                            val client = OkHttpClient()
-//                            val response = client.newCall(request).execute()
-//                            val responseBody = response.body?.string()
-//
-//                            if (responseBody != null) {
-//                                if (responseBody.contains("authentication successful")) {
-//                                    context.startActivity(Intent(context, CampanhaDetailsActivity::class.java))
-//                                } else {
-//                                    Log.d("Logging", "Error Authentication")
-//                                }
-//                            }
-//                        }
-//
-//                        val email = userState.onSave { email: String? ->
-//                            if (email != null) {
-//                                authenticate(email)
-//                            }
-//                        }
-//
-//                        val password = passwordState.onSave { password: String? ->
-//                            if (password != null) {
-//                                authenticate(password)
-//                            }
-//                        }
                     }
-
                 },
                 modifier = Modifier
                     .width(280.dp)
