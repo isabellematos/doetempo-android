@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -27,8 +28,9 @@ import br.senai.sp.jandira.doetempo.services.user.UserCall
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import androidx.compose.foundation.lazy.items
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun cardCampanha() {
 
@@ -50,7 +52,8 @@ fun cardCampanha() {
 
     call.enqueue(object : Callback<CampanhaList> {
         override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
-            //response.body()!!.campaigns
+            titleState = response.body()!!.campaigns[0].title
+            descriptionState = response.body()!!.campaigns[0].description
 
         }
 
@@ -60,27 +63,26 @@ fun cardCampanha() {
 
     })
 
-    val retrofit1 = RetrofitFactory.getRetrofit()
-    val campanhaCall1 = retrofit1.create(CampanhaCall::class.java)
-    val call1 = campanhaCall1.get()
-
-
-    call1.enqueue(object : Callback<Campanha> {
-        override fun onResponse(call: Call<Campanha>, response: Response<Campanha>) {
-            titleState = response.body()!!.title
-            descriptionState = response.body()!!.description
-
-        }
-
-        override fun onFailure(call: Call<Campanha>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-
-    })
+//    val retrofit1 = RetrofitFactory.getRetrofit()
+//    val campanhaCall1 = retrofit1.create(CampanhaCall::class.java)
+//    val call1 = campanhaCall1.get()
+//
+//
+//    call1.enqueue(object : Callback<Campanha> {
+//        override fun onResponse(call: Call<Campanha>, response: Response<Campanha>) {
+//            titleState = response.body()!!.title
+//            descriptionState = response.body()!!.description
+//
+//        }
+//
+//        override fun onFailure(call: Call<Campanha>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//
+//    })
 
     Column(
     ) {
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,3 +144,7 @@ fun cardCampanha() {
         }
     }
 }
+
+
+
+

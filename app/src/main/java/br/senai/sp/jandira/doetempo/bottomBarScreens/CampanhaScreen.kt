@@ -3,6 +3,7 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -18,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.HomeActivity
+import br.senai.sp.jandira.doetempo.model.CampanhaList
+import androidx.compose.foundation.lazy.items
 
 //import br.senai.sp.jandira.doetempo.HomeActivities.
 
@@ -28,6 +31,10 @@ fun CampanhaScreen() {
 
     var userNameState by remember {
         mutableStateOf("")
+    }
+
+    var campanhasState by remember {
+        mutableStateOf(CampanhaList(listOf()))
     }
 
     val context = LocalContext.current
@@ -67,7 +74,14 @@ fun CampanhaScreen() {
         }
 
         //LazyColumn(content = )
-        cardCampanha()
+
+        val itemss = mutableListOf(CampanhaList(listOf()))
+        LazyColumn(modifier = Modifier.padding(16.dp)) {
+            items(itemss) {
+                cardCampanha()
+            }
+        }
     }
+    cardCampanha()
 }
 

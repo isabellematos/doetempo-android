@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -32,8 +33,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
+import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
+import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.model.LoginDto
 import br.senai.sp.jandira.doetempo.model.TokenDto
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.services.login.AuthApiService
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import okhttp3.internal.http2.Settings
@@ -186,6 +190,9 @@ fun Login() {
             )
 
             val context = LocalContext.current
+            var campanhasState by remember {
+                mutableStateOf(CampanhaList(listOf()))
+            }
             Button(
                 onClick = {
                     isUserError = userState.length == 0
@@ -206,7 +213,7 @@ fun Login() {
                         val authCall = retrofit.create(AuthApiService::class.java)
                         val authToken = authCall.getLogin(loginDto)
 
-                        authToken.enqueue(object: Callback<TokenDto> {
+                        authToken.enqueue(object : Callback<TokenDto> {
                             override fun onResponse(
                                 call: Call<TokenDto>,
                                 response: Response<TokenDto>
@@ -214,15 +221,24 @@ fun Login() {
                                 Log.i("ds3m", response.body().toString())
 
                                 if (response.body()?.accessTokenVerify.isNullOrEmpty()) {
-                                    Toast.makeText(context, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Usuário e/ou senha incorretos!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     Log.i("ds3m", "Login inválido!")
                                 }
 
                                 if (response.body()?.dataUser?.type == "ONG") {
                                     // Home da ong
-                                    val newActivity = Intent(context, HomeActivity::class.java).putExtra("key", response.body()!!.accessTokenVerify)
-                                    newActivity.putExtra("name",
-                                    response.body()!!.dataUser?.name
+                                    val newActivity =
+                                        Intent(context, HomeActivity::class.java).putExtra(
+                                            "key",
+                                            response.body()!!.accessTokenVerify
+                                        )
+                                    newActivity.putExtra(
+                                        "name",
+                                        response.body()!!.dataUser?.name
                                     )
 
                                     startActivity(context, newActivity, Bundle.EMPTY)
