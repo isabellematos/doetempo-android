@@ -27,6 +27,7 @@
     <string name="ong">Sou uma ONG</string>
     <string name="volunteer">Quero ser um voluntário</string>
     <string name="title_activity_cadastro_ong">CadastroOngActivity</string>
+    <string name="title_activity_campanha_details">CampanhaDetailsActivity</string>
     <string name="title_activity_home_activity">HomeActivity</string>
     <string name="complemento">Complemento</string>
     <string name="bairro">Bairro</string>

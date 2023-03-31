@@ -2,6 +2,7 @@ package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -11,11 +12,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,8 +28,14 @@ import br.senai.sp.jandira.doetempo.CampanhaComponents.cardAlbum
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
 import br.senai.sp.jandira.doetempo.CampanhaComponents.comoContribuir
 import br.senai.sp.jandira.doetempo.CampanhaComponents.datas
+import br.senai.sp.jandira.doetempo.model.Campanha
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CampanhaDetailsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +50,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     SideEffect {
                         systemUi.setStatusBarColor(color = Color(79, 121, 254), darkIcons = true)
                     }
-                    aboutCampanha()
+                    aboutCampanha(campanha = Campanha())
                 }
             }
         }
@@ -51,9 +58,69 @@ class CampanhaDetailsActivity : ComponentActivity() {
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun aboutCampanha() {
+fun aboutCampanha(campanha: Campanha) {
+
+    val retrofit = RetrofitFactory.getRetrofit()
+    val campanhaCall = retrofit.create(CampanhaCall::class.java)
+    val call = campanhaCall.get()
+
+    var titleState by remember {
+        mutableStateOf("")
+    }
+
+    var idState by remember {
+        mutableStateOf("")
+    }
+
+    var descriptionState by remember {
+        mutableStateOf("")
+    }
+
+    var beginDateState by remember {
+        mutableStateOf("")
+    }
+
+    var endDateState by remember {
+        mutableStateOf("")
+    }
+
+    var homeOfficeState by remember {
+        mutableStateOf(false)
+    }
+
+    var howToContributeState by remember {
+        mutableStateOf("")
+    }
+
+    var prerequisitesState by remember {
+        mutableStateOf("")
+    }
+
+    val context = LocalContext.current
+    var intent = (context as CampanhaDetailsActivity).intent
+    idState = intent.getStringExtra("id").toString()
+    Log.i("ds3m", idState.toString())
+
+
+    call.enqueue(object : Callback<Campanha> {
+        override fun onResponse(call: Call<Campanha>, response: Response<Campanha>) {
+             titleState = response.body()!!.title.toString()
+             descriptionState = response.body()!!.description.toString()
+            Log.i("ds3m", descriptionState.toString())
+             beginDateState = response.body()!!.begin_date.toString()
+             endDateState = response.body()!!.end_date.toString()
+             homeOfficeState = response.body()!!.home_office == true
+             howToContributeState = response.body()!!.how_to_contribute.toString()
+             prerequisitesState = response.body()!!.prerequisites.toString()
+        }
+
+        override fun onFailure(call: Call<Campanha>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+    })
 
     val scrollState = rememberScrollState()
 
@@ -131,21 +198,6 @@ fun aboutCampanha() {
             ) {
 
                 Icon(
-                    imageVector = Icons.TwoTone.Favorite,
-                    contentDescription = "",
-                    modifier = Modifier.clickable {
-                        if (colorTint == Color.White) {
-                            colorTint = Color.Red
-                        } else if (colorTint == Color.Red) {
-                            colorTint = Color.White
-                        }
-                    },
-                    tint = colorTint
-                )
-
-                Spacer(modifier = Modifier.padding(16.dp))
-
-                Icon(
                     imageVector = Icons.Filled.Share,
                     contentDescription = "",
                     tint = Color.White
@@ -153,7 +205,7 @@ fun aboutCampanha() {
 
             }
             Text(
-                text = "Publicado em 27/02/23",
+                text = beginDateState,
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 fontSize = 11.sp
@@ -166,17 +218,20 @@ fun aboutCampanha() {
                 .fillMaxHeight()
                 .verticalScroll(scrollState)
         ) {
-            Text(
-                text = "Professor(a) de Matematica",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp),
-                color = Color(79, 121, 254),
-                textAlign = TextAlign.Center,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
+            campanha.title?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
+                    color = Color(79, 121, 254),
+                    textAlign = TextAlign.Center,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold
 
-            )
+                )
+            }
+            }
             Spacer(modifier = Modifier.padding(16.dp))
 
             Column(
@@ -189,7 +244,7 @@ fun aboutCampanha() {
                     fontSize = 20.sp
                 )
                 Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel lacus enim. Donec posuere eros nec leo placerat commodo. Etiam suscipit ante ultrices tortor rutrum gravida." + " Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse blandit, lorem quis auctor volutpat, nisl purus blandit ante, nec fermentum enim magna in nunc." + " Fusce est massa, finibus id condimentum eu, lacinia nec velit.",
+                    text = descriptionState,
                     textAlign = TextAlign.Justify,
                     modifier = Modifier.padding(end = 50.dp)
                 )
@@ -299,7 +354,7 @@ fun aboutCampanha() {
             }
         }
     }
-}
+
 
 @Preview
 @Composable

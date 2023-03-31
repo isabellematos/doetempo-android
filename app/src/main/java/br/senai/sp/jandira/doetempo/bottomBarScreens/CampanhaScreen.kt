@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +22,12 @@ import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.model.CampanhaList
 import androidx.compose.foundation.lazy.items
+import br.senai.sp.jandira.doetempo.model.Campanha
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 //import br.senai.sp.jandira.doetempo.HomeActivities.
 
@@ -75,13 +82,32 @@ fun CampanhaScreen() {
 
         //LazyColumn(content = )
 
-        val itemss = mutableListOf(CampanhaList(listOf()))
+        val retrofit = RetrofitFactory.getRetrofit()
+        val campanhaCall = retrofit.create(CampanhaCall::class.java)
+        val call = campanhaCall.getAll()
+
+        var campanhasState by remember {
+            mutableStateOf(listOf<Campanha>())
+        }
+
+        call.enqueue(object : Callback<CampanhaList> {
+            override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
+                campanhasState = response.body()!!.campaigns
+
+            }
+
+            override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
+            }
+
+        })
+
+        Log.i("ds3m", campanhasState.toString())
         LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(itemss) {
-                cardCampanha()
+            items(campanhasState.size) { index ->
+                cardCampanha(campanha = campanhasState[index])
             }
         }
     }
-    cardCampanha()
 }
 

@@ -1,8 +1,11 @@
 package br.senai.sp.jandira.doetempo.HomeActivities
 
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,10 +32,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
+import br.senai.sp.jandira.doetempo.HomeActivity
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun cardCampanha() {
+fun cardCampanha(campanha: Campanha) {
 
     var titleState by remember {
         mutableStateOf("")
@@ -42,52 +49,20 @@ fun cardCampanha() {
         mutableStateOf("")
     }
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val campanhaCall = retrofit.create(CampanhaCall::class.java)
-    val call = campanhaCall.getAll()
-
-    var campanhasState by remember {
-        mutableStateOf(CampanhaList(listOf()))
-    }
-
-    call.enqueue(object : Callback<CampanhaList> {
-        override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
-            titleState = response.body()!!.campaigns[0].title
-            descriptionState = response.body()!!.campaigns[0].description
-
-        }
-
-        override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-
-    })
-
-//    val retrofit1 = RetrofitFactory.getRetrofit()
-//    val campanhaCall1 = retrofit1.create(CampanhaCall::class.java)
-//    val call1 = campanhaCall1.get()
-//
-//
-//    call1.enqueue(object : Callback<Campanha> {
-//        override fun onResponse(call: Call<Campanha>, response: Response<Campanha>) {
-//            titleState = response.body()!!.title
-//            descriptionState = response.body()!!.description
-//
-//        }
-//
-//        override fun onFailure(call: Call<Campanha>, t: Throwable) {
-//            Log.i("ds3m", t.message.toString())
-//        }
-//
-//    })
-
     Column(
     ) {
+        val context = LocalContext.current
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp)
+                .clickable {
+                    val newActivity = Intent(context, CampanhaDetailsActivity::class.java).putExtra("id", campanha.id)
+                    ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
+                }
                 .size(width = 323.dp, height = 190.dp),
+
+
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -111,15 +86,17 @@ fun cardCampanha() {
 
                     )
             }
-            Text(
-                text = titleState,
-                modifier = Modifier.padding(top = 12.dp, start = 10.dp),
-                color = Color(79, 121, 254),
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
+            campanha.title?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(top = 12.dp, start = 10.dp),
+                    color = Color(79, 121, 254),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold
 
-            )
+                )
+            }
 
             Column(
                 modifier = Modifier.fillMaxWidth()
@@ -133,12 +110,14 @@ fun cardCampanha() {
 
                 Spacer(modifier = Modifier.size(8.dp))
 
-                Text(
-                    text = descriptionState,
-                    modifier = Modifier.padding(start = 14.dp),
-                    color = Color(136, 136, 136),
-                    fontWeight = FontWeight.SemiBold
-                )
+                campanha.description?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier.padding(start = 14.dp),
+                        color = Color(136, 136, 136),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
 
             }
         }
