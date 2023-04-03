@@ -244,6 +244,21 @@ fun Login() {
                                     startActivity(context, newActivity, Bundle.EMPTY)
 
                                 }
+                                if (response.body()?.dataUser?.type == "USER") {
+                                    // Home do voluntario
+                                    val newActivity =
+                                        Intent(context, HomeActivity::class.java).putExtra(
+                                            "key",
+                                            response.body()!!.accessTokenVerify
+                                        )
+                                    newActivity.putExtra(
+                                        "name",
+                                        response.body()!!.dataUser?.name
+                                    )
+
+                                    startActivity(context, newActivity, Bundle.EMPTY)
+
+                                }
                             }
 
                             override fun onFailure(call: Call<TokenDto>, t: Throwable) {
