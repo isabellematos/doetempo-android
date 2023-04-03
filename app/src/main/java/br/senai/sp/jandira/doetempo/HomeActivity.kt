@@ -21,10 +21,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.HomeActivities.Items_menu
 import br.senai.sp.jandira.doetempo.HomeActivities.NavigationHost
-
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

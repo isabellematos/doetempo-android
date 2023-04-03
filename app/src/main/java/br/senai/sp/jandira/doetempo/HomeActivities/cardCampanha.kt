@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -19,23 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.model.Campanha
-import br.senai.sp.jandira.doetempo.model.CampanhaList
-import br.senai.sp.jandira.doetempo.model.UserList
-import br.senai.sp.jandira.doetempo.services.RetrofitFactory
-import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
-import br.senai.sp.jandira.doetempo.services.user.UserCall
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
-import br.senai.sp.jandira.doetempo.HomeActivity
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable

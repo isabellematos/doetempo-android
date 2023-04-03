@@ -5,14 +5,16 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface CampanhaCall {
 
     @GET("/campaign/")
     fun getAll(): Call<CampanhaList>
 
-    @GET("/campaign/")
-    fun get(): Call<Campanha>
+    @GET("/campaign/{id}")
+    fun getById(@Path("id")id: String): Call<CampanhaDetalhes>
+
 
     @POST("/campaign/")
     fun save(@Body contact: Campanha): Call<CreatedCampanha>

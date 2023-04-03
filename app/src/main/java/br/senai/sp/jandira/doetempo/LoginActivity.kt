@@ -3,7 +3,6 @@ package br.senai.sp.jandira.doetempo
 
 import RetrofitFactoryLogin
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -33,19 +32,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
-import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.model.LoginDto
 import br.senai.sp.jandira.doetempo.model.TokenDto
-import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.services.login.AuthApiService
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import okhttp3.internal.http2.Settings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 
 class LoginActivity : ComponentActivity() {

@@ -36,7 +36,7 @@ fun comoContribuir() {
             Column {
 
                 Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel lacus enim. Donec posuere eros nec leo placerat commodo. Etiam suscipit ante ultrices tortor rutrum gravida." + " Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse blandit, lorem quis auctor volutpat, nisl purus blandit ante, nec fermentum enim magna in nunc." + " Fusce est massa, finibus id condimentum eu, lacinia nec velit",
+                    text = "gedrvdgfvdgvbfhdcgvb" ,
                     modifier = Modifier.padding(12.dp),
                     fontSize = 12.sp,
                     textAlign = TextAlign.Justify

@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,15 +19,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardAlbum
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
-import br.senai.sp.jandira.doetempo.CampanhaComponents.comoContribuir
 import br.senai.sp.jandira.doetempo.CampanhaComponents.datas
 import br.senai.sp.jandira.doetempo.model.Campanha
+import br.senai.sp.jandira.doetempo.model.CampanhaDetalhes
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
@@ -50,21 +48,21 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     SideEffect {
                         systemUi.setStatusBarColor(color = Color(79, 121, 254), darkIcons = true)
                     }
-                    aboutCampanha(campanha = Campanha())
+                    AboutCampanha(campanha = Campanha())
                 }
             }
         }
     }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 //@Preview(showBackground = true, showSystemUi = true)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun aboutCampanha(campanha: Campanha) {
+fun AboutCampanha(campanha: Campanha) {
 
     val retrofit = RetrofitFactory.getRetrofit()
     val campanhaCall = retrofit.create(CampanhaCall::class.java)
-    val call = campanhaCall.get()
+
 
     var titleState by remember {
         mutableStateOf("")
@@ -101,26 +99,40 @@ fun aboutCampanha(campanha: Campanha) {
     val context = LocalContext.current
     var intent = (context as CampanhaDetailsActivity).intent
     idState = intent.getStringExtra("id").toString()
-    Log.i("ds3m", idState.toString())
+    Log.i("ds3m", idState)
 
 
-    call.enqueue(object : Callback<Campanha> {
-        override fun onResponse(call: Call<Campanha>, response: Response<Campanha>) {
-             titleState = response.body()!!.title.toString()
-             descriptionState = response.body()!!.description.toString()
-            Log.i("ds3m", descriptionState.toString())
-             beginDateState = response.body()!!.begin_date.toString()
-             endDateState = response.body()!!.end_date.toString()
-             homeOfficeState = response.body()!!.home_office == true
-             howToContributeState = response.body()!!.how_to_contribute.toString()
-             prerequisitesState = response.body()!!.prerequisites.toString()
-        }
+    if (idState != "") {
 
-        override fun onFailure(call: Call<Campanha>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
+        val call = campanhaCall.getById(idState)
+        call.enqueue(object : Callback<CampanhaDetalhes> {
 
-    })
+            override fun onResponse(
+                call: Call<CampanhaDetalhes>,
+                response: Response<CampanhaDetalhes>
+            ) {
+                titleState = response.body()!!.campaign.title.toString()
+                descriptionState = response.body()!!.campaign.description.toString()
+                beginDateState = response.body()!!.campaign.begin_date.toString()
+                endDateState = response.body()!!.campaign.end_date.toString()
+                homeOfficeState = response.body()!!.campaign.home_office == true
+                howToContributeState = response.body()!!.campaign.how_to_contribute.toString()
+                prerequisitesState = response.body()!!.campaign.prerequisites.toString()
+                Log.i("ds3m", response.body()!!.campaign.prerequisites.toString())
+
+                Log.i("ds3m", response.body()!!.campaign.toString())
+
+            }
+
+            override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
+            }
+
+        })
+    } else {
+        Log.i("ds3m", "erro: id vazio")
+
+    }
 
     val scrollState = rememberScrollState()
 
@@ -215,27 +227,26 @@ fun aboutCampanha(campanha: Campanha) {
         //MAIN
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            campanha.title?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp),
-                    color = Color(79, 121, 254),
-                    textAlign = TextAlign.Center,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
+            Text(
+                text = titleState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                color = Color(79, 121, 254),
+                textAlign = TextAlign.Center,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
 
-                )
-            }
-            }
+            )
             Spacer(modifier = Modifier.padding(16.dp))
 
             Column(
-                modifier = Modifier.padding(top = 20.dp, start = 20.dp)
+                modifier = Modifier
+                    .padding(top = 20.dp, start = 20.dp)
+                    .fillMaxSize(1f)
             ) {
                 Text(
                     text = "Sobre o projeto:",
@@ -246,9 +257,10 @@ fun aboutCampanha(campanha: Campanha) {
                 Text(
                     text = descriptionState,
                     textAlign = TextAlign.Justify,
-                    modifier = Modifier.padding(end = 50.dp)
+                    modifier = Modifier.padding(end = 50.dp),
+                    color = Color.Black,
                 )
-
+                Log.i("ds3m", descriptionState.toString())
                 Text(
                     text = "Detalhes",
                     modifier = Modifier.padding(top = 52.dp),
@@ -308,18 +320,6 @@ fun aboutCampanha(campanha: Campanha) {
                     cardCategoria()
                 }
 
-                Column (
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    // DATAS
-                    Text(
-                        text = "Datas",
-                        modifier = Modifier.padding(top = 36.dp, bottom = 24.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
-                    )
-                    datas()
-
                     //COMO CONTRIBUIR
                     Text(
                         text = "Como contribuir",
@@ -327,8 +327,41 @@ fun aboutCampanha(campanha: Campanha) {
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp
                     )
-                    comoContribuir()
 
+                    Text(
+                        text = howToContributeState,
+                        modifier = Modifier.padding(12.dp),
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Justify
+                    )
+                    Text(
+                        text = "Pré-requisitos:",
+                        modifier = Modifier.padding(start = 12.dp, top = 10.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = prerequisitesState,
+                        modifier = Modifier.padding(start = 12.dp, top = 3.dp),
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Justify,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Card(
+                        shape = RoundedCornerShape(50.dp)
+                    ) {
+                        LinearProgressIndicator(
+                            progress = 0.3f,
+                            modifier = Modifier.size(295.dp, 13.dp),
+                            color = Color(79, 121, 254),
+                            backgroundColor = Color(217, 217, 217)
+                        )
+                    }
+                    Text(
+                        text = "X vagas Disponíveis",
+                        modifier = Modifier.padding(start = 185.dp, top = 5.dp),
+                        fontSize = 12.sp
+                    )
                     Button(
                         onClick = { /*TODO*/ },
                         modifier = Modifier
@@ -356,9 +389,12 @@ fun aboutCampanha(campanha: Campanha) {
     }
 
 
-@Preview
-@Composable
-fun DefaultPreview() {
-    DoetempoTheme{
-    }
-}
+//@Preview(
+//    showBackground = true,
+//    showSystemUi = true
+//)
+
+//@Composable
+//fun AboutCampanhaPreview() {
+//   AboutCampanha()
+//}
