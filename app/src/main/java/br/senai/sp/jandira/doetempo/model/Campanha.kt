@@ -9,7 +9,16 @@ data class Campanha(
     var home_office: Boolean? = false,
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
-    var tbl_ong: Ong? = null,
-    //var tbl_campaign_address: Address?,
-
+    var tbl_ong: Ong? = Ong(
+        id = "",
+        name = "",
+        email = "",
+        password = "",
+        cnpj = "",
+        foundationDate = "",
+        address = Address(postalCode = "", number = "", complement = ""),
+        id_type = "",
+        description = ""
+    ),
+    var tbl_campaign_address: Address,
     )

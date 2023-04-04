@@ -19,16 +19,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardAlbum
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
-import br.senai.sp.jandira.doetempo.CampanhaComponents.datas
-import br.senai.sp.jandira.doetempo.model.Campanha
-import br.senai.sp.jandira.doetempo.model.CampanhaDetalhes
+import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import retrofit2.Call
@@ -48,7 +46,27 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     SideEffect {
                         systemUi.setStatusBarColor(color = Color(79, 121, 254), darkIcons = true)
                     }
-                    AboutCampanha(campanha = Campanha())
+                    AboutCampanha(campanha = Campanha(
+                            id = "",
+                            title = "",
+                            description = "",
+                            begin_date = "",
+                            end_date = "",
+                            home_office = false,
+                            how_to_contribute = "",
+                            prerequisites = "",
+                        tbl_ong = Ong(
+                            id = "",
+                            name = "",
+                            email = "",
+                            password = "",
+                            cnpj = "",
+                            foundationDate = "",
+                            address = Address(postalCode = "", number = "", complement = ""),
+                            id_type = "",
+                            description = ""
+                        ),
+                        tbl_campaign_address = Address(postalCode = "", number = "", complement = "")))
                 }
             }
         }
@@ -65,6 +83,18 @@ fun AboutCampanha(campanha: Campanha) {
 
 
     var titleState by remember {
+        mutableStateOf("")
+    }
+
+    var ongState by remember {
+        mutableStateOf("")
+    }
+
+    var idOngState by remember {
+        mutableStateOf("")
+    }
+
+    var addressState by remember {
         mutableStateOf("")
     }
 
@@ -118,21 +148,41 @@ fun AboutCampanha(campanha: Campanha) {
                 homeOfficeState = response.body()!!.campaign.home_office == true
                 howToContributeState = response.body()!!.campaign.how_to_contribute.toString()
                 prerequisitesState = response.body()!!.campaign.prerequisites.toString()
-                Log.i("ds3m", response.body()!!.campaign.prerequisites.toString())
-
-                Log.i("ds3m", response.body()!!.campaign.toString())
-
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
                 Log.i("ds3m", t.message.toString())
             }
 
+
         })
     } else {
         Log.i("ds3m", "erro: id vazio")
 
     }
+
+
+        val retrofit1 = RetrofitFactory.getRetrofit()
+        val ongCall = retrofit1.create(OngCall::class.java)
+        val callOng = ongCall.getById(idOngState)
+
+        callOng.enqueue(object : Callback<Ong> {
+
+                override fun onResponse(
+                    call: Call<Ong>,
+                    response: Response<Ong>
+                ) {
+                    ongState = response.body()!!.name
+                    Log.i("ds3m", response.body()!!.name)
+                    idOngState = response.body()!!.id
+                    //addressState = response.body()!!.ngo.address?.postalCode
+                }
+                override fun onFailure(call: Call<Ong>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                }
+
+            })
+
 
     val scrollState = rememberScrollState()
 
@@ -149,7 +199,9 @@ fun AboutCampanha(campanha: Campanha) {
         //Header
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(bottomEnd = 70.dp, bottomStart = 70.dp)
+            shape = RoundedCornerShape(bottomEnd = 70.dp, bottomStart = 70.dp),
+            backgroundColor = Color(79, 121, 254)
+
         ) {
             Column(
                 modifier = Modifier
@@ -181,7 +233,7 @@ fun AboutCampanha(campanha: Campanha) {
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Formigas Albinas",
+                            text = ongState,
                             modifier = Modifier.padding(start = 4.dp),
                             fontSize = 12.sp,
                             color = Color.White,
@@ -298,7 +350,7 @@ fun AboutCampanha(campanha: Campanha) {
                         modifier = Modifier.padding(bottom = 30.dp)
                     )
                     Text(
-                        text = "Avenidas das Pitas, 154",
+                        text = addressState,
                         modifier = Modifier.padding(top = 2.dp, start = 10.dp)
                     )
                 }
