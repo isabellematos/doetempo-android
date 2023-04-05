@@ -46,7 +46,8 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     SideEffect {
                         systemUi.setStatusBarColor(color = Color(79, 121, 254), darkIcons = true)
                     }
-                    AboutCampanha(campanha = Campanha(
+                    AboutCampanha(
+                        campanha = Campanha(
                             id = "",
                             title = "",
                             description = "",
@@ -55,18 +56,24 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             home_office = false,
                             how_to_contribute = "",
                             prerequisites = "",
-                        tbl_ong = Ong(
-                            id = "",
-                            name = "",
-                            email = "",
-                            password = "",
-                            cnpj = "",
-                            foundationDate = "",
-                            address = Address(postalCode = "", number = "", complement = ""),
-                            id_type = "",
-                            description = ""
-                        ),
-                        tbl_campaign_address = Address(postalCode = "", number = "", complement = "")))
+                            tbl_ngo = Ong(
+                                id = "",
+                                name = "",
+                                email = "",
+                                password = "",
+                                cnpj = "",
+                                foundationDate = "",
+                                address = Address(postalCode = "", number = "", complement = ""),
+                                id_type = "",
+                                description = ""
+                            ),
+                            tbl_campaign_address = Address(
+                                postalCode = "",
+                                number = "",
+                                complement = ""
+                            )
+                        )
+                    )
                 }
             }
         }
@@ -141,47 +148,27 @@ fun AboutCampanha(campanha: Campanha) {
                 call: Call<CampanhaDetalhes>,
                 response: Response<CampanhaDetalhes>
             ) {
-                titleState = response.body()!!.campaign.title.toString()
-                descriptionState = response.body()!!.campaign.description.toString()
-                beginDateState = response.body()!!.campaign.begin_date.toString()
-                endDateState = response.body()!!.campaign.end_date.toString()
-                homeOfficeState = response.body()!!.campaign.home_office == true
-                howToContributeState = response.body()!!.campaign.how_to_contribute.toString()
-                prerequisitesState = response.body()!!.campaign.prerequisites.toString()
+                titleState = response.body()!!.campaigns.title.toString()
+                descriptionState = response.body()!!.campaigns.description.toString()
+                beginDateState = response.body()!!.campaigns.begin_date.toString()
+                endDateState = response.body()!!.campaigns.end_date.toString()
+                homeOfficeState = response.body()!!.campaigns.home_office == true
+                howToContributeState = response.body()!!.campaigns.how_to_contribute.toString()
+                prerequisitesState = response.body()!!.campaigns.prerequisites.toString()
+                ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
+                idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
                 Log.i("ds3m", t.message.toString())
             }
 
-
         })
+
     } else {
         Log.i("ds3m", "erro: id vazio")
 
     }
-
-
-        val retrofit1 = RetrofitFactory.getRetrofit()
-        val ongCall = retrofit1.create(OngCall::class.java)
-        val callOng = ongCall.getById(idOngState)
-
-        callOng.enqueue(object : Callback<Ong> {
-
-                override fun onResponse(
-                    call: Call<Ong>,
-                    response: Response<Ong>
-                ) {
-                    ongState = response.body()!!.name
-                    Log.i("ds3m", response.body()!!.name)
-                    idOngState = response.body()!!.id
-                    //addressState = response.body()!!.ngo.address?.postalCode
-                }
-                override fun onFailure(call: Call<Ong>, t: Throwable) {
-                    Log.i("ds3m", t.message.toString())
-                }
-
-            })
 
 
     val scrollState = rememberScrollState()
@@ -372,73 +359,73 @@ fun AboutCampanha(campanha: Campanha) {
                     cardCategoria()
                 }
 
-                    //COMO CONTRIBUIR
-                    Text(
-                        text = "Como contribuir",
-                        modifier = Modifier.padding(top = 36.dp, bottom = 24.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
-                    )
+                //COMO CONTRIBUIR
+                Text(
+                    text = "Como contribuir",
+                    modifier = Modifier.padding(top = 36.dp, bottom = 24.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
 
-                    Text(
-                        text = howToContributeState,
-                        modifier = Modifier.padding(12.dp),
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Justify
+                Text(
+                    text = howToContributeState,
+                    modifier = Modifier.padding(12.dp),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Justify
+                )
+                Text(
+                    text = "Pré-requisitos:",
+                    modifier = Modifier.padding(start = 12.dp, top = 10.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = prerequisitesState,
+                    modifier = Modifier.padding(start = 12.dp, top = 3.dp),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Justify,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Card(
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    LinearProgressIndicator(
+                        progress = 0.3f,
+                        modifier = Modifier.size(295.dp, 13.dp),
+                        color = Color(79, 121, 254),
+                        backgroundColor = Color(217, 217, 217)
                     )
+                }
+                Text(
+                    text = "X vagas Disponíveis",
+                    modifier = Modifier.padding(start = 185.dp, top = 5.dp),
+                    fontSize = 12.sp
+                )
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(50.dp),
+                    colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+                ) {
                     Text(
-                        text = "Pré-requisitos:",
-                        modifier = Modifier.padding(start = 12.dp, top = 10.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
+                        text = "INSCREVER-SE",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = prerequisitesState,
-                        modifier = Modifier.padding(start = 12.dp, top = 3.dp),
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Justify,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Card(
-                        shape = RoundedCornerShape(50.dp)
-                    ) {
-                        LinearProgressIndicator(
-                            progress = 0.3f,
-                            modifier = Modifier.size(295.dp, 13.dp),
-                            color = Color(79, 121, 254),
-                            backgroundColor = Color(217, 217, 217)
-                        )
-                    }
-                    Text(
-                        text = "X vagas Disponíveis",
-                        modifier = Modifier.padding(start = 185.dp, top = 5.dp),
-                        fontSize = 12.sp
-                    )
-                    Button(
-                        onClick = { /*TODO*/ },
+                    Icon(
+                        painter = painterResource(id = R.drawable.hearticon),
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(50.dp),
-                        colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-                    ) {
-                        Text(
-                            text = "INSCREVER-SE",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.hearticon),
-                            modifier = Modifier
-                                .size(40.dp)
-                                .padding(start = 20.dp),
-                            contentDescription = "",
-                            tint = Color.White
-                        )
-                    }
+                            .size(40.dp)
+                            .padding(start = 20.dp),
+                        contentDescription = "",
+                        tint = Color.White
+                    )
                 }
             }
         }
     }
+}
 
 
 //@Preview(
