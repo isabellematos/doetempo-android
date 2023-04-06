@@ -24,6 +24,11 @@
             android:label="@string/title_activity_cadastro_ong"
             android:theme="@style/Theme.Doetempo" />
         <activity
+            android:name=".CreateCampanha"
+            android:exported="false"
+            android:label="@string/title_create_campanha"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
             android:name=".CampanhaDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_campanha_details"

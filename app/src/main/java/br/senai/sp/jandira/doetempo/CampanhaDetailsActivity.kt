@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -26,7 +27,6 @@ import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
-import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import retrofit2.Call
@@ -402,7 +402,7 @@ fun AboutCampanha(campanha: Campanha) {
                     fontSize = 12.sp
                 )
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { context.startActivity(Intent(context, CreateCampanha::class.java)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(50.dp),

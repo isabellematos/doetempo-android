@@ -86,8 +86,8 @@ fun adcionarCampanha() {
 
                     )
                 CreateCampanhaScreen()
-                middleInfos(viewModel())
-                bottom()
+                    //middleInfos(viewModel())
+                bottom(viewModel = CreateCampanhaViewModel())
 
             }
         }

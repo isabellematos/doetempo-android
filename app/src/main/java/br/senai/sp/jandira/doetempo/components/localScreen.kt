@@ -25,8 +25,8 @@ import androidx.compose.ui.window.DialogProperties
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun localScreen(
-    onDimiss:()->Unit,
-    onConfirm:()->Unit
+    onDimiss: () -> Unit,
+    onConfirm: () -> Unit
 ) {
 
 
@@ -77,7 +77,7 @@ fun localScreen(
                 .padding(30.dp)
                 .size(width = 350.dp, height = 450.dp),
             shape = RoundedCornerShape(10.dp),
-            backgroundColor = Color(217,217,217)
+            backgroundColor = Color(217, 217, 217)
         ) {
             Column() {
                 Text(
@@ -111,7 +111,10 @@ fun localScreen(
                         .focusRequester(weightFocusRequester)
                         .size(width = 270.dp, height = 30.dp),
                     trailingIcon = {
-                        if (nomeLocalIsError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                        if (nomeLocalIsError) Icon(
+                            imageVector = Icons.Rounded.Warning,
+                            contentDescription = ""
+                        )
                     },
                     shape = RoundedCornerShape(5.dp)
                 )
@@ -278,7 +281,10 @@ fun localScreen(
                         .focusRequester(weightFocusRequester)
                         .size(width = 270.dp, height = 30.dp),
                     trailingIcon = {
-                        if (complementoIsError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
+                        if (complementoIsError) Icon(
+                            imageVector = Icons.Rounded.Warning,
+                            contentDescription = ""
+                        )
                     },
                     shape = RoundedCornerShape(5.dp)
                 )
@@ -291,14 +297,14 @@ fun localScreen(
                     Button(
                         onClick = { onDimiss() },
                         modifier = Modifier.padding(start = 50.dp),
-                        colors = ButtonDefaults.buttonColors(Color(243,112,112))
+                        colors = ButtonDefaults.buttonColors(Color(243, 112, 112))
                     ) {
                         Text(text = "Cancelar")
                     }
                     Button(
                         onClick = { onConfirm() },
                         modifier = Modifier.padding(start = 8.dp),
-                        colors = ButtonDefaults.buttonColors(Color(71,230,234))
+                        colors = ButtonDefaults.buttonColors(Color(71, 230, 234))
                     ) {
                         Text(text = "Salvar")
                     }
