@@ -2,6 +2,7 @@ package br.senai.sp.jandira.doetempo
 
 
 import RetrofitFactoryLogin
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -237,6 +238,9 @@ fun Login() {
 
                                     startActivity(context, newActivity, Bundle.EMPTY)
 
+                                    val sharedPreferences = context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
+                                    sharedPreferences.edit().putString("token", response.body()!!.accessTokenVerify).apply()
+
                                 }
                                 if (response.body()?.dataUser?.type == "USER") {
                                     // Home do voluntario
@@ -256,7 +260,7 @@ fun Login() {
                             }
 
                             override fun onFailure(call: Call<TokenDto>, t: Throwable) {
-                                TODO("Not yet implemented")
+                                Log.i("ds3m", t.message.toString())
                             }
 
                         })

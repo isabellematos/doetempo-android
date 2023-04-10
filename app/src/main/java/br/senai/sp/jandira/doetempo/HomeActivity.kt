@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,11 +36,14 @@ class HomeActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(251,251,253)
+                    color = Color(251, 251, 253)
                 ) {
                     val systemUi = rememberSystemUiController()
                     SideEffect {
-                        systemUi.setStatusBarColor(color = Color(251,251,253,0), darkIcons = true)
+                        systemUi.setStatusBarColor(
+                            color = Color(251, 251, 253, 0),
+                            darkIcons = true
+                        )
                     }
                     MainScreen()
                 }
@@ -55,6 +60,28 @@ fun MainScreen() {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    //onClick = {context.startActivity(Intent(context, CadastroUserActivity::class.java)) },
+
+    val items = listOf(
+        MinFabItem(
+            label = "Nova Campanha",
+            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java)),
+            identifier = ""
+
+        ),
+        MinFabItem(
+            label = "Nova Publicação",
+            identifier = "",
+            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java))
+        ),
+        MinFabItem(
+            label = "Achar vagas",
+            identifier = "",
+            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java))
+        ),
+    )
 
     val navigationItem = listOf(
         Items_menu.Screen1,
@@ -62,10 +89,19 @@ fun MainScreen() {
         Items_menu.Screen3
     )
 
+    var multiFloatingState by remember { mutableStateOf(MultiFloatingState.Collapsed) }
     Scaffold(
         scaffoldState = scaffoldState,
         bottomBar = { BottomBar(navController, navigationItem) },
-        floatingActionButton = { Fab(scope ,scaffoldState)},
+        floatingActionButton = {
+            Fab(
+                multiFloatingState = multiFloatingState,
+                onMultiFabStateChange = {
+                    multiFloatingState = it
+                 },
+                items = items
+            )
+        },
         isFloatingActionButtonDocked = true
     ) {
         NavigationHost(navController)
@@ -85,7 +121,7 @@ fun BottomBar(
     menu_items: List<Items_menu>
 ) {
     BottomAppBar(
-        backgroundColor = Color(157,231,253),
+        backgroundColor = Color(157, 231, 253),
         cutoutShape = MaterialTheme.shapes.small.copy(
             CornerSize(percent = 50)
         )
@@ -94,7 +130,7 @@ fun BottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 65.dp, 0.dp),
-            backgroundColor = Color(157,231,253) 
+            backgroundColor = Color(157, 231, 253)
         ) {
             val currentRoute = currentRoute(navController = navController)
             menu_items.forEach { item ->
@@ -135,11 +171,13 @@ fun Fab(
                     )
             }
         },
-        backgroundColor = Color(157,231,253)
+        backgroundColor = Color(157, 231, 253)
 
     ) {
-        Icon(imageVector = Icons.Filled.Add,
-            contentDescription = "Menu")
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = "Menu"
+        )
     }
 }
 

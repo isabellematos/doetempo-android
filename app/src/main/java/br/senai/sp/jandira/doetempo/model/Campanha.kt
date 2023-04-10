@@ -9,6 +9,7 @@ data class Campanha(
     var home_office: Boolean? = false,
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
+    var id_ngo: String? = "",
     var tbl_ngo: Ong? = Ong(
         id = "",
         name = "",

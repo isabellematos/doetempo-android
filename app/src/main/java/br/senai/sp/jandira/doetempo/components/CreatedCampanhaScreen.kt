@@ -46,7 +46,7 @@ fun createdCampanhaScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(30.dp)
-                .size(width = 350.dp, height = 450.dp),
+                .size(width = 150.dp, height = 200.dp),
             shape = RoundedCornerShape(10.dp),
             backgroundColor = Color(217, 217, 217)
         ) {

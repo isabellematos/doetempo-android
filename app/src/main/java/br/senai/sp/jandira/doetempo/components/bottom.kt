@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.components
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -256,18 +257,18 @@ fun bottom(
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(0.5f),
+                modifier = Modifier.fillMaxWidth(1f),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(5.dp),
                     text = "Data de início: ${beginDateState}",
                     fontWeight = FontWeight.SemiBold,
                     color = Color.DarkGray
                 )
 
                 Text(
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(5.dp),
                     text = "Data de término: ${endDateState}",
                     fontWeight = FontWeight.SemiBold,
                     color = Color.DarkGray
@@ -496,8 +497,9 @@ fun bottom(
                             description = sobreCampanhaState,
                             begin_date = beginDateState,
                             end_date = endDateState,
-                            home_office = homeOfficeState,
+                            home_office = true,
                             how_to_contribute = comoContribuirState,
+                            id_ngo = "0f68b7cd-07ae-46b2-af39-cf5df5f1e0eb",
                             prerequisites = preReqsState,
                             tbl_campaign_address = Address(
                                 number = "99",
@@ -506,29 +508,36 @@ fun bottom(
                             )
                         )
 
-                        val retrofit = RetrofitFactory.getRetrofit()
-                        val campanhaCall = retrofit.create(CampanhaCall::class.java)
-                        val call = campanhaCall.getAll()
+                        Log.i("ds3m", contact.title.toString())
 
-                        val callContactPost = campanhaCall.save(contact)
+                        val sharedPreferences =
+                            context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
+                        val token = sharedPreferences.getString("token", "")
+                        Log.i("ds3m tokenn", token.toString())
 
-                        callContactPost.enqueue(object : Callback<CreatedCampanha> {
-                            override fun onResponse(
-                                call: Call<CreatedCampanha>,
-                                response: Response<CreatedCampanha>
-                            ) {
-                                viewModel.onAddClick()
+                        if (!token.isNullOrEmpty()) {
+                            val retrofit = RetrofitFactory.getRetrofit()
+                            val campanhaCall = retrofit.create(CampanhaCall::class.java)
+
+                            val callContactPost = campanhaCall.save("Bearer $token", contact)
+
+                            callContactPost.enqueue(object : Callback<CreatedCampanha> {
+                                override fun onResponse(
+                                    call: Call<CreatedCampanha>,
+                                    response: Response<CreatedCampanha>
+                                ) {
+                                    Log.i("headers", response.headers().names().toString())
+                                    Log.i("ds3m", response.body()!!.toString())
+                                    viewModel.onAddClick()
+                                }
+
+                                override fun onFailure(call: Call<CreatedCampanha>, t: Throwable) {
+                                    Log.i("ds3m", t.message.toString())
+                                }
                             }
-
-                            override fun onFailure(call: Call<CreatedCampanha>, t: Throwable) {
-                                Log.i("ds3m", t.message.toString())
-                            }
-
+                            )
                         }
-                        )
-
                     },
-
                     modifier = Modifier
                         .size(width = 130.dp, height = 40.dp),
                     shape = RoundedCornerShape(50.dp),
