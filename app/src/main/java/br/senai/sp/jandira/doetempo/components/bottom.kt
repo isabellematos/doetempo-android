@@ -323,8 +323,6 @@ fun bottom(
             mutableStateOf(radioOptions[0])
         }
 
-
-
         Column(modifier = Modifier.selectableGroup()) {
 
             radioOptions.forEach { label ->
@@ -492,6 +490,7 @@ fun bottom(
 
                 Button(
                     onClick = {
+
                         val contact = Campanha(
                             title = nomeCampanhaState,
                             description = sobreCampanhaState,
@@ -518,18 +517,7 @@ fun bottom(
                                 call: Call<CreatedCampanha>,
                                 response: Response<CreatedCampanha>
                             ) {
-
-                                if (viewModel.isDialogShown) {
-                                    createdCampanhaScreen(
-                                        onDimiss = {
-                                            viewModel.onDimissiDialog()
-                                        },
-                                        onConfirm = {
-                                            //SALVA AS INFOS
-                                        }
-                                    )
-                                }
-
+                                viewModel.onAddClick()
                             }
 
                             override fun onFailure(call: Call<CreatedCampanha>, t: Throwable) {
@@ -540,6 +528,7 @@ fun bottom(
                         )
 
                     },
+
                     modifier = Modifier
                         .size(width = 130.dp, height = 40.dp),
                     shape = RoundedCornerShape(50.dp),
@@ -548,6 +537,16 @@ fun bottom(
                     Text(
                         text = "PUBLICAR",
                         color = Color.White
+                    )
+                }
+                if (viewModel.isDialogShown) {
+                    createdCampanhaScreen(
+                        onDimiss = {
+                            viewModel.onDimissiDialog()
+                        },
+                        onConfirm = {
+                            //SALVA AS INFOS
+                        }
                     )
                 }
             }

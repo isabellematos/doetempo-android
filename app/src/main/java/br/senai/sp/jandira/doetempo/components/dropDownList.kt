@@ -49,6 +49,7 @@ fun dropDownList() {
                 label = {
                     Text(text = "Tags")
                 },
+                singleLine = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expended) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors()
             )

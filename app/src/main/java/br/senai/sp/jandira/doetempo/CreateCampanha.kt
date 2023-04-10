@@ -92,9 +92,7 @@ fun adcionarCampanha() {
             }
         }
     }
-
 }
-
 
 @Composable
 fun DefaultPreview() {
