@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.HomeActivities.Items_menu
 import br.senai.sp.jandira.doetempo.HomeActivities.NavigationHost
+import br.senai.sp.jandira.doetempo.bottomBarScreens.CampanhaScreen
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -67,19 +68,18 @@ fun MainScreen() {
     val items = listOf(
         MinFabItem(
             label = "Nova Campanha",
-            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java)),
+//            onClickAction =  clickAction(context, Intent(context, CreateCampanha::class.java)), //context.startActivity(Intent(context, CreateCampanha::class.java)),
             identifier = ""
-
         ),
         MinFabItem(
             label = "Nova Publicação",
             identifier = "",
-            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java))
+//            onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
         ),
         MinFabItem(
             label = "Achar vagas",
             identifier = "",
-            onClickAction = context.startActivity(Intent(context, CadastroUserActivity::class.java))
+//            onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
         ),
     )
 

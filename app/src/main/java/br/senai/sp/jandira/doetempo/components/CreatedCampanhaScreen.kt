@@ -3,15 +3,11 @@ package br.senai.sp.jandira.doetempo.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -20,7 +16,7 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun createdCampanhaScreen(
-    onDimiss: () -> Unit,
+    onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
 
@@ -36,7 +32,7 @@ fun createdCampanhaScreen(
 
 
     Dialog(
-        onDismissRequest = { onDimiss },
+        onDismissRequest = { onDismiss },
         properties = DialogProperties(
             usePlatformDefaultWidth = false
         )
@@ -65,7 +61,7 @@ fun createdCampanhaScreen(
                         .padding(top = 16.dp, start = 70.dp)
                 ) {
                     Button(
-                        onClick = { onDimiss() },
+                        onClick = { onDismiss() },
                         modifier = Modifier.padding(start = 50.dp),
                         colors = ButtonDefaults.buttonColors(Color(243, 112, 112))
                     ) {

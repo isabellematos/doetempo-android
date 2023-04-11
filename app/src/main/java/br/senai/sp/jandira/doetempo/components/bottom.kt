@@ -1,8 +1,6 @@
 package br.senai.sp.jandira.doetempo.components
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -29,8 +27,6 @@ import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
-import br.senai.sp.jandira.doetempo.CreateCampanhaScreen
 import br.senai.sp.jandira.doetempo.model.CreatedCampanha
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
@@ -40,7 +36,6 @@ import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
-import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.model.Address
 import retrofit2.Call
 import retrofit2.Callback
@@ -501,11 +496,11 @@ fun bottom(
                             how_to_contribute = comoContribuirState,
                             id_ngo = "0f68b7cd-07ae-46b2-af39-cf5df5f1e0eb",
                             prerequisites = preReqsState,
-                            tbl_campaign_address = Address(
+                            address = Address(
                                 number = "99",
                                 postalCode = "06626420",
                                 complement = null
-                            )
+                            ),
                         )
 
                         Log.i("ds3m", contact.title.toString())
@@ -528,7 +523,7 @@ fun bottom(
                                 ) {
                                     Log.i("headers", response.headers().names().toString())
                                     Log.i("ds3m", response.body()!!.toString())
-                                    viewModel.onAddClick()
+                                    viewModel.onAddClickCampanha()
                                 }
 
                                 override fun onFailure(call: Call<CreatedCampanha>, t: Throwable) {
@@ -548,10 +543,10 @@ fun bottom(
                         color = Color.White
                     )
                 }
-                if (viewModel.isDialogShown) {
+                if (viewModel.isDialogShownCampanha) {
                     createdCampanhaScreen(
-                        onDimiss = {
-                            viewModel.onDimissiDialog()
+                        onDismiss = {
+                            viewModel.onDismissDialogCampanha()
                         },
                         onConfirm = {
                             //SALVA AS INFOS

@@ -235,11 +235,10 @@ fun Login() {
                                         "name",
                                         response.body()!!.dataUser?.name
                                     )
-
-                                    startActivity(context, newActivity, Bundle.EMPTY)
-
                                     val sharedPreferences = context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
                                     sharedPreferences.edit().putString("token", response.body()!!.accessTokenVerify).apply()
+
+                                    startActivity(context, newActivity, Bundle.EMPTY)
 
                                 }
                                 if (response.body()?.dataUser?.type == "USER") {
