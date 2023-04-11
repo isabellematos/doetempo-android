@@ -1,7 +1,11 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface.OnClickListener
+import android.content.Intent
 import android.os.Bundle
+import android.service.autofill.OnClickAction
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateFloat
@@ -29,11 +33,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import br.senai.sp.jandira.doetempo.components.addCampanhaHeader
 import br.senai.sp.jandira.doetempo.components.bottom
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
@@ -115,8 +121,6 @@ enum class MultiFloatingState{
 class MinFabItem(
     val label: String,
     val identifier: String,
-    val onClickAction: Unit
-
 )
 
 
@@ -127,6 +131,7 @@ fun Fab(
     items:List<MinFabItem>
 
 ) {
+    val context = LocalContext.current
     val transition = updateTransition(targetState = multiFloatingState, label = "transition")
     val rotate by transition.animateFloat(label = "rotate") {
         if (it == MultiFloatingState.Expanded) 315f else 0f
@@ -153,6 +158,8 @@ fun Fab(
                 MinFab(
                     item = it,
                     onMinFabItemClick = {
+                        val intent = Intent(context, CreateCampanha::class.java)
+                        context.startActivity(intent)
                     },
                     alpha = alpha
                 )

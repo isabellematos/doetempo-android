@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import buscarCep
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -45,6 +46,15 @@ fun localScreen(
     var rua by remember {
         mutableStateOf("")
     }
+
+    var stateState by remember {
+        mutableStateOf("")
+    }
+
+    var bairroState by remember {
+        mutableStateOf("")
+    }
+
     var ruaIsError by remember {
         mutableStateOf(false)
     }
@@ -81,29 +91,29 @@ fun localScreen(
         ) {
             Column() {
                 Text(
-                    text = "Adicionar local de camapanha",
+                    text = "Adicionar local de campanha",
                     modifier = Modifier.padding(top = 28.dp, start = 46.dp, bottom = 28.dp),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.DarkGray
                 )
                 Text(
-                    text = "Nome do local",
+                    text = "Bairro",
                     modifier = Modifier.padding(start = 28.dp),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.DarkGray
                 )
                 OutlinedTextField(
-                    value = nomeLocal,
-                    onValueChange = { newNameLocal ->
-                        if (newNameLocal.length == 0) {
+                    value = bairroState,
+                    onValueChange = { newBairro ->
+                        if (newBairro.length == 0) {
                             nomeLocalIsError = true
-                            newNameLocal
+                            newBairro
                         } else {
                             nomeLocalIsError = false
                         }
-                        nomeLocal = newNameLocal
+                        bairroState = newBairro
                     },
                     modifier = Modifier
                         .padding(start = 28.dp, end = 28.dp)
@@ -155,23 +165,7 @@ fun localScreen(
                             .size(width = 128.dp, height = 30.dp),
                         shape = RoundedCornerShape(5.dp)
                     )
-                    OutlinedTextField(
-                        value = cep,
-                        onValueChange = { newCep ->
-                            if (newCep.length == 0) {
-                                cepIsError = true
-                                newCep
-                            } else {
-                                cepIsError = false
-                            }
-                            cep = newCep
-                        },
-                        modifier = Modifier
-                            .padding(end = 28.dp)
-                            .focusRequester(weightFocusRequester)
-                            .size(width = 128.dp, height = 30.dp),
-                        shape = RoundedCornerShape(5.dp)
-                    )
+
                 }
 
                 ///////////////////////////
@@ -191,13 +185,30 @@ fun localScreen(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.DarkGray
                     )
-                    Text(
-                        text = "UF",
-                        modifier = Modifier.padding(start = 95.dp, top = 16.dp),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.DarkGray
+
+                    OutlinedTextField(
+                            value = stateState,
+                    onValueChange = { newState ->
+                        if (newState.length == 0) {
+                            cepIsError = true
+                            newState
+                        } else {
+                            cepIsError = false
+                        }
+                        stateState = newState
+                    },
+                    modifier = Modifier
+                        .padding(end = 28.dp)
+                        .focusRequester(weightFocusRequester)
+                        .size(width = 128.dp, height = 30.dp),
+                    shape = RoundedCornerShape(5.dp)
                     )
+                    Text(
+                    text = "UF",
+                    modifier = Modifier.padding(start = 95.dp, top = 16.dp),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.DarkGray)
                 }
 
                 Row(
@@ -222,14 +233,14 @@ fun localScreen(
                     )
                     OutlinedTextField(
                         value = rua,
-                        onValueChange = { newCep ->
-                            if (newCep.length == 0) {
+                        onValueChange = { newRua ->
+                            if (newRua.length == 0) {
                                 cepIsError = true
-                                newCep
+                                newRua
                             } else {
                                 cepIsError = false
                             }
-                            cep = newCep
+                            rua = newRua
                         },
                         modifier = Modifier
                             .padding(end = 24.dp)
@@ -247,6 +258,17 @@ fun localScreen(
                                 cepIsError = false
                             }
                             cep = newCep
+
+                            if (newCep.length == 8) {
+//                        Log.i("ds3m", newCep)
+                                buscarCep(newCep) {
+                                    nomeLocal = it.cidade
+                                    rua = it.logradouro
+                                    stateState = it.estado
+                                    bairroState = it.bairro
+                                    cep = it.cep
+                                }.toString()
+                            }
                         },
                         modifier = Modifier
                             .padding(end = 28.dp)

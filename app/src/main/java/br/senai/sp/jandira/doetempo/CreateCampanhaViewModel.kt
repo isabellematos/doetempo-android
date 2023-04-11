@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.senai.sp.jandira.doetempo.CreateCampanhaScreenState
 import kotlinx.coroutines.launch
 
 class CreateCampanhaViewModel : ViewModel() {
@@ -46,6 +45,17 @@ class CreateCampanhaViewModel : ViewModel() {
 
     fun onDimissiDialog(){
         isDialogShown = false
+    }
+
+    var isDialogShownCampanha by mutableStateOf(false)
+        private set
+
+    fun onAddClickCampanha(){
+        isDialogShownCampanha = true
+    }
+
+    fun onDismissDialogCampanha(){
+        isDialogShownCampanha = false
     }
 
 }
