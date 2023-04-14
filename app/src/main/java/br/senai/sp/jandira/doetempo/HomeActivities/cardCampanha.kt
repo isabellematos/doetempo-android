@@ -24,6 +24,7 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
+import coil.compose.AsyncImage
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -37,6 +38,11 @@ fun cardCampanha(campanha: Campanha) {
         mutableStateOf("")
     }
 
+    var photoCampanhaState by remember {
+        mutableStateOf("")
+    }
+
+
     Column(
     ) {
         val context = LocalContext.current
@@ -45,7 +51,10 @@ fun cardCampanha(campanha: Campanha) {
                 .fillMaxWidth()
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp)
                 .clickable {
-                    val newActivity = Intent(context, CampanhaDetailsActivity::class.java).putExtra("id", campanha.id)
+                    val newActivity = Intent(context, CampanhaDetailsActivity::class.java).putExtra(
+                        "id",
+                        campanha.id
+                    )
                     ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
                 }
                 .size(width = 323.dp, height = 190.dp),
@@ -54,10 +63,27 @@ fun cardCampanha(campanha: Campanha) {
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
         ) {
+
+            //photoCampanhaState = campanha.photoURL.toString()
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
+
+                AsyncImage(
+                    model = photoCampanhaState,
+                    contentDescription = null,
+                    Modifier
+                        .size(60.dp)
+                        .padding(start = 12.dp, top = 12.dp)
+                        .border(
+                            2.dp,
+                            color = Color(79, 121, 254),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                )
+
                 Image(
                     painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.luizamelllogo),
                     contentDescription = "",

@@ -14,29 +14,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun cardAlbum() {
 
-    Column(
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(335.dp, 240.dp)
-                .padding(bottom = 12.dp),
-            border = BorderStroke(2.dp, color = Color(79, 121, 254))
-        ) {
-            Column(
-            ) {
-                Image(
-                    painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.imgteste),
-                    contentDescription = "",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
+//    Column(
+//    ) {
+//        Card(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .size(335.dp, 240.dp)
+//                .padding(bottom = 12.dp),
+//            border = BorderStroke(2.dp, color = Color(79, 121, 254))
+//        ) {
+//            Column(
+//            ) {
+//                AsyncImage(
+//                    model = photoURlNGOState,
+//                    contentDescription = null,
+//                    Modifier.height(90.dp).padding(start = 20.dp, top = 10.dp)
+//                )
+//            }
+//        }
+//    }
 }

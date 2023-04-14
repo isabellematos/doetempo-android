@@ -13,7 +13,8 @@ data class Ong(
     @SerializedName("foundation_date") var foundationDate: String?,
     var address: Address?,
     var id_type: String? = "",
-    var description: String?  = ""
+    var description: String?  = "",
+    var photoURL: String? = ""
 ){
     override fun toString(): String {
         return "Ong(id='$id', name='$name', email='$email', password='$password', cnpj='$cnpj', foundation_date='$foundationDate')"

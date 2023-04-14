@@ -28,6 +28,7 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import retrofit2.Call
 import retrofit2.Callback
@@ -117,6 +118,14 @@ fun AboutCampanha(campanha: Campanha) {
         mutableStateOf("")
     }
 
+    var photoURlNGOState by remember {
+        mutableStateOf("")
+    }
+
+    var photoURLCampanhaState by remember {
+        mutableStateOf("")
+    }
+
     var endDateState by remember {
         mutableStateOf("")
     }
@@ -152,11 +161,13 @@ fun AboutCampanha(campanha: Campanha) {
                 descriptionState = response.body()!!.campaigns.description.toString()
                 beginDateState = response.body()!!.campaigns.begin_date.toString()
                 endDateState = response.body()!!.campaigns.end_date.toString()
-                homeOfficeState = response.body()!!.campaigns.home_office == true
+                homeOfficeState = response.body()!!.campaigns.home_office!!
                 howToContributeState = response.body()!!.campaigns.how_to_contribute.toString()
                 prerequisitesState = response.body()!!.campaigns.prerequisites.toString()
                 ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
                 idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
+                photoURlNGOState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
+                photoURLCampanhaState = response.body()!!.campaigns.photoURL.toString()
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
@@ -201,12 +212,10 @@ fun AboutCampanha(campanha: Campanha) {
                     modifier = Modifier.padding(top = 10.dp)
                 ) {
 
-                    Image(
-                        painter = painterResource(id = R.drawable.formiga),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(70.dp)
-                            .padding(top = 25.dp, start = 25.dp)
+                    AsyncImage(
+                        model = photoURlNGOState,
+                        contentDescription = null,
+                        Modifier.height(90.dp).padding(start = 20.dp, top = 10.dp)
                     )
 
                     //Textos
@@ -234,7 +243,7 @@ fun AboutCampanha(campanha: Campanha) {
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "",
                             modifier = Modifier
-                                .padding(start = 130.dp, top = 22.dp)
+                                .padding(start = 110.dp, top = 22.dp)
                                 .size(25.dp),
                             tint = Color.LightGray
                         )
@@ -319,6 +328,17 @@ fun AboutCampanha(campanha: Campanha) {
                         modifier = Modifier.padding(top = 2.dp, start = 10.dp)
                     )
                 }
+
+                var possibleHomeOffice = "Pode ser feito online"
+                var impossibleHomeOffice = "Não pode ser feito online"
+
+                if (homeOfficeState == true)
+                    possibleHomeOffice
+
+                if (homeOfficeState == false)
+                    impossibleHomeOffice
+
+
                 Row() {
                     Icon(
                         imageVector = Icons.Default.Devices,
@@ -326,7 +346,7 @@ fun AboutCampanha(campanha: Campanha) {
                         modifier = Modifier.padding(bottom = 15.dp)
                     )
                     Text(
-                        text = "Pode ser feito online",
+                        text = "cep",
                         modifier = Modifier.padding(top = 2.dp, start = 10.dp)
                     )
                 }
@@ -336,10 +356,22 @@ fun AboutCampanha(campanha: Campanha) {
                         contentDescription = "",
                         modifier = Modifier.padding(bottom = 30.dp)
                     )
-                    Text(
-                        text = addressState,
-                        modifier = Modifier.padding(top = 2.dp, start = 10.dp)
-                    )
+                    if (homeOfficeState == true) {
+                        possibleHomeOffice
+                        Text(
+                            text = possibleHomeOffice,
+                            modifier = Modifier.padding(top = 2.dp, start = 10.dp)
+                        )
+                    } else {
+                        impossibleHomeOffice
+                        Text(
+                            text = impossibleHomeOffice,
+                            modifier = Modifier.padding(
+                                top = 2.dp,
+                                start = 10.dp
+                            )
+                        )
+                    }
                 }
 
                 Text(
@@ -355,7 +387,25 @@ fun AboutCampanha(campanha: Campanha) {
                         .padding(end = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    cardAlbum()
+                    Column(
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(335.dp, 240.dp)
+                                .padding(bottom = 12.dp),
+                            border = BorderStroke(2.dp, color = Color(79, 121, 254))
+                        ) {
+                            Column(
+                            ) {
+                                AsyncImage(
+                                    model = photoURLCampanhaState,
+                                    contentDescription = null,
+                                    Modifier.fillMaxSize()
+                                )
+                            }
+                        }
+                    }
                     cardCategoria()
                 }
 
@@ -402,7 +452,14 @@ fun AboutCampanha(campanha: Campanha) {
                     fontSize = 12.sp
                 )
                 Button(
-                    onClick = { context.startActivity(Intent(context, CreateCampanha::class.java)) },
+                    onClick = {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                CreateCampanha::class.java
+                            )
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(50.dp),

@@ -241,6 +241,5 @@ fun MinFab(
 @Composable
 fun DefaultPreview() {
     DoetempoTheme() {
-
     }
 }
