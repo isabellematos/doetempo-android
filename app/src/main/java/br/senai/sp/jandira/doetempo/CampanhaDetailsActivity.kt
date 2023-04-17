@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardAlbum
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
+import br.senai.sp.jandira.doetempo.components.createdCampanhaScreen
+import br.senai.sp.jandira.doetempo.components.subscribedCampanhaScreen
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
@@ -72,9 +76,10 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 postalCode = "",
                                 number = "",
                                 complement = ""
-                            )
+                            ),
                         )
                     )
+                    OpenSubscribedScreen(viewModel = CreateCampanhaViewModel())
                 }
             }
         }
@@ -215,7 +220,9 @@ fun AboutCampanha(campanha: Campanha) {
                     AsyncImage(
                         model = photoURlNGOState,
                         contentDescription = null,
-                        Modifier.height(90.dp).padding(start = 20.dp, top = 10.dp)
+                        Modifier
+                            .height(90.dp)
+                            .padding(start = 20.dp, top = 10.dp)
                     )
 
                     //Textos
@@ -451,38 +458,51 @@ fun AboutCampanha(campanha: Campanha) {
                     modifier = Modifier.padding(start = 185.dp, top = 5.dp),
                     fontSize = 12.sp
                 )
-                Button(
-                    onClick = {
-                        context.startActivity(
-                            Intent(
-                                context,
-                                CreateCampanha::class.java
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(50.dp),
-                    colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-                ) {
-                    Text(
-                        text = "INSCREVER-SE",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Icon(
-                        painter = painterResource(id = R.drawable.hearticon),
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(start = 20.dp),
-                        contentDescription = "",
-                        tint = Color.White
-                    )
                 }
             }
         }
     }
+
+
+@Composable
+fun OpenSubscribedScreen( viewModel: CreateCampanhaViewModel) {
+
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            viewModel.onAddClickCampanha()
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(50.dp),
+        colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+    ) {
+        Text(
+            text = "INSCREVER-SE",
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+        if (viewModel.isDialogShownCampanha) {
+            subscribedCampanhaScreen(
+                onDismiss = {
+                    viewModel.onDismissDialogCampanha()
+                },
+                onConfirm = {
+                    context.startActivity(Intent(context, HomeActivity::class.java))
+                })
+        }
+        Icon(
+            painter = painterResource(id = R.drawable.hearticon),
+            modifier = Modifier
+                .size(40.dp)
+                .padding(start = 20.dp),
+            contentDescription = "",
+            tint = Color.White
+        )
+    }
 }
+
 
 
 //@Preview(

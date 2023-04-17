@@ -24,13 +24,25 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
+import br.senai.sp.jandira.doetempo.model.CampanhaDetalhes
+import br.senai.sp.jandira.doetempo.model.OngList
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import coil.compose.AsyncImage
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun cardCampanha(campanha: Campanha) {
 
     var titleState by remember {
+        mutableStateOf("")
+    }
+
+    var idState by remember {
         mutableStateOf("")
     }
 
@@ -42,6 +54,41 @@ fun cardCampanha(campanha: Campanha) {
         mutableStateOf("")
     }
 
+    var photoCampanhaState1 by remember {
+        mutableStateOf("")
+    }
+
+    val context = LocalContext.current
+    var intent = (context as CampanhaDetailsActivity).intent
+    idState = intent.getStringExtra("id").toString()
+    Log.i("ds3m", idState)
+
+
+    if (idState != "") {
+
+        val retrofit = RetrofitFactory.getRetrofit()
+        val campanhaCall = retrofit.create(CampanhaCall::class.java)
+        val call = campanhaCall.getById(idState)
+        call.enqueue(object : Callback<CampanhaDetalhes> {
+
+            override fun onResponse(
+                call: Call<CampanhaDetalhes>,
+                response: Response<CampanhaDetalhes>
+            ) {
+                 photoCampanhaState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
+
+            }
+
+            override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
+            }
+
+        })
+
+    } else {
+        Log.i("ds3m", "erro: id vazio")
+
+    }
 
     Column(
     ) {
@@ -64,7 +111,7 @@ fun cardCampanha(campanha: Campanha) {
             shape = RoundedCornerShape(15.dp)
         ) {
 
-            //photoCampanhaState = campanha.photoURL.toString()
+           // photoCampanhaState1 = campanha.tbl_ngo?.photoURL.toString()
 
             Row(
                 modifier = Modifier
@@ -83,22 +130,6 @@ fun cardCampanha(campanha: Campanha) {
                             shape = RoundedCornerShape(8.dp)
                         )
                 )
-
-                Image(
-                    painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.luizamelllogo),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(start = 12.dp, top = 12.dp)
-                        .border(
-                            2.dp,
-                            color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .clip(shape = RoundedCornerShape(8.dp)),
-                    alignment = Alignment.TopStart,
-
-                    )
             }
             campanha.title?.let {
                 Text(

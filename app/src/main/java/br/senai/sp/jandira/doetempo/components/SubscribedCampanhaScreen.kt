@@ -15,7 +15,7 @@ import androidx.compose.ui.window.DialogProperties
 
 
 @Composable
-fun createdCampanhaScreen(
+fun subscribedCampanhaScreen(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -37,7 +37,7 @@ fun createdCampanhaScreen(
         ) {
             Column() {
                 Text(
-                    text = "Parabéns, sua campanha foi criada com sucesso!",
+                    text = "Parabéns, você agora esta inscrito nessa campanha!",
                     modifier = Modifier.padding(top = 28.dp, start = 46.dp, bottom = 28.dp),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,

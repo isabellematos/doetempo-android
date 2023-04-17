@@ -29,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import br.senai.sp.jandira.doetempo.*
+import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.model.CreatedCampanha
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
@@ -37,9 +39,6 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
-import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
-import br.senai.sp.jandira.doetempo.HomeActivity
-import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.model.Address
 import buscarCep
 import retrofit2.Call
@@ -173,6 +172,8 @@ fun bottom(
         }
     )
 
+
+    CreateCampanhaScreen()
 
     Column(
         modifier = Modifier
@@ -316,7 +317,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.cep),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -353,7 +354,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.state),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -390,7 +391,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.city),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -427,7 +428,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.street),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -464,7 +465,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.bairro),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -501,7 +502,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.number),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -538,7 +539,7 @@ fun bottom(
                             Text(
                                 text = stringResource(id = R.string.complemento),
                                 modifier = Modifier.padding(bottom = 8.dp),
-                                color = Color.Black,
+                                color = Color.Gray,
                                 fontSize = 18.sp,
                             )
                         },
@@ -803,7 +804,6 @@ fun bottom(
                     sobreCampanhaIsError = sobreCampanhaState.length == 0
                     comoContribuirIsError = comoContribuirState.length == 0
                     preReqsIsError = preReqsState.length == 0
-                    //isBirthDateError = birthDateState.length == 0
 
                     val text = "Todos os campos são necessarios"
                     val duration = Toast.LENGTH_SHORT
@@ -878,8 +878,7 @@ fun bottom(
                         viewModel.onDismissDialogCampanha()
                     },
                     onConfirm = {
-                        val newActivity = Intent(context, HomeActivity::class.java)
-
+                        context.startActivity(Intent(context, HomeActivity::class.java))
                     })
             }
         }

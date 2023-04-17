@@ -102,7 +102,6 @@ fun CampanhaScreen() {
 
         })
 
-        Log.i("ds3m", campanhasState.toString())
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             items(campanhasState.size) { index ->
                 cardCampanha(campanha = campanhasState[index])
