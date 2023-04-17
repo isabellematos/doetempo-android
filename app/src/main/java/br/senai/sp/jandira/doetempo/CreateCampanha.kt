@@ -103,7 +103,7 @@ fun adcionarCampanha() {
                     alignment = Alignment.TopStart,
 
                     )
-                CreateCampanhaScreen()
+                    //CreateCampanhaScreen()
                     //middleInfos(viewModel())
                 bottom(viewModel = CreateCampanhaViewModel())
 

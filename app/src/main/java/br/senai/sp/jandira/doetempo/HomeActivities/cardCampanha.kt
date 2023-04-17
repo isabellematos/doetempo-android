@@ -58,37 +58,6 @@ fun cardCampanha(campanha: Campanha) {
         mutableStateOf("")
     }
 
-    val context = LocalContext.current
-    var intent = (context as CampanhaDetailsActivity).intent
-    idState = intent.getStringExtra("id").toString()
-    Log.i("ds3m", idState)
-
-
-    if (idState != "") {
-
-        val retrofit = RetrofitFactory.getRetrofit()
-        val campanhaCall = retrofit.create(CampanhaCall::class.java)
-        val call = campanhaCall.getById(idState)
-        call.enqueue(object : Callback<CampanhaDetalhes> {
-
-            override fun onResponse(
-                call: Call<CampanhaDetalhes>,
-                response: Response<CampanhaDetalhes>
-            ) {
-                 photoCampanhaState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
-
-            }
-
-            override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
-            }
-
-        })
-
-    } else {
-        Log.i("ds3m", "erro: id vazio")
-
-    }
 
     Column(
     ) {
@@ -111,7 +80,7 @@ fun cardCampanha(campanha: Campanha) {
             shape = RoundedCornerShape(15.dp)
         ) {
 
-           // photoCampanhaState1 = campanha.tbl_ngo?.photoURL.toString()
+            photoCampanhaState1 = campanha.tbl_ngo?.photoURL.toString()
 
             Row(
                 modifier = Modifier
@@ -119,7 +88,7 @@ fun cardCampanha(campanha: Campanha) {
             ) {
 
                 AsyncImage(
-                    model = photoCampanhaState,
+                    model = photoCampanhaState1,
                     contentDescription = null,
                     Modifier
                         .size(60.dp)

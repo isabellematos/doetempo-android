@@ -1,10 +1,18 @@
 package br.senai.sp.jandira.doetempo.components
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,8 +35,11 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.model.CreatedCampanha
@@ -41,13 +52,19 @@ import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import br.senai.sp.jandira.doetempo.model.Address
 import buscarCep
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.firebase.storage.FirebaseStorage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun bottom(
-    viewModel: CreateCampanhaViewModel
+    viewModel: CreateCampanhaViewModel = viewModel()
 ) {
 
     var comoContribuirState by remember {
@@ -142,6 +159,158 @@ fun bottom(
         mutableStateOf(false)
     }
 
+    val storage = FirebaseStorage.getInstance()
+
+    // Create a storage reference from our app
+    val storageRef = storage.reference.child("documents/document/").child("image%")
+
+    val state = viewModel.state
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+    SideEffect {
+        permissionState.launchPermissionRequest()
+    }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = {
+                viewModel.updateSelectedImageList(
+                    listOfImages = it
+                )
+            }
+        )
+
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 55.dp, top = 30.dp, end = 55.dp),
+        backgroundColor = Color(246,246,246)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.paste),
+            modifier = Modifier
+                .padding(top = 60.dp)
+                .size(100.dp),
+            contentDescription = ""
+        )
+
+        Column (
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment =  Alignment.CenterHorizontally
+        ){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(screenWidth * 0.5f)
+            ){
+
+                val context = LocalContext.current
+
+                fun getBitmapFromUri(uri: Uri): Bitmap? {
+                    val inputStream = context.contentResolver.openInputStream(uri)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    inputStream?.close()
+                    return bitmap
+                }
+
+                if (state.listOfSelectedImages.isNotEmpty()){
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                    ){
+                        itemsIndexed(state.listOfSelectedImages){index: Int, item: Uri ->
+                            val image = item
+                            val bitmap = getBitmapFromUri(image)
+                            val baos = ByteArrayOutputStream()
+                            if (bitmap != null) {
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                            }
+                            val data = baos.toByteArray()
+
+                            storageRef.putBytes(data)
+                                .addOnSuccessListener { taskSnapshot ->
+                                    // A imagem foi enviada com sucesso
+                                }
+                                .addOnFailureListener { exception ->
+                                    // Ocorreu um erro ao enviar a imagem
+                                }
+                            Log.i("ds3m", item.toString())
+                            ImagePreviewItem(
+                                uri = item,
+                                height = screenHeight * 0.5f,
+                                width = screenWidth * 0.6f,
+                                onClick = {
+                                    viewModel.onItemRemove(index)
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.width(5.dp))
+
+                        }
+                    }
+                }
+                if(state.listOfSelectedImages.isNotEmpty()){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                    }
+
+                }
+            }
+            Button(
+                onClick = {
+
+
+                    if (permissionState.status.isGranted){
+                        galleryLauncher.launch("image/*")
+                    }else
+                        permissionState.launchPermissionRequest()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp),
+                colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+            ){
+                Text(
+                    text = "Upload",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.uploadicon),
+                    modifier = Modifier.padding(start = 10.dp),
+                    contentDescription = "",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "───────────────────────",
+            modifier = Modifier.padding(top = 32.dp, bottom = 32.dp),
+            color = Color.LightGray
+        )
+    }
+
+
+
     //Controla o foco
     val weightFocusRequester = FocusRequester()
 
@@ -172,9 +341,6 @@ fun bottom(
         }
     )
 
-
-    CreateCampanhaScreen()
-
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -198,7 +364,9 @@ fun bottom(
             label = {
                 Text(
                     text = "Nome da campanha",
+                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold
+
                 )
             },
             trailingIcon = {
@@ -231,6 +399,7 @@ fun bottom(
             label = {
                 Text(
                     text = "Sobre a campanha",
+                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -744,6 +913,7 @@ fun bottom(
             label = {
                 Text(
                     text = "Como contribuir",
+                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -776,6 +946,7 @@ fun bottom(
             label = {
                 Text(
                     text = "Requisitos",
+                    color = Color.Black,
                     fontWeight = FontWeight.SemiBold
                 )
             },
@@ -826,6 +997,7 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
+                            photos = listOf()
                         )
 
                         Log.i("ds3m", contact.title.toString())

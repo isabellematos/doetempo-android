@@ -1,5 +1,7 @@
 package br.senai.sp.jandira.doetempo.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Campanha(
     var id: String? = "",
     var title: String? = "",
@@ -10,7 +12,8 @@ data class Campanha(
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
     var id_ngo: String? = "",
-    var photoURL: String? = "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2Fdefault.png?alt=media&token=337960c3-810d-42bc-b17e-14dd945acc2c",
+    @SerializedName("tbl_campaign_photos") var photos: List<Photo>,
+    var photoURL: String? = "",
     var address : Address? = Address(
         number = "",
         complement = "",

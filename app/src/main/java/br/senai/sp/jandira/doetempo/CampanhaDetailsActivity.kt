@@ -75,11 +75,11 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             tbl_campaign_address = Address(
                                 postalCode = "",
                                 number = "",
-                                complement = ""
+                                complement = "",
                             ),
+                            photos = listOf()
                         )
                     )
-                    OpenSubscribedScreen(viewModel = CreateCampanhaViewModel())
                 }
             }
         }
@@ -172,7 +172,7 @@ fun AboutCampanha(campanha: Campanha) {
                 ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
                 idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
                 photoURlNGOState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
-                photoURLCampanhaState = response.body()!!.campaigns.photoURL.toString()
+                photoURLCampanhaState = response.body()!!.campaigns.photos[0].photoURL.toString()
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
@@ -458,48 +458,48 @@ fun AboutCampanha(campanha: Campanha) {
                     modifier = Modifier.padding(start = 185.dp, top = 5.dp),
                     fontSize = 12.sp
                 )
-                }
             }
         }
     }
 
+    @Composable
+    fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel) {
 
-@Composable
-fun OpenSubscribedScreen( viewModel: CreateCampanhaViewModel) {
+        val context = LocalContext.current
 
-    val context = LocalContext.current
-
-    Button(
-        onClick = {
-            viewModel.onAddClickCampanha()
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(50.dp),
-        colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-    ) {
-        Text(
-            text = "INSCREVER-SE",
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
-        if (viewModel.isDialogShownCampanha) {
-            subscribedCampanhaScreen(
-                onDismiss = {
-                    viewModel.onDismissDialogCampanha()
-                },
-                onConfirm = {
-                    context.startActivity(Intent(context, HomeActivity::class.java))
-                })
-        }
-        Icon(
-            painter = painterResource(id = R.drawable.hearticon),
+        Button(
+            onClick = {
+                viewModel.onAddClickCampanha()
+            },
             modifier = Modifier
-                .size(40.dp)
-                .padding(start = 20.dp),
-            contentDescription = "",
-            tint = Color.White
-        )
+                .fillMaxWidth()
+                .padding(50.dp)
+                .size(30.dp),
+            colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+        ) {
+            Text(
+                text = "INSCREVER-SE",
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            if (viewModel.isDialogShownCampanha) {
+                subscribedCampanhaScreen(
+                    onDismiss = {
+                        viewModel.onDismissDialogCampanha()
+                    },
+                    onConfirm = {
+                        context.startActivity(Intent(context, HomeActivity::class.java))
+                    })
+            }
+            Icon(
+                painter = painterResource(id = R.drawable.hearticon),
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(start = 20.dp),
+                contentDescription = "",
+                tint = Color.White
+            )
+        }
     }
 }
 
