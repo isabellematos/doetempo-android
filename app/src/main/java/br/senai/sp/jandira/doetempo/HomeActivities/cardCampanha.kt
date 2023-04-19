@@ -24,6 +24,7 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.CampanhaDetalhes
 import br.senai.sp.jandira.doetempo.model.OngList
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
@@ -58,6 +59,10 @@ fun cardCampanha(campanha: Campanha) {
         mutableStateOf("")
     }
 
+    val context = LocalContext.current
+
+    var datastore = DataStoreAppData(context = context)
+    Log.i("datastoreCard", datastore.getIdUser.collectAsState(initial = "").value.toString())
 
     Column(
     ) {

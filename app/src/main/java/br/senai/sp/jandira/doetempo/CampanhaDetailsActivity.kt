@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -458,48 +459,66 @@ fun AboutCampanha(campanha: Campanha) {
                     modifier = Modifier.padding(start = 185.dp, top = 5.dp),
                     fontSize = 12.sp
                 )
+
+                OpenSubscribedScreen(viewModel = CreateCampanhaViewModel(), campanha)
+
             }
         }
     }
+}
 
-    @Composable
-    fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel) {
+fun handleClickButtonSubscribe(
+    viewModel: CreateCampanhaViewModel,
+    context: Context,
+    campaignId: String,
+    userId: String
+) {
+    viewModel.onAddClickCampanha()
+    Log.i("id_campaign", campaignId)
+    Log.i("id_user", userId)
+}
 
-        val context = LocalContext.current
+@Composable
+fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel, campanha: Campanha) {
 
-        Button(
-            onClick = {
-                viewModel.onAddClickCampanha()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(50.dp)
-                .size(30.dp),
-            colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-        ) {
-            Text(
-                text = "INSCREVER-SE",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            if (viewModel.isDialogShownCampanha) {
-                subscribedCampanhaScreen(
-                    onDismiss = {
-                        viewModel.onDismissDialogCampanha()
-                    },
-                    onConfirm = {
-                        context.startActivity(Intent(context, HomeActivity::class.java))
-                    })
-            }
-            Icon(
-                painter = painterResource(id = R.drawable.hearticon),
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(start = 20.dp),
-                contentDescription = "",
-                tint = Color.White
-            )
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            val userId = context.getSharedPreferences("app_data", Context.MODE_PRIVATE).getString("token", "testee")
+            Log.i("ds3m", userId.toString())
+
+            campanha.id?.let { context.getSharedPreferences("app_data", Context.MODE_PRIVATE).getString("id_user", "")
+                ?.let { it1 -> handleClickButtonSubscribe(viewModel, context, campanha.id!!, userId = it1) } }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(50.dp)
+            .size(30.dp),
+        colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+    ) {
+        Text(
+            text = "INSCREVER-SE",
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+        if (viewModel.isDialogShownCampanha) {
+            subscribedCampanhaScreen(
+                onDismiss = {
+                    viewModel.onDismissDialogCampanha()
+                },
+                onConfirm = {
+                    context.startActivity(Intent(context, HomeActivity::class.java))
+                })
         }
+        Icon(
+            painter = painterResource(id = R.drawable.hearticon),
+            modifier = Modifier
+                .size(40.dp)
+                .padding(start = 20.dp),
+            contentDescription = "",
+            tint = Color.White
+        )
     }
 }
 

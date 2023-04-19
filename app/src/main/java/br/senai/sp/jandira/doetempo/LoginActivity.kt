@@ -11,13 +11,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -33,6 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.model.LoginDto
 import br.senai.sp.jandira.doetempo.model.TokenDto
@@ -79,10 +78,14 @@ fun Login() {
     var passwordState by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
 
     var isPasswordError by remember {
         mutableStateOf(false)
     }
+
+    val scope = rememberCoroutineScope()
+    val datastore = DataStoreAppData(context = context)
 
 
     //Content
@@ -99,7 +102,7 @@ fun Login() {
         //Header
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
 
         ) {
             Image(
@@ -117,7 +120,7 @@ fun Login() {
             OutlinedTextField(
                 value = userState,
                 onValueChange = { newUser ->
-                    if (newUser.length == 0) {
+                    if (newUser.isEmpty()) {
                         isUserError = true
                         newUser
                     } else {
@@ -127,7 +130,7 @@ fun Login() {
                     userState = newUser
                 },
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(CenterHorizontally)
                     .padding(top = 80.dp),
                 label = {
                     Text(
@@ -156,7 +159,7 @@ fun Login() {
                     passwordState = newPassword
                 },
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
+                    .align(CenterHorizontally)
                     .padding(top = 24.dp),
                 label = {
                     Text(
@@ -213,7 +216,7 @@ fun Login() {
                                 call: Call<TokenDto>,
                                 response: Response<TokenDto>
                             ) {
-                                Log.i("ds3m", response.body().toString())
+                                val token = response.body()?.accessTokenVerify.toString()
 
                                 if (response.body()?.accessTokenVerify.isNullOrEmpty()) {
                                     Toast.makeText(
@@ -235,8 +238,8 @@ fun Login() {
                                         "name",
                                         response.body()!!.dataUser?.name
                                     )
-                                    val sharedPreferences = context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
-                                    sharedPreferences.edit().putString("token", response.body()!!.accessTokenVerify).apply()
+
+                                    newActivity.putExtra("id_user", response.body()!!.dataUser?.id)
 
                                     startActivity(context, newActivity, Bundle.EMPTY)
 
