@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -42,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
-import br.senai.sp.jandira.doetempo.model.CreatedCampanha
+import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
@@ -50,7 +49,7 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
-import br.senai.sp.jandira.doetempo.model.Address
+import br.senai.sp.jandira.doetempo.services.causas.CausesCall
 import buscarCep
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -159,10 +158,10 @@ fun bottom(
         mutableStateOf(false)
     }
 
-    val storage = FirebaseStorage.getInstance()
-
-    // Create a storage reference from our app
-    val storageRef = storage.reference.child("documents/document/").child("image%")
+//    val storage = FirebaseStorage.getInstance()
+//
+//    // Create a storage reference from our app
+//    val storageRef = storage.reference.child("documents/document/").child("image%")
 
     val state = viewModel.state
     val configuration = LocalConfiguration.current
@@ -237,13 +236,13 @@ fun bottom(
                             }
                             val data = baos.toByteArray()
 
-                            storageRef.putBytes(data)
-                                .addOnSuccessListener { taskSnapshot ->
-                                    // A imagem foi enviada com sucesso
-                                }
-                                .addOnFailureListener { exception ->
-                                    // Ocorreu um erro ao enviar a imagem
-                                }
+//                            storageRef.putBytes(data)
+//                                .addOnSuccessListener { taskSnapshot ->
+//                                    // A imagem foi enviada com sucesso
+//                                }
+//                                .addOnFailureListener { exception ->
+//                                    // Ocorreu um erro ao enviar a imagem
+//                                }
                             Log.i("ds3m", item.toString())
                             ImagePreviewItem(
                                 uri = item,
@@ -841,6 +840,49 @@ fun bottom(
 
     }
 
+    val retrofit = RetrofitFactory.getRetrofit()
+    val causesCall = retrofit.create(CausesCall::class.java)
+    val call = causesCall.getAll()
+
+    var causesState by remember {
+        mutableStateOf(listOf<Cause>())
+    }
+
+    call.enqueue(object : Callback<CauseList> {
+        override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
+            causesState = response.body()!!.causes
+
+
+        }
+
+        override fun onFailure(call: Call<CauseList>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+    })
+
+    val retrofit1 = RetrofitFactory.getRetrofit()
+    val causeCall = retrofit1.create(CausesCall::class.java)
+    val callCause = causeCall.get()
+
+    var causeName by remember {
+        mutableStateOf("")
+    }
+
+    callCause.enqueue(object : Callback<Cause> {
+        override fun onResponse(call: Call<Cause>, response: Response<Cause>) {
+            causeName = response.body()!!.title.toString()
+
+        }
+
+        override fun onFailure(call: Call<Cause>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+    })
+
+
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -867,7 +909,7 @@ fun bottom(
             backgroundColor = Color(165, 218, 230)
         ) {
             Text(
-                text = "Educação",
+                text = causeName,
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .size(105.dp, 26.dp),
