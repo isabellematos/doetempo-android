@@ -1,7 +1,6 @@
 package br.senai.sp.jandira.doetempo
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,7 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.HomeActivities.Items_menu
 import br.senai.sp.jandira.doetempo.HomeActivities.NavigationHost
-import br.senai.sp.jandira.doetempo.bottomBarScreens.CampanhaScreen
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -62,6 +61,7 @@ fun MainScreen() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val savedToken = DataStoreAppData(context = context).getToken.collectAsState(initial = "")
 
     //onClick = {context.startActivity(Intent(context, CadastroUserActivity::class.java)) },
 
@@ -102,6 +102,7 @@ fun MainScreen() {
                 items = items
             )
         },
+        floatingActionButtonPosition = FabPosition.End,
         isFloatingActionButtonDocked = true
     ) {
         NavigationHost(navController)
@@ -130,7 +131,8 @@ fun BottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 0.dp, 65.dp, 0.dp),
-            backgroundColor = Color(157, 231, 253)
+            backgroundColor = Color(157, 231, 253),
+            elevation = 0.dp
         ) {
             val currentRoute = currentRoute(navController = navController)
             menu_items.forEach { item ->

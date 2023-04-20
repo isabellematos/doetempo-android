@@ -1,6 +1,6 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,11 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.HomeActivity
-import br.senai.sp.jandira.doetempo.model.CampanhaList
-import androidx.compose.foundation.lazy.items
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.Campanha
+import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +32,7 @@ import retrofit2.Response
 //import br.senai.sp.jandira.doetempo.HomeActivities.
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun CampanhaScreen() {
     //CONTENT
@@ -47,6 +48,20 @@ fun CampanhaScreen() {
     val context = LocalContext.current
     var intent = (context as HomeActivity).intent
     userNameState = intent.getStringExtra("name").toString()
+    val token = intent.getStringExtra("key")
+    val idUser = intent.getStringExtra("id_user")
+
+    val scope = rememberCoroutineScope()
+    val datastore = DataStoreAppData(context = context)
+
+    scope.launch {
+        if (token != null && idUser != null) {
+            datastore.saveToken(token)
+            datastore.saveIdUser(idUser)
+        }
+    }
+
+    Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
 
     Column(
         modifier = Modifier
@@ -69,6 +84,7 @@ fun CampanhaScreen() {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
             )
+
             IconButton(onClick = {  }) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
