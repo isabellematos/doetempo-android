@@ -19,7 +19,8 @@ data class Campanha(
         complement = "",
         postalCode = ""
     ),
-    var causes: List<Cause>? = listOf(Cause(id = "07c4c9d2-e633-48ca-848b-0f3a0b74d405"), Cause(id = "70a2ad4b-c472-4bbc-b7bf-86e0ec1d4dc3")),
+   @SerializedName("tbl_campaign_causes") var causes: List<Cause>?,
+    var cause: String? = "",
     var tbl_ngo: Ong? = Ong(
         id = "",
         name = "",

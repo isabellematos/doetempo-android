@@ -190,7 +190,7 @@ fun bottom(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 55.dp, top = 30.dp, end = 55.dp),
-        backgroundColor = Color(246,246,246)
+        backgroundColor = Color(246, 246, 246)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.paste),
@@ -200,17 +200,17 @@ fun bottom(
             contentDescription = ""
         )
 
-        Column (
+        Column(
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth(),
-            horizontalAlignment =  Alignment.CenterHorizontally
-        ){
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenWidth * 0.5f)
-            ){
+            ) {
 
                 val context = LocalContext.current
 
@@ -221,13 +221,13 @@ fun bottom(
                     return bitmap
                 }
 
-                if (state.listOfSelectedImages.isNotEmpty()){
+                if (state.listOfSelectedImages.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.Center)
-                    ){
-                        itemsIndexed(state.listOfSelectedImages){index: Int, item: Uri ->
+                    ) {
+                        itemsIndexed(state.listOfSelectedImages) { index: Int, item: Uri ->
                             val image = item
                             val bitmap = getBitmapFromUri(image)
                             val baos = ByteArrayOutputStream()
@@ -258,7 +258,7 @@ fun bottom(
                         }
                     }
                 }
-                if(state.listOfSelectedImages.isNotEmpty()){
+                if (state.listOfSelectedImages.isNotEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -272,16 +272,16 @@ fun bottom(
                 onClick = {
 
 
-                    if (permissionState.status.isGranted){
+                    if (permissionState.status.isGranted) {
                         galleryLauncher.launch("image/*")
-                    }else
+                    } else
                         permissionState.launchPermissionRequest()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp),
                 colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-            ){
+            ) {
                 Text(
                     text = "Upload",
                     color = Color.White,
@@ -307,7 +307,6 @@ fun bottom(
             color = Color.LightGray
         )
     }
-
 
 
     //Controla o foco
@@ -840,42 +839,55 @@ fun bottom(
 
     }
 
+    val context = LocalContext.current
     val retrofit = RetrofitFactory.getRetrofit()
     val causesCall = retrofit.create(CausesCall::class.java)
-    val call = causesCall.getAll()
 
-    var causesState by remember {
-        mutableStateOf(listOf<Cause>())
+
+    val sharedPreferences =
+        context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
+    val token = sharedPreferences.getString("token", "")
+
+    if (!token.isNullOrEmpty()) {
+
+        val call = causesCall.save("Bearer $token", contact = Cause())
+
+        call.enqueue(object : Callback<CreatedCause> {
+            override fun onResponse(call: Call<CreatedCause>, response: Response<CreatedCause>) {
+                Log.i("headers", response.headers().names().toString())
+                Log.i("ds3m", response.body()!!.toString())
+                //causesState = response.headers().names().toString()
+                //Log.i("causanome", causesState.toString())
+
+            }
+
+            override fun onFailure(call: Call<CreatedCause>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
+            }
+
+        })
     }
 
-    call.enqueue(object : Callback<CauseList> {
-        override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
-            causesState = response.body()!!.causes
-
-
-        }
-
-        override fun onFailure(call: Call<CauseList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-
-    })
 
     val retrofit1 = RetrofitFactory.getRetrofit()
     val causeCall = retrofit1.create(CausesCall::class.java)
-    val callCause = causeCall.get()
+    val callCause = causeCall.getAll()
 
     var causeName by remember {
         mutableStateOf("")
     }
 
-    callCause.enqueue(object : Callback<Cause> {
-        override fun onResponse(call: Call<Cause>, response: Response<Cause>) {
-            causeName = response.body()!!.title.toString()
+    var causesState by remember {
+        mutableStateOf(listOf<Cause>())
+    }
 
+    callCause.enqueue(object : Callback<CauseList> {
+        override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
+            causesState = response.body()!!.causes
+            Log.i("causa", causesState.toString())
         }
 
-        override fun onFailure(call: Call<Cause>, t: Throwable) {
+        override fun onFailure(call: Call<CauseList>, t: Throwable) {
             Log.i("ds3m", t.message.toString())
         }
 
@@ -909,7 +921,7 @@ fun bottom(
             backgroundColor = Color(165, 218, 230)
         ) {
             Text(
-                text = causeName,
+                text = "educacao",
                 modifier = Modifier
                     .padding(top = 5.dp)
                     .size(105.dp, 26.dp),
@@ -1039,7 +1051,9 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photos = listOf()
+                            photos = listOf(),
+                            //cause = causeName,
+                            causes = causesState
                         )
 
                         Log.i("ds3m", contact.title.toString())

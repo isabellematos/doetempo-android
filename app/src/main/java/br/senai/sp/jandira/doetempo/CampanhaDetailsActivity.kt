@@ -78,7 +78,9 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 number = "",
                                 complement = "",
                             ),
-                            photos = listOf()
+                            photos = listOf(),
+                            cause = "",
+                            causes = listOf()
                         )
                     )
                 }
