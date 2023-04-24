@@ -3,8 +3,6 @@ package br.senai.sp.jandira.doetempo.components
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -59,18 +58,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageException
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.ktx.storageMetadata
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import kotlin.properties.Delegates
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -176,6 +170,22 @@ fun bottom(
 //    // Create a storage reference from our app
 //    val storageRef = storage.reference.child("documents/document/").child("image%")
 
+
+    var galleryLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = {
+                viewModel.updateSelectedImageList(
+                    listOfImages = it
+                )
+            }
+        )
+
+    var storageRef: FirebaseStorage
+
+    storageRef = FirebaseStorage.getInstance()
+
+
     val state = viewModel.state
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -187,16 +197,6 @@ fun bottom(
     SideEffect {
         permissionState.launchPermissionRequest()
     }
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetMultipleContents(),
-            onResult = {
-                viewModel.updateSelectedImageList(
-                    listOfImages = it
-                )
-            }
-        )
 
     class UploadImageActivity : ComponentActivity() {
         private lateinit var image: ImageView
@@ -213,53 +213,62 @@ fun bottom(
             storageRef = FirebaseStorage.getInstance()
 
 
+//            val galleryImage = registerForActivityResult(
+//                ActivityResultContracts.GetContent(),
+//                ActivityResultCallback {
+//                    image.setImageURI(it)
+//                    if (it != null) {
+//                        uri = it
+//                    }
+//                }
+//            )
 
-            val galleryImage = registerForActivityResult(
-                ActivityResultContracts.GetContent(),
-                ActivityResultCallback {
-                    image.setImageURI(it)
-                    if (it != null) {
-                        uri = it
-                    }
-                }
-            )
 
-            if (bntBrowse) {
-                galleryImage.launch("image/*")
-            }
+//            if (bntBrowse) {
+//                galleryImage.launch("image/*")
+//            }
 
-            if (bntUpload) {
-                storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                    .putFile(uri)
-                    .addOnSuccessListener { task ->
-                        task.metadata!!.reference!!.downloadUrl
-                            .addOnSuccessListener {
-                                val userId = FirebaseAuth.getInstance().currentUser!!.uid
-
-                                val mapImage = mapOf(
-                                    "url" to it.toString()
-                                )
-
-                                val databaseReference = FirebaseDatabase.getInstance().getReference("userImages")
-                                databaseReference.child(userId).setValue(mapImage)
-                                    .addOnSuccessListener {
-                                        Toast.makeText(this, "Succesfull", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                    .addOnFailureListener { error ->
-                                        Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                            }
-                    }
-            }
+//            if (bntUpload) {
+//                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+//                    .putFile(uri)
+//                    .addOnSuccessListener { task ->
+//                        task.metadata!!.reference!!.downloadUrl
+//                            .addOnSuccessListener {
+//                                val userId = FirebaseAuth.getInstance().currentUser!!.uid
+//
+//                                val mapImage = mapOf(
+//                                    "url" to it.toString()
+//                                )
+//
+//                                val databaseReference =
+//                                    FirebaseDatabase.getInstance().getReference("userImages")
+//                                databaseReference.child(userId).setValue(mapImage)
+//                                    .addOnSuccessListener {
+//                                        Toast.makeText(this, "Succesfull", Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                                    .addOnFailureListener { error ->
+//                                        Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT)
+//                                            .show()
+//                                    }
+//                            }
+//                    }
+//            }
         }
     }
+
+
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 55.dp, top = 30.dp, end = 55.dp),
+            .padding(start = 55.dp, top = 30.dp, end = 55.dp)
+            .clickable {
+                if (permissionState.status.isGranted) {
+                    galleryLauncher.launch("image/*")
+                } else
+                    permissionState.launchPermissionRequest()
+            },
         backgroundColor = Color(246, 246, 246)
     ) {
         Icon(
@@ -315,12 +324,23 @@ fun bottom(
 
                 }
             }
+
+            val context = LocalContext.current
             Button(
                 onClick = {
-//                    if (permissionState.status.isGranted) {
-//                        galleryLauncher.launch("image/*")
-//                    } else
-//                        permissionState.launchPermissionRequest()
+                    storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                        .putFile(state.listOfSelectedImages)
+                        .addOnSuccessListener { task ->
+                            task.metadata!!.reference!!.downloadUrl
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Successfull", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                .addOnFailureListener { error ->
+                                    Toast.makeText(context, state.listOfSelectedImages.toString(), Toast.LENGTH_SHORT)
+                                        .show()
+                                        }
+                                }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -354,7 +374,7 @@ fun bottom(
     }
 
 
-    //Controla o foco
+//Controla o foco
     val weightFocusRequester = FocusRequester()
 
 
@@ -769,7 +789,7 @@ fun bottom(
     }
 
     Column(
-        // modifier = Modifier.fillMaxWidth()
+// modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(1f),
@@ -827,7 +847,7 @@ fun bottom(
         fontWeight = FontWeight.SemiBold
     )
 
-    //RadioButton
+//RadioButton
     val radioOptions = listOf("Sim", "Não")
 
     var colorTint by remember {
@@ -1157,7 +1177,6 @@ fun bottom(
         }
     }
 }
-
 
 
 

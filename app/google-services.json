@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "74245774231",
+    "project_id": "doe-tempo-50ccb",
+    "storage_bucket": "doe-tempo-50ccb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74245774231:android:39257e16fd27d6040342d2",
+        "android_client_info": {
+          "package_name": "br.senai.sp.jandira.doetempo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "74245774231-4g8gcr7t1thijvc5g5e4qs5tenbvuocg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdMjy0QjSySBzgvLdTv5yitNnDCWB-_AY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "74245774231-4g8gcr7t1thijvc5g5e4qs5tenbvuocg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

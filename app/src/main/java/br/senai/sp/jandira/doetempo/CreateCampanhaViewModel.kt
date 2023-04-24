@@ -14,7 +14,7 @@ class CreateCampanhaViewModel : ViewModel() {
         private set
 
 
-    fun updateSelectedImageList(listOfImages: List<Uri>) {
+    fun updateSelectedImageList(listOfImages: List<@JvmSuppressWildcards Uri>) {
         val updatedImageList = state.listOfSelectedImages.toMutableList()
         viewModelScope.launch {
             updatedImageList += listOfImages
