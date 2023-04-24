@@ -6,9 +6,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -55,10 +59,19 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.ktx.storageMetadata
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import kotlin.properties.Delegates
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -185,6 +198,63 @@ fun bottom(
             }
         )
 
+    class UploadImageActivity : ComponentActivity() {
+        private lateinit var image: ImageView
+        private var bntBrowse by Delegates.notNull<Boolean>()
+        private var bntUpload by Delegates.notNull<Boolean>()
+
+        private var storageRef = Firebase.storage
+
+        private lateinit var uri: Uri
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            storageRef = FirebaseStorage.getInstance()
+
+
+
+            val galleryImage = registerForActivityResult(
+                ActivityResultContracts.GetContent(),
+                ActivityResultCallback {
+                    image.setImageURI(it)
+                    if (it != null) {
+                        uri = it
+                    }
+                }
+            )
+
+            if (bntBrowse) {
+                galleryImage.launch("image/*")
+            }
+
+            if (bntUpload) {
+                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                    .putFile(uri)
+                    .addOnSuccessListener { task ->
+                        task.metadata!!.reference!!.downloadUrl
+                            .addOnSuccessListener {
+                                val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+                                val mapImage = mapOf(
+                                    "url" to it.toString()
+                                )
+
+                                val databaseReference = FirebaseDatabase.getInstance().getReference("userImages")
+                                databaseReference.child(userId).setValue(mapImage)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(this, "Succesfull", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                            }
+                    }
+            }
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -214,13 +284,6 @@ fun bottom(
 
                 val context = LocalContext.current
 
-                fun getBitmapFromUri(uri: Uri): Bitmap? {
-                    val inputStream = context.contentResolver.openInputStream(uri)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    inputStream?.close()
-                    return bitmap
-                }
-
                 if (state.listOfSelectedImages.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier
@@ -228,21 +291,6 @@ fun bottom(
                             .align(Alignment.Center)
                     ) {
                         itemsIndexed(state.listOfSelectedImages) { index: Int, item: Uri ->
-                            val image = item
-                            val bitmap = getBitmapFromUri(image)
-                            val baos = ByteArrayOutputStream()
-                            if (bitmap != null) {
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                            }
-                            val data = baos.toByteArray()
-
-//                            storageRef.putBytes(data)
-//                                .addOnSuccessListener { taskSnapshot ->
-//                                    // A imagem foi enviada com sucesso
-//                                }
-//                                .addOnFailureListener { exception ->
-//                                    // Ocorreu um erro ao enviar a imagem
-//                                }
                             Log.i("ds3m", item.toString())
                             ImagePreviewItem(
                                 uri = item,
@@ -252,7 +300,6 @@ fun bottom(
                                     viewModel.onItemRemove(index)
                                 }
                             )
-
                             Spacer(modifier = Modifier.width(5.dp))
 
                         }
@@ -270,12 +317,10 @@ fun bottom(
             }
             Button(
                 onClick = {
-
-
-                    if (permissionState.status.isGranted) {
-                        galleryLauncher.launch("image/*")
-                    } else
-                        permissionState.launchPermissionRequest()
+//                    if (permissionState.status.isGranted) {
+//                        galleryLauncher.launch("image/*")
+//                    } else
+//                        permissionState.launchPermissionRequest()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
