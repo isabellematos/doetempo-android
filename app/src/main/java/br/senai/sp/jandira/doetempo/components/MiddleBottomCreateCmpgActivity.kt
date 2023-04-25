@@ -199,9 +199,9 @@ fun bottom(
     }
 
     class UploadImageActivity : ComponentActivity() {
-        private lateinit var image: ImageView
-        private var bntBrowse by Delegates.notNull<Boolean>()
-        private var bntUpload by Delegates.notNull<Boolean>()
+//        private lateinit var image: ImageView
+//        private var bntBrowse by Delegates.notNull<Boolean>()
+//        private var bntUpload by Delegates.notNull<Boolean>()
 
         private var storageRef = Firebase.storage
 
@@ -258,19 +258,37 @@ fun bottom(
     }
 
 
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 55.dp, top = 30.dp, end = 55.dp)
-            .clickable {
+            .padding(start = 55.dp, top = 30.dp, end = 55.dp),
+        backgroundColor = Color(246, 246, 246)
+    ) {
+        Button(
+            onClick = {
                 if (permissionState.status.isGranted) {
                     galleryLauncher.launch("image/*")
                 } else
                     permissionState.launchPermissionRequest()
             },
-        backgroundColor = Color(246, 246, 246)
-    ) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
+            colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+        ) {
+            Text(
+                text = "Open your gallery",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.uploadicon),
+                modifier = Modifier.padding(start = 10.dp),
+                contentDescription = "",
+                tint = Color.White
+            )
+        }
         Icon(
             painter = painterResource(id = R.drawable.paste),
             modifier = Modifier
@@ -329,7 +347,7 @@ fun bottom(
             Button(
                 onClick = {
                     storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                        .putFile(state.listOfSelectedImages)
+                        .putFile(state.listOfSelectedImages[0])
                         .addOnSuccessListener { task ->
                             task.metadata!!.reference!!.downloadUrl
                                 .addOnSuccessListener {
@@ -948,8 +966,8 @@ fun bottom(
 
     callCause.enqueue(object : Callback<CauseList> {
         override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
-            causesState = response.body()!!.causes
-            Log.i("causa", causesState.toString())
+          //  causesState = response.body()!!.causes
+           // Log.i("causa", causesState.toString())
         }
 
         override fun onFailure(call: Call<CauseList>, t: Throwable) {
