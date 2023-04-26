@@ -61,9 +61,6 @@ fun cardCampanha(campanha: Campanha) {
 
     val context = LocalContext.current
 
-    var datastore = DataStoreAppData(context = context)
-    Log.i("datastoreCard", datastore.getIdUser.collectAsState(initial = "").value.toString())
-
     Column(
     ) {
         val context = LocalContext.current
@@ -86,6 +83,7 @@ fun cardCampanha(campanha: Campanha) {
         ) {
 
             photoCampanhaState1 = campanha.tbl_ngo?.photoURL.toString()
+            Log.i("photo", photoCampanhaState1)
 
             Row(
                 modifier = Modifier

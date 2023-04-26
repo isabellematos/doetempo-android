@@ -112,32 +112,7 @@ fun choose() {
                     fontSize = 18.sp
                 )
             }
-            Spacer(modifier = Modifier.padding(8.dp))
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 38.dp, end = 38.dp)
-                    .size(50.dp),
-                shape = RoundedCornerShape(30.dp),
-                colors = ButtonDefaults.buttonColors(Color(67, 101, 210))
-            )
-            {
-                Image(
-                    painter = painterResource(id = R.drawable.googleicon),
-                    contentDescription = "googleIcon"
-                )
-
-                Spacer(modifier = Modifier.padding(3.dp))
-
-                Text(
-                    text = stringResource(id = R.string.googleLogin),
-                    color = Color.Black,
-                    fontSize = 18.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             Text(
                 text = stringResource(id = R.string.haveAccount),

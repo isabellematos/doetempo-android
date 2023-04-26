@@ -796,6 +796,11 @@ fun bottom(
         mutableStateOf(radioOptions[0])
     }
 
+    val context = LocalContext.current
+
+    val datastore = DataStoreAppData(context)
+    val token = datastore.getToken.collectAsState(initial = "").value.toString()
+
     Column(modifier = Modifier.selectableGroup()) {
 
         radioOptions.forEach { label ->
@@ -842,14 +847,8 @@ fun bottom(
 
     }
 
-    val context = LocalContext.current
     val retrofit = RetrofitFactory.getRetrofit()
     val causesCall = retrofit.create(CausesCall::class.java)
-
-
-    val sharedPreferences =
-        context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
-    val token = sharedPreferences.getString("token", "")
 
     if (!token.isNullOrEmpty()) {
 
@@ -875,6 +874,7 @@ fun bottom(
     val retrofit1 = RetrofitFactory.getRetrofit()
     val causeCall = retrofit1.create(CausesCall::class.java)
     val callCause = causeCall.getAll()
+
 
     var causeName by remember {
         mutableStateOf("")
@@ -1054,17 +1054,23 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photos = state.listOfSelectedImages,
+                            photos = listOf(),
                             //cause = causeName,
                             causes = causesState
                         )
+                        
+                        val photo = Photo(
+                            photoURL= state.listOfSelectedImages[0].toString()
+                        )
+
+                        Log.i("ds3m", photo.toString())
 
                         storageRef.getReference("images").child(System.currentTimeMillis().toString())
                             .putFile(state.listOfSelectedImages[0])
                             .addOnSuccessListener { task ->
                                 task.metadata!!.reference!!.downloadUrl
                                     .addOnSuccessListener {
-                                        Toast.makeText(context, "Successfull", Toast.LENGTH_SHORT)
+                                        Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
                                             .show()
                                     }
                                     .addOnFailureListener { error ->
@@ -1074,12 +1080,6 @@ fun bottom(
                             }
 
                         Log.i("ds3m", contact.title.toString())
-
-                        val sharedPreferences =
-                            context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
-//                        val token = sharedPreferences.getString("token", "")
-                        val datastore = DataStoreAppData(context)
-                        val token = datastore.getToken.toString()
                         Log.i("ds3m tokenn", token.toString())
 
                         if (!token.isNullOrEmpty()) {
@@ -1087,14 +1087,13 @@ fun bottom(
                             val campanhaCall = retrofit.create(CampanhaCall::class.java)
 
                             val callContactPost = campanhaCall.save("Bearer $token", contact)
-
                             callContactPost.enqueue(object : Callback<CreatedCampanha> {
                                 override fun onResponse(
                                     call: Call<CreatedCampanha>,
                                     response: Response<CreatedCampanha>
                                 ) {
                                     Log.i("headers", response.headers().names().toString())
-                                    Log.i("ds3m", response.body()!!.toString())
+                                     Log.i("ds3m", response.body()!!.toString())
                                     viewModel.onAddClickCampanha()
                                 }
 

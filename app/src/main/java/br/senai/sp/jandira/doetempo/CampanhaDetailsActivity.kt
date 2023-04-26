@@ -3,6 +3,7 @@ package br.senai.sp.jandira.doetempo
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -171,7 +172,7 @@ fun AboutCampanha(campanha: Campanha) {
                 ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
                 idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
                 photoURlNGOState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
-                photoURLCampanhaState = response.body()!!.campaigns.photos[0].toString()
+                photoURLCampanhaState = response.body()!!.campaigns.photos!!?.get(0)?.toString() ?: ""
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {

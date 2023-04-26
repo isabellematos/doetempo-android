@@ -1,6 +1,5 @@
 package br.senai.sp.jandira.doetempo.model
 
-import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Campanha(
@@ -13,7 +12,7 @@ data class Campanha(
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
     var id_ngo: String? = "",
-    @SerializedName("tbl_campaign_photos") var photos: List<Uri>,
+    @SerializedName("tbl_campaign_photos") var photos: List<Photo>? = listOf(),
     var photoURL: String? = "",
     var address: Address? = Address(
         number = "",
