@@ -109,7 +109,6 @@ fun CampanhaScreen() {
         call.enqueue(object : Callback<CampanhaList> {
             override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
                 campanhasState = response.body()!!.campaigns
-
             }
 
             override fun onFailure(call: Call<CampanhaList>, t: Throwable) {

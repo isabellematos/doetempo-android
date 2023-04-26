@@ -38,4 +38,4 @@ data class Campanha(
         complement = "",
         postalCode = ""
     ),
-    )
+)

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
 import br.senai.sp.jandira.doetempo.components.subscribedCampanhaScreen
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
@@ -149,11 +150,9 @@ fun AboutCampanha(campanha: Campanha) {
     val context = LocalContext.current
     var intent = (context as CampanhaDetailsActivity).intent
     idState = intent.getStringExtra("id").toString()
-    Log.i("ds3m", idState)
 
 
     if (idState != "") {
-
         val call = campanhaCall.getById(idState)
         call.enqueue(object : Callback<CampanhaDetalhes> {
 
@@ -161,6 +160,7 @@ fun AboutCampanha(campanha: Campanha) {
                 call: Call<CampanhaDetalhes>,
                 response: Response<CampanhaDetalhes>
             ) {
+                Log.i("campanha_id", response.body().toString())
                 titleState = response.body()!!.campaigns.title.toString()
                 descriptionState = response.body()!!.campaigns.description.toString()
                 beginDateState = response.body()!!.campaigns.begin_date.toString()
@@ -458,7 +458,7 @@ fun AboutCampanha(campanha: Campanha) {
                     fontSize = 12.sp
                 )
 
-                OpenSubscribedScreen(viewModel = CreateCampanhaViewModel(), campanha)
+                OpenSubscribedScreen(viewModel = CreateCampanhaViewModel(), campanha.id.toString())
 
             }
         }
@@ -477,17 +477,14 @@ fun handleClickButtonSubscribe(
 }
 
 @Composable
-fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel, campanha: Campanha) {
-
+fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel, campanhaId: String) {
     val context = LocalContext.current
+    val datastore = DataStoreAppData(context)
+    val userId = datastore.getIdUser.collectAsState(initial = "").value.toString()
 
     Button(
         onClick = {
-            val userId = context.getSharedPreferences("app_data", Context.MODE_PRIVATE).getString("token", "testee")
-            Log.i("ds3m", userId.toString())
-
-            campanha.id?.let { context.getSharedPreferences("app_data", Context.MODE_PRIVATE).getString("id_user", "")
-                ?.let { it1 -> handleClickButtonSubscribe(viewModel, context, campanha.id!!, userId = it1) } }
+            handleClickButtonSubscribe(viewModel, context, campanhaId, userId = userId)
         },
         modifier = Modifier
             .fillMaxWidth()
