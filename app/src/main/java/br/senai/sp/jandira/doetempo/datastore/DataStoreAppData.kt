@@ -30,7 +30,6 @@ class DataStoreAppData(private val context: Context) {
     }
 
     suspend fun saveIdUser(idUser: String) {
-        Log.i("aaa", "aaa")
         context.dataStore.edit {preferences ->
             preferences[ID_USER] = idUser
         }
