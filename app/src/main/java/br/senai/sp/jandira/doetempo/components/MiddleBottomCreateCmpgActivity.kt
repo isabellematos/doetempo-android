@@ -6,13 +6,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,9 +38,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.datastore.dataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
@@ -58,14 +57,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.properties.Delegates
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -264,31 +260,6 @@ fun bottom(
             .padding(start = 55.dp, top = 30.dp, end = 55.dp),
         backgroundColor = Color(246, 246, 246)
     ) {
-        Button(
-            onClick = {
-                if (permissionState.status.isGranted) {
-                    galleryLauncher.launch("image/*")
-                } else
-                    permissionState.launchPermissionRequest()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 30.dp),
-            colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-        ) {
-            Text(
-                text = "Open your gallery",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.uploadicon),
-                modifier = Modifier.padding(start = 10.dp),
-                contentDescription = "",
-                tint = Color.White
-            )
-        }
         Icon(
             painter = painterResource(id = R.drawable.paste),
             modifier = Modifier
@@ -346,19 +317,10 @@ fun bottom(
             val context = LocalContext.current
             Button(
                 onClick = {
-                    storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                        .putFile(state.listOfSelectedImages[0])
-                        .addOnSuccessListener { task ->
-                            task.metadata!!.reference!!.downloadUrl
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "Successfull", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                                .addOnFailureListener { error ->
-                                    Toast.makeText(context, state.listOfSelectedImages.toString(), Toast.LENGTH_SHORT)
-                                        .show()
-                                        }
-                                }
+                    if (permissionState.status.isGranted) {
+                        galleryLauncher.launch("image/*")
+                    } else
+                        permissionState.launchPermissionRequest()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1134,16 +1096,32 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photos = listOf(),
+                            photos = state.listOfSelectedImages,
                             //cause = causeName,
                             causes = causesState
                         )
+
+                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                            .putFile(state.listOfSelectedImages[0])
+                            .addOnSuccessListener { task ->
+                                task.metadata!!.reference!!.downloadUrl
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "Successfull", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, state.listOfSelectedImages.toString(), Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                            }
 
                         Log.i("ds3m", contact.title.toString())
 
                         val sharedPreferences =
                             context.getSharedPreferences("app_data", Context.MODE_PRIVATE)
-                        val token = sharedPreferences.getString("token", "")
+//                        val token = sharedPreferences.getString("token", "")
+                        val datastore = DataStoreAppData(context)
+                        val token = datastore.getToken.toString()
                         Log.i("ds3m tokenn", token.toString())
 
                         if (!token.isNullOrEmpty()) {

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,10 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import br.senai.sp.jandira.doetempo.CampanhaComponents.cardAlbum
 import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
-import br.senai.sp.jandira.doetempo.components.createdCampanhaScreen
 import br.senai.sp.jandira.doetempo.components.subscribedCampanhaScreen
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
@@ -175,7 +171,7 @@ fun AboutCampanha(campanha: Campanha) {
                 ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
                 idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
                 photoURlNGOState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
-                photoURLCampanhaState = response.body()!!.campaigns.photos[0].photoURL.toString()
+                photoURLCampanhaState = response.body()!!.campaigns.photos[0].toString()
             }
 
             override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
