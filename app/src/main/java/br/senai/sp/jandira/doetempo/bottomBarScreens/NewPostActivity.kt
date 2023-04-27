@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.Manifest
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -33,15 +34,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
+import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.ImagePreviewItem
 import br.senai.sp.jandira.doetempo.R
+import br.senai.sp.jandira.doetempo.model.CreatedPost
+import br.senai.sp.jandira.doetempo.model.CreatedUser
+import br.senai.sp.jandira.doetempo.model.Post
+import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class NewPostActivity : ComponentActivity() {
@@ -231,6 +241,32 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
 
         Button(
             onClick = {
+               val contact = Post(
+                    content = newPublication,
+                    photoURL = state.listOfSelectedImages.toString()
+                )
+
+                val callContactPost = PostCall.save(contact)
+
+                callContactPost.enqueue(object : Callback<CreatedPost> {
+                    override fun onResponse(
+                        call: Call<CreatedPost>,
+                        response: Response<CreatedPost>
+                    ) {
+                        Log.i("ds3m", response.body()!!.toString())
+
+                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
+
+                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
+                            .show()
+
+                    }
+                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
+                        Log.i("ds3m", t.message.toString())
+                    }
+                })
+
+
                 storageRef.getReference("images").child(System.currentTimeMillis().toString())
                     .putFile(state.listOfSelectedImages[0])
                     .addOnSuccessListener { task ->

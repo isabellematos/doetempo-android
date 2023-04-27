@@ -10,10 +10,10 @@ interface PostCall {
     fun getAll(): Call<PostList>
 
     @GET("/post/{id}")
-    fun getById(@Path("id")id: String): Call<CampanhaDetalhes>
+    fun getById(@Path("id")id: String): Call<PostInfo>
 
 
     @POST("/post/")
-    fun save(@Header("Authorization") token: String, @Body contact: Campanha): Call<CreatedCampanha>
+    fun save(@Header("Authorization") token: String, @Body contact: Campanha): Call<CreatedPost>
 
 }

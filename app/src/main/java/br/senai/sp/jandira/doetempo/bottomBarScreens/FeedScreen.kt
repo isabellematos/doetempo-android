@@ -24,9 +24,12 @@ import br.senai.sp.jandira.doetempo.model.PostInfo
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyRow
@@ -40,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.components.bottom
+import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -47,6 +51,23 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.storage.FirebaseStorage
 
+class FeedScreenActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            DoetempoTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    FeedScreen()
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Preview(showBackground = true, showSystemUi = true)
