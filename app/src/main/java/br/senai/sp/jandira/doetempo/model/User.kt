@@ -15,6 +15,8 @@ data class User(
     var address: Address?,
     var rg: String? = "",
     var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
+    var id_type: String = "",
+    var photoURL: String? = "",
     @SerializedName("id_type") var idType: String? = ""
 ){
     override fun toString(): String {

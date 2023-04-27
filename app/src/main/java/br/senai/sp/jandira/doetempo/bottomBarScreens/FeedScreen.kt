@@ -1,21 +1,12 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.R
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CameraAlt
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Videocam
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,22 +19,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import br.senai.sp.jandira.doetempo.BottomBar
-import br.senai.sp.jandira.doetempo.Fab
 import br.senai.sp.jandira.doetempo.HomeActivities.Items_menu
-import br.senai.sp.jandira.doetempo.MinFabItem
-import br.senai.sp.jandira.doetempo.MultiFloatingState
 import br.senai.sp.jandira.doetempo.model.PostInfo
-
-import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import br.senai.sp.jandira.doetempo.*
+import br.senai.sp.jandira.doetempo.components.bottom
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+//import br.senai.sp.jandira.feedscreen.componentsFeedScreen.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.storage.FirebaseStorage
 
 
-
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun FeedScreen() {
-
+fun FeedScreen(viewModel: CreateCampanhaViewModel = viewModel()) {
 
     val systemUi = rememberSystemUiController()
     val navController = rememberNavController()
@@ -77,7 +85,7 @@ fun FeedScreen() {
     val users = listOf(
         PostInfo(
             name = "Nome teste",
-            profilePic = painterResource(id = R.drawable.mansmiling),
+            profilePic = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
             date = "27 dez. às 14:33",
             verified = false,
             postText = "Lore epsum ragatanga arigato konichua bafome vem na minha casa bafome pra ver se eu nao encho de porrada.",
@@ -89,11 +97,11 @@ fun FeedScreen() {
         ),
         PostInfo(
             name = "Nome teste2",
-            profilePic = painterResource(id = R.drawable.mansmiling),
+            profilePic = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
             date = "10 dez. às 14:33",
             verified = true,
             postText = "Lore epsum ragatanga arigato konichua bafome vem na minha casa bafome pra ver se eu nao encho de porrada.",
-            postPhoto = painterResource(id = R.drawable.postpicexample),
+            postPhoto = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.postpicexample),
             postVideo = "",
             comment = "",
             commentCount = 10,
@@ -101,7 +109,7 @@ fun FeedScreen() {
         ),
         PostInfo(
             name = "Nome teste3",
-            profilePic = painterResource(id = R.drawable.mansmiling),
+            profilePic = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
             date = "27 dez. às 07:55",
             verified = false,
             postText = "",
@@ -113,120 +121,40 @@ fun FeedScreen() {
         )
     )
 
-    var newPublication by remember {
-        mutableStateOf("")
-    }
-    var newPublicationisError by remember {
-        mutableStateOf(false)
-    }
-
-    val weightFocusRequester = FocusRequester()
-
 
 //CONTENT
+
+    val context = LocalContext.current
+
     Column(
-        modifier = Modifier.fillMaxSize().background(color = Color(248,248,248))
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp),
     ) {
-
-        Box(
+        Row(
             modifier = Modifier
-
-                .height(100.dp),
+                .fillMaxWidth()
         ) {
-            //HEADER
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(70.dp)
-                    .background(Color(79, 254, 199)),
-            )
-            {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .padding(start = 350.dp, top = 10.dp)
-
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "",
-                        tint = Color.DarkGray
-                    )
+            IconButton(
+                onClick = {
+                    context.startActivity(Intent(context, NewPostActivity()::class.java))
                 }
-            }
-            Image(
-                painter = painterResource(id = br.senai.sp.jandira.feedscreen.R.drawable.mansmiling),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .size(70.dp)
-                    .border(
-                        2.dp,
-                        color = Color(79, 121, 254),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clip(shape = RoundedCornerShape(8.dp))
-                    .align(Alignment.BottomStart)
-
-            )
-        }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OutlinedTextField(
-                value = newPublication,
-                onValueChange = {altPublication ->
-                    if (altPublication.length == 0) {
-                        newPublicationisError = true
-                        altPublication
-                    } else {
-                        newPublicationisError = false
-                    }
-                    newPublication = altPublication
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .size(300.dp, 50.dp)
-                    .focusRequester(weightFocusRequester),
-                label = {
-                    Text(
-                        text = "Faça uma publicação",
-                        fontWeight = FontWeight.Normal
-                    )
-                },
-                trailingIcon = {
-                    if (newPublicationisError) Icon(imageVector = Icons.Rounded.Warning, contentDescription = "")
-                },
-                shape = RoundedCornerShape(10.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                IconButton(
-                    onClick = { /*TODO*/ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.CameraAlt,
-                        modifier = Modifier.size(30.dp),
-                        contentDescription = ""
-                    )
-                }
-                IconButton(
-                    onClick = { /*TODO*/ }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Videocam,
-                        modifier = Modifier.size(35.dp),
-                        contentDescription = ""
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(start = 1.dp, end = 50.dp),
+                )
+                Text(
+                    text = "Faça uma publicação!",
+                    modifier = Modifier.padding(start = 10.dp),
+                    fontWeight = FontWeight.Normal
+                )
             }
         }
+
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -240,7 +168,7 @@ fun FeedScreen() {
                     items = items
                 )
             },
-            backgroundColor = Color(248,248,248),
+            backgroundColor = Color(248, 248, 248),
             isFloatingActionButtonDocked = true
         ) { innerPadding ->
             LazyColumn(
@@ -255,3 +183,4 @@ fun FeedScreen() {
         }
     }
 }
+

@@ -237,9 +237,6 @@ fun bottom(
                     .fillMaxWidth()
                     .height(screenWidth * 0.5f)
             ) {
-
-                val context = LocalContext.current
-
                 if (state.listOfSelectedImages.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier
@@ -257,7 +254,6 @@ fun bottom(
                                 }
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-
                         }
                     }
                 }
@@ -268,7 +264,6 @@ fun bottom(
                         contentAlignment = Alignment.Center
                     ) {
                     }
-
                 }
             }
 
