@@ -12,7 +12,7 @@ data class Campanha(
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
     var id_ngo: String? = "",
-    @SerializedName("tbl_campaign_photos") var photos: List<Photo>? = listOf(),
+    @SerializedName("tbl_campaign_photos") var photos: String = "",
     var photoURL: String? = "",
     var address: Address? = Address(
         number = "",

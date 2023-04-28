@@ -1,7 +1,6 @@
 package br.senai.sp.jandira.doetempo.components
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -38,7 +37,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.datastore.dataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
@@ -1049,7 +1047,6 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photos = listOf(),
                             //cause = causeName,
                             causes = causesState
                         )

@@ -10,7 +10,7 @@ interface PostCall {
     fun getAll(): Call<PostList>
 
     @GET("/post/{id}")
-    fun getById(@Path("id")id: String): Call<PostInfo>
+    fun getById(@Path("id")id: String): Call<PostDetalhes>
 
 
     @POST("/post/")

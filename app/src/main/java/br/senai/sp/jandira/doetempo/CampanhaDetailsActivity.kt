@@ -3,7 +3,6 @@ package br.senai.sp.jandira.doetempo
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -76,7 +75,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 number = "",
                                 complement = "",
                             ),
-                            photos = listOf(),
+                            photos = "",
                             cause = "",
                             causes = listOf()
                         )

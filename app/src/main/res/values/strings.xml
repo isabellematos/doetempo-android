@@ -34,4 +34,5 @@
     <string name="title_create_campanha">CreateCampanha</string>
     <string name="title_activity_storage">StorageActivity</string>
     <string name="title_activity_newpost">NewPostActivity</string>
+    <string name="title_activity_postWidget">postWidget</string>
 </resources>

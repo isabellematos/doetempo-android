@@ -246,25 +246,25 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                     photoURL = state.listOfSelectedImages.toString()
                 )
 
-                val callContactPost = PostCall.save(contact)
-
-                callContactPost.enqueue(object : Callback<CreatedPost> {
-                    override fun onResponse(
-                        call: Call<CreatedPost>,
-                        response: Response<CreatedPost>
-                    ) {
-                        Log.i("ds3m", response.body()!!.toString())
-
-                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
-
-                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
-                            .show()
-
-                    }
-                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
-                        Log.i("ds3m", t.message.toString())
-                    }
-                })
+//                val callContactPost = PostCall.save(contact)
+//
+//                callContactPost.enqueue(object : Callback<CreatedPost> {
+//                    override fun onResponse(
+//                        call: Call<CreatedPost>,
+//                        response: Response<CreatedPost>
+//                    ) {
+//                        Log.i("ds3m", response.body()!!.toString())
+//
+//                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
+//
+//                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
+//                            .show()
+//
+//                    }
+//                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
+//                        Log.i("ds3m", t.message.toString())
+//                    }
+//                })
 
 
                 storageRef.getReference("images").child(System.currentTimeMillis().toString())

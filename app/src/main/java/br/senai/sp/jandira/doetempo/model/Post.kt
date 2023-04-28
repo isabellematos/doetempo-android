@@ -6,6 +6,7 @@ data class Post(
     var id: String? = "",
     var content: String? = "",
     var created_at: String = "",
+   // @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
     @SerializedName("PostNgo") var tbl_ngo: Ong? = Ong(
         id = "",
         name = "",
