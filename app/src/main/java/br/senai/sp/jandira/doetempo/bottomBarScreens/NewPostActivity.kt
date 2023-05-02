@@ -243,7 +243,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
             onClick = {
                val contact = Post(
                     content = newPublication,
-                    photoURL = state.listOfSelectedImages.toString()
+                    photo_url = state.listOfSelectedImages.toString()
                 )
 
 //                val callContactPost = PostCall.save(contact)

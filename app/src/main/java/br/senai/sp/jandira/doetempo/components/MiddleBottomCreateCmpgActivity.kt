@@ -1052,7 +1052,7 @@ fun bottom(
                         )
                         
                         val photo = Photo(
-                            photoURL= state.listOfSelectedImages[0].toString()
+                            photo_url= state.listOfSelectedImages[0].toString()
                         )
 
                         Log.i("ds3m", photo.toString())

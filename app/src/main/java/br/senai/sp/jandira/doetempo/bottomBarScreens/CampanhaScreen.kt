@@ -55,13 +55,19 @@ fun CampanhaScreen() {
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token != null && idUser != null) {
+        if (token != null && idUser != null && userNameState !=null) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
+            datastore.saveNameUser(userNameState)
         }
     }
 
+    userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
+
     Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
+    Log.i("datastore", datastore.getNameUser.collectAsState(initial = "").value.toString())
+
+
 
     Column(
         modifier = Modifier
@@ -81,8 +87,9 @@ fun CampanhaScreen() {
             Text(
                 text = "Olá $userNameState!",
                 modifier = Modifier.padding(start = 20.dp, top = 20.dp),
+                color = Color.Black,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
 
             IconButton(onClick = {  }) {

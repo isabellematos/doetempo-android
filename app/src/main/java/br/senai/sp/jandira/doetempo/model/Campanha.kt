@@ -12,16 +12,16 @@ data class Campanha(
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
     var id_ngo: String? = "",
-    @SerializedName("tbl_campaign_photos") var photos: String = "",
-    var photoURL: String? = "",
+   //@SerializedName("campaign_photos") var photos: String = "",
+    var photo_url: String? = "",
     var address: Address? = Address(
         number = "",
         complement = "",
         postalCode = ""
     ),
-    @SerializedName("tbl_campaign_causes") var causes: List<Cause>?,
+    @SerializedName("campaign_causes") var causes: List<Cause>?,
     var cause: String? = "",
-    var tbl_ngo: Ong? = Ong(
+    var ngo: Ong? = Ong(
         id = "",
         name = "",
         email = "",
@@ -32,7 +32,8 @@ data class Campanha(
         id_type = "",
         description = ""
     ),
-    var tbl_campaign_address: Address? = Address(
+    var campaign_address: Address? = Address(
+        id = "",
         number = "",
         complement = "",
         postalCode = ""

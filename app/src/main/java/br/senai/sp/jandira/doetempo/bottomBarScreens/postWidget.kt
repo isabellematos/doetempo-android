@@ -37,7 +37,7 @@ fun PostWidget(post: Post) {
     //val verifiedSign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
 
-    val photoProfile = post.tbl_ngo?.photoURL.toString()
+    val photoProfile = post.ngo?.photo_url.toString()
     Log.i("photo1", photoProfile)
 
     val photoPost = post.post_photo

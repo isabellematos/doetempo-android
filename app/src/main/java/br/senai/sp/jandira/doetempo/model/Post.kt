@@ -7,24 +7,24 @@ data class Post(
     var content: String? = "",
     var created_at: String = "",
    // @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
-    @SerializedName("PostNgo") var tbl_ngo: Ong? = Ong(
+    @SerializedName("post_ngo") var ngo: Ong? = Ong(
         id = "",
         name = "",
         email = "",
         id_type = "",
-        photoURL = "",
+        photo_url = "",
         foundationDate = "",
         address = Address(postalCode = "", number = "", complement = ""),
     ),
-    @SerializedName("PostUser") var tbl_user: User? = User(
+    @SerializedName("post_user") var user: User? = User(
         id = "",
         name = "",
         email = "",
         id_type = "",
-        photoURL = "",
+        photo_url = "",
         birthdate = "",
         address = Address(postalCode = "", number = "", complement = ""),
     ),
-    @SerializedName("PostPhoto") var post_photo: List<Photo>? = listOf(),
-    var photoURL: String? = "",
+    @SerializedName("post_photo") var post_photo: List<Photo>? = listOf(),
+    var photo_url: String? = "",
 )

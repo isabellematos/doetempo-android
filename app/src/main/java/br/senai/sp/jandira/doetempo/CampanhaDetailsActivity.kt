@@ -32,6 +32,7 @@ import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,7 +60,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             home_office = false,
                             how_to_contribute = "",
                             prerequisites = "",
-                            tbl_ngo = Ong(
+                            ngo = Ong(
                                 id = "",
                                 name = "",
                                 email = "",
@@ -70,12 +71,12 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 id_type = "",
                                 description = ""
                             ),
-                            tbl_campaign_address = Address(
+                            campaign_address = Address(
                                 postalCode = "",
                                 number = "",
                                 complement = "",
                             ),
-                            photos = "",
+                            photo_url = "",
                             cause = "",
                             causes = listOf()
                         )
@@ -87,7 +88,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
 }
 
 //@Preview(showBackground = true, showSystemUi = true)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun AboutCampanha(campanha: Campanha) {
 
@@ -151,30 +152,41 @@ fun AboutCampanha(campanha: Campanha) {
     var intent = (context as CampanhaDetailsActivity).intent
     idState = intent.getStringExtra("id").toString()
 
+    val scope = rememberCoroutineScope()
+    val datastore = DataStoreAppData(context = context)
+
+    scope.launch {
+        if (idState != null ) {
+            datastore.saveIdCampanha(idState)
+        }
+    }
+
+    Log.i("datastore", datastore.getIdCampanha.collectAsState(initial = "").value.toString())
 
     if (idState != "") {
         val call = campanhaCall.getById(idState)
-        call.enqueue(object : Callback<CampanhaDetalhes> {
+        call.enqueue(object : Callback<Campanha> {
 
             override fun onResponse(
-                call: Call<CampanhaDetalhes>,
-                response: Response<CampanhaDetalhes>
+                call: Call<Campanha>,
+                response: Response<Campanha>
             ) {
                 Log.i("campanha_id", response.body().toString())
-                titleState = response.body()!!.campaigns.title.toString()
-                descriptionState = response.body()!!.campaigns.description.toString()
-                beginDateState = response.body()!!.campaigns.begin_date.toString()
-                endDateState = response.body()!!.campaigns.end_date.toString()
-                homeOfficeState = response.body()!!.campaigns.home_office!!
-                howToContributeState = response.body()!!.campaigns.how_to_contribute.toString()
-                prerequisitesState = response.body()!!.campaigns.prerequisites.toString()
-                ongState = response.body()!!.campaigns.tbl_ngo?.name ?: ""
-                idOngState = response.body()!!.campaigns.tbl_ngo?.id ?: ""
-                photoURlNGOState = response.body()!!.campaigns.tbl_ngo?.photoURL.toString()
-                photoURLCampanhaState = response.body()!!.campaigns.photos!!?.get(0)?.toString() ?: ""
+                titleState = response.body()!!.title.toString()
+                descriptionState = response.body()!!.description.toString()
+                beginDateState = response.body()!!.begin_date.toString()
+                endDateState = response.body()!!.end_date.toString()
+                homeOfficeState = response.body()!!.home_office!!
+                howToContributeState = response.body()!!.how_to_contribute.toString()
+                prerequisitesState = response.body()!!.prerequisites.toString()
+                ongState = response.body()!!.ngo?.name.toString()
+                idOngState = response.body()!!.ngo?.id.toString()
+                photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
+                photoURLCampanhaState = response.body()!!.photo_url.toString()
+                idState = response.body()!!.id.toString()
             }
 
-            override fun onFailure(call: Call<CampanhaDetalhes>, t: Throwable) {
+            override fun onFailure(call: Call<Campanha>, t: Throwable) {
                 Log.i("ds3m", t.message.toString())
             }
 

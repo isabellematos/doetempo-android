@@ -70,8 +70,7 @@ fun cardCampanha(campanha: Campanha) {
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp)
                 .clickable {
                     val newActivity = Intent(context, CampanhaDetailsActivity::class.java).putExtra(
-                        "id",
-                        campanha.id
+                        "id",campanha.id
                     )
                     ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
                 }
@@ -81,8 +80,7 @@ fun cardCampanha(campanha: Campanha) {
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
         ) {
-
-            photoCampanhaState1 = campanha.tbl_ngo?.photoURL.toString()
+            photoCampanhaState1 = campanha.ngo?.photo_url.toString()
             Log.i("photo", photoCampanhaState1)
 
             Row(

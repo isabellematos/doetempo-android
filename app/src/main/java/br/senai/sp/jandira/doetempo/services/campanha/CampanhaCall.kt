@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.services.campanha
 
+import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
 import br.senai.sp.jandira.doetempo.model.*
 import retrofit2.Call
 import retrofit2.http.Body
@@ -15,7 +16,7 @@ interface CampanhaCall {
     fun getAll(): Call<CampanhaList>
 
     @GET("/campaign/{id}")
-    fun getById(@Path("id")id: String): Call<CampanhaDetalhes>
+    fun getById(@Path("id")id: String): Call<Campanha>
 
 
     @POST("/campaign/")
