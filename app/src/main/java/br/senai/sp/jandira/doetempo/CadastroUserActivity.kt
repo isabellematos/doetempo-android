@@ -180,22 +180,22 @@ fun CadastroUser() {
 
     val retrofit = RetrofitFactory.getRetrofit()
     val userCall = retrofit.create(UserCall::class.java)
-    val call = userCall.getAll()
-
-    var usersState by remember {
-        mutableStateOf(UserList(listOf()))
-    }
-
-    call.enqueue(object : Callback<UserList> {
-        override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
-//            Log.i("ds3m", response.body()!!.users[0].name)
-        }
-
-        override fun onFailure(call: Call<UserList>, t: Throwable) {
-//            Log.i("ds3m", t.message.toString())
-        }
-
-    })
+//    val call = userCall.getAll()
+//
+//    var usersState by remember {
+//        mutableStateOf(UserList(listOf()))
+//    }
+//
+//    call.enqueue(object : Callback<UserList> {
+//        override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
+////            Log.i("ds3m", response.body()!!.users[0].name)
+//        }
+//
+//        override fun onFailure(call: Call<UserList>, t: Throwable) {
+////            Log.i("ds3m", t.message.toString())
+//        }
+//
+//    })
     class DateTransformation() : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             return dateFilter(text)
@@ -813,8 +813,6 @@ fun CadastroUser() {
                     val text = "Todos os campos são necessarios"
                     val duration = Toast.LENGTH_SHORT
 
-
-
                     if (isNameError || isEmailError || isPasswordError || isCpfError || isBirthDateError || isCepError || isStateError || isCityError || isNumberError) {
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
@@ -833,7 +831,8 @@ fun CadastroUser() {
                                 postalCode = cepState,
                                 complement = null
                             ),
-                            gender = genderState
+                            gender = genderState,
+                            type = Type()
                         )
 
                         Log.i("ds3m", contact.birthdate.toString())

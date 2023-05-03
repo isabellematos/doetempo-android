@@ -37,8 +37,8 @@ fun PostWidget(post: Post) {
     //val verifiedSign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
 
-    val photoProfile = post.ngo?.photo_url.toString()
-    Log.i("photo1", photoProfile)
+//    val photoProfile = post.ngo?.photo_url.toString()
+//    Log.i("photo1", photoProfile)
 
     val photoPost = post.post_photo
     if (photoPost != null) {
@@ -68,18 +68,18 @@ fun PostWidget(post: Post) {
                 Row(
                     verticalAlignment = Alignment.Top
                 ) {
-                    AsyncImage(
-                        model = photoProfile,
-                        contentDescription = null,
-                        Modifier
-                            .size(60.dp)
-                            .padding(start = 12.dp, top = 12.dp)
-                            .border(
-                                2.dp,
-                                color = Color(79, 121, 254),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                    )
+//                    AsyncImage(
+//                        model = photoProfile,
+//                        contentDescription = null,
+//                        Modifier
+//                            .size(60.dp)
+//                            .padding(start = 12.dp, top = 12.dp)
+//                            .border(
+//                                2.dp,
+//                                color = Color(79, 121, 254),
+//                                shape = RoundedCornerShape(8.dp)
+//                            )
+//                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(
                         modifier = Modifier.fillMaxWidth()

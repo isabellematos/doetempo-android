@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.create
 
 //import br.senai.sp.jandira.feedscreen.componentsFeedScreen.*
 
@@ -52,7 +53,6 @@ class FeedScreenActivity : ComponentActivity() {
 
 @Composable
 fun FeedScreen() {
-
 
 //    val systemUi = rememberSystemUiController()
 //    val navController = rememberNavController()
@@ -83,10 +83,7 @@ fun FeedScreen() {
 //        },
 //    )
 
-
 //CONTENT
-
-
 
     Column(
         modifier = Modifier
@@ -140,13 +137,13 @@ fun FeedScreen() {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val postCall = retrofit.create(PostCall::class.java)
-        val call = postCall.getAll()
+        var callPosts = postCall.getAll()
 
         var postState by remember {
             mutableStateOf(listOf<Post>())
         }
 
-        call.enqueue(object : Callback<PostList> {
+        callPosts.enqueue(object : Callback<PostList> {
             override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
                 postState = response.body()!!.allPosts
             }

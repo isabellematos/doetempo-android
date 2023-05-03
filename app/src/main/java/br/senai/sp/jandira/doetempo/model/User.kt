@@ -17,7 +17,8 @@ data class User(
     var gender: String = "e180d522-f176-4c44-9005-160aa1d9ecf1",
     var id_type: String = "",
     var photo_url: String? = "",
-    @SerializedName("id_type") var idType: String? = ""
+    @SerializedName("id_type") var idType: String? = "",
+    var type: Type?
 ){
     override fun toString(): String {
        return "User(id=$id, name='$name', email='$email', password='$password', cpf='$cpf')"

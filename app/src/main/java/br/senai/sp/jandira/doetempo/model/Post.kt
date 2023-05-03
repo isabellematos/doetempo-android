@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.model
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Post(
@@ -7,24 +8,26 @@ data class Post(
     var content: String? = "",
     var created_at: String = "",
    // @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
-    @SerializedName("post_ngo") var ngo: Ong? = Ong(
-        id = "",
-        name = "",
-        email = "",
-        id_type = "",
-        photo_url = "",
-        foundationDate = "",
-        address = Address(postalCode = "", number = "", complement = ""),
-    ),
-    @SerializedName("post_user") var user: User? = User(
-        id = "",
-        name = "",
-        email = "",
-        id_type = "",
-        photo_url = "",
-        birthdate = "",
-        address = Address(postalCode = "", number = "", complement = ""),
-    ),
-    @SerializedName("post_photo") var post_photo: List<Photo>? = listOf(),
-    var photo_url: String? = "",
+    @SerializedName("post_ngo") var ngo: List<Ong> = listOf(),
+//        id = "",
+//        name = "",
+//        email = "",
+//        id_type = "",
+//        photo_url = "",
+//        foundationDate = "",
+//        address = Address(postalCode = "", number = "", complement = ""),
+//        type = Type(name = ""),
+//    ),
+    @SerializedName("post_user") var user: List<User> = listOf(),
+//        id = "",
+//        name = "",
+//        email = "",
+//        id_type = "",
+//        photo_url = "",
+//        birthdate = "",
+//        address = Address(postalCode = "", number = "", complement = ""),
+//        type = Type(name = "")
+//    ),
+    @SerializedName("post_photo") var post_photo: List<Uri> = listOf(),
+    @SerializedName("_count") var count: Count?
 )

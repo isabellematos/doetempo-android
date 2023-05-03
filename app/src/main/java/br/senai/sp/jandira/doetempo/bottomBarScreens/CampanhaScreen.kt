@@ -47,7 +47,7 @@ fun CampanhaScreen() {
 
     val context = LocalContext.current
     var intent = (context as HomeActivity).intent
-    userNameState = intent.getStringExtra("name").toString()
+    val nameUser = intent.getStringExtra("name")
     val token = intent.getStringExtra("key")
     val idUser = intent.getStringExtra("id_user")
 
@@ -55,18 +55,17 @@ fun CampanhaScreen() {
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token != null && idUser != null && userNameState !=null) {
+        if (token != null && idUser != null && nameUser != null ) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
-            datastore.saveNameUser(userNameState)
+            datastore.saveNameUser(nameUser)
         }
     }
 
-    userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
+     userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
 
-    Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
-    Log.i("datastore", datastore.getNameUser.collectAsState(initial = "").value.toString())
-
+    //Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
+    //Log.i("datastore", datastore.getNameUser.collectAsState(initial = "").value.toString())
 
 
     Column(
@@ -76,9 +75,6 @@ fun CampanhaScreen() {
                 color = Color(251, 251, 253)
             )
     ) {
-
-
-
         //HEADER
         Row(
             modifier = Modifier.fillMaxWidth(),

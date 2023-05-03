@@ -6,6 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import br.senai.sp.jandira.doetempo.constants.Constants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 class RetrofitFactory {
 
@@ -14,13 +16,20 @@ class RetrofitFactory {
 
         private lateinit var instance: Retrofit
 
+        val okhttp = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+
         // :: é pra pegar a instancia do objeto
         fun getRetrofit(): Retrofit {
             if (!::instance.isInitialized) {
                 instance = Retrofit
                     .Builder()
-                    .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create()) // create(gson)
+                    .baseUrl(Constants.BASE_URL)
+                    .client(okhttp)
                     .build()
             }
 

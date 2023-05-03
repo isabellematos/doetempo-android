@@ -744,6 +744,7 @@ fun CadastroOng() {
                                 postalCode = cepState,
                                 complement = null
                             ),
+                            type = Type()
                         )
 
                         val callContactOngPost = ongCall.save(contact)
@@ -755,8 +756,7 @@ fun CadastroOng() {
                             ) {
                                 Log.i("ds3m", response.body()!!.toString())
 
-                                val newActivity =
-                                    Intent(context, HomeActivity::class.java).putExtra(
+                                val newActivity = Intent(context, HomeActivity::class.java).putExtra(
                                         "name",
                                         response.body()!!.payload.name
                                     )

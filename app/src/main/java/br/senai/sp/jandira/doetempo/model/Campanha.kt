@@ -30,7 +30,8 @@ data class Campanha(
         foundationDate = "",
         address = Address(postalCode = "", number = "", complement = ""),
         id_type = "",
-        description = ""
+        description = "",
+        type = Type()
     ),
     var campaign_address: Address? = Address(
         id = "",

@@ -69,7 +69,8 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 foundationDate = "",
                                 address = Address(postalCode = "", number = "", complement = ""),
                                 id_type = "",
-                                description = ""
+                                description = "",
+                                type = Type()
                             ),
                             campaign_address = Address(
                                 postalCode = "",

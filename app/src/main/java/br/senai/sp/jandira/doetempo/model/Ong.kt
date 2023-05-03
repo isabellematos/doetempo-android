@@ -14,7 +14,8 @@ data class Ong(
     var address: Address?,
     var id_type: String? = "",
     var description: String?  = "",
-    var photo_url: String? = ""
+    var photo_url: String? = "",
+    var type: Type?
 ){
     override fun toString(): String {
         return "Ong(id='$id', name='$name', email='$email', password='$password', cnpj='$cnpj', foundation_date='$foundationDate')"
