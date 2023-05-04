@@ -34,16 +34,17 @@ import coil.compose.AsyncImage
 
 @Composable
 fun PostWidget(post: Post) {
-    //val verifiedSign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
+    //val verifiedS
+    // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
 
 //    val photoProfile = post.ngo?.photo_url.toString()
 //    Log.i("photo1", photoProfile)
 
-    val photoPost = post.post_photo
-    if (photoPost != null) {
-        Log.i("photo2", photoPost.toString())
-    }
+//    val photoPost = post.post_photo
+//    if (photoPost != null) {
+//        Log.i("photo2", photoPost.toString())
+//    }
 
     Column(
         modifier = Modifier
@@ -105,10 +106,12 @@ fun PostWidget(post: Post) {
 //                            }
 //                        }
 //                    }
-                        Text(
-                            text = post.created_at,
-                            fontSize = 13.sp
-                        )
+                        post.created_at?.let {
+                            Text(
+                                text = it,
+                                fontSize = 13.sp
+                            )
+                        }
                         post.content?.let {
                             Text(
                                 text = it,
@@ -127,18 +130,18 @@ fun PostWidget(post: Post) {
                 }
 
             }
-            AsyncImage(
-                model = photoPost,
-                contentDescription = null,
-                Modifier
-                    .size(60.dp)
-                    .padding(start = 12.dp, top = 12.dp)
-                    .border(
-                        2.dp,
-                        color = Color(79, 121, 254),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            )
+//            AsyncImage(
+//                model = photoPost,
+//                contentDescription = null,
+//                Modifier
+//                    .size(60.dp)
+//                    .padding(start = 12.dp, top = 12.dp)
+//                    .border(
+//                        2.dp,
+//                        color = Color(79, 121, 254),
+//                        shape = RoundedCornerShape(8.dp)
+//                    )
+//            )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {

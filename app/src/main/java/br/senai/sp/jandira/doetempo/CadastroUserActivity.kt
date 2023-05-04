@@ -495,8 +495,10 @@ fun CadastroUser() {
             })
 
             var genderState by remember {
-                mutableStateOf("")
+                mutableStateOf(GenderList())
             }
+
+            var genderStateString = genderState.toString()
 
             if (!genderList.isEmpty()) {
                 val (selectedOption, onOptionSelected) = remember { mutableStateOf(genderList[0]) }
@@ -510,7 +512,7 @@ fun CadastroUser() {
                                     selected = (text == selectedOption),
                                     onClick = {
                                         onOptionSelected(text)
-                                        genderState = text.id
+                                        genderStateString = text.id.toString()
 //                                        Log.i("ds3m", genderState)
                                     },
                                     role = Role.RadioButton
@@ -520,9 +522,9 @@ fun CadastroUser() {
                         ) {
                             RadioButton(
                                 selected = (text == selectedOption),
-                                onClick = { genderState = text.id }
+                                onClick = { genderStateString = text.id.toString() }
                             )
-                            Text(text = text.name)
+                            text.name?.let { Text(text = it) }
                         }
                     }
                 }

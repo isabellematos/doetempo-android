@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.platform.LocalContext
 import br.senai.sp.jandira.doetempo.*
+import br.senai.sp.jandira.doetempo.CampanhaComponents.datas
 import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
@@ -51,18 +53,37 @@ class FeedScreenActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun FeedScreen() {
 
 //    val systemUi = rememberSystemUiController()
 //    val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
     var multiFloatingState by remember {
         mutableStateOf(MultiFloatingState.Collapsed)
     }
 
     val context = LocalContext.current
+
+
+    var intent = (context as HomeActivity).intent
+    val token = intent.getStringExtra("key")
+    val idUser = intent.getStringExtra("id_user")
+    val nameUser = intent.getStringExtra("name")
+    val typeUser = intent.getStringExtra("type")
+
+    val scope = rememberCoroutineScope()
+    val datastore = DataStoreAppData(context = context)
+
+    scope.launch {
+        if (token !== null && idUser !== null && nameUser !== null  && typeUser !== null) {
+            datastore.saveToken(token)
+            datastore.saveIdUser(idUser)
+            datastore.saveNameUser(nameUser)
+            datastore.saveTypeUser(typeUser)
+        }
+    }
 
 //    val users = listOf(
 //        post.tbl_ngo?.let {
@@ -145,7 +166,7 @@ fun FeedScreen() {
 
         callPosts.enqueue(object : Callback<PostList> {
             override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
-                postState = response.body()!!.allPosts
+             postState = response.body()!!.allPosts
             }
 
             override fun onFailure(call: Call<PostList>, t: Throwable) {

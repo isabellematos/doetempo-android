@@ -257,6 +257,10 @@ fun Login() {
                                         response.body()!!.dataUser?.name
                                     )
 
+                                    newActivity.putExtra("id_user", response.body()!!.dataUser?.id)
+                                    newActivity.putExtra("type", response.body()!!.dataUser?.type)
+
+
                                     startActivity(context, newActivity, Bundle.EMPTY)
 
                                 }

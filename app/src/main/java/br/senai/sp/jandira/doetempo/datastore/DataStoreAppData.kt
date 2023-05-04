@@ -20,11 +20,16 @@ class DataStoreAppData(private val context: Context) {
         val ID_USER = stringPreferencesKey("id_user")
         val ID_CAMPANHA = stringPreferencesKey("id_campanha")
         val NAME_USER = stringPreferencesKey("name_user")
+        val TYPE_USER = stringPreferencesKey("type_user")
     }
 
     // Pegar o token
     val getToken: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[TOKEN_JWT] ?: ""
+    }
+
+    val getTypeUser: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[TYPE_USER] ?: ""
     }
 
     val getIdCampanha: Flow<String?> = context.dataStore.data.map { preferences ->
@@ -45,6 +50,12 @@ class DataStoreAppData(private val context: Context) {
         }
     }
 
+    suspend fun saveTypeUser(typeUser: String) {
+        context.dataStore.edit {preferences ->
+            preferences[TYPE_USER] = typeUser
+        }
+    }
+
     suspend fun saveIdCampanha(idCampanha: String) {
         context.dataStore.edit {preferences ->
             preferences[ID_CAMPANHA] = idCampanha
@@ -59,7 +70,6 @@ class DataStoreAppData(private val context: Context) {
 
     // Salvar o token no dataStore
     suspend fun saveToken(token: String) {
-        Log.i("aaa", "aaa")
         context.dataStore.edit { preferences ->
             preferences[TOKEN_JWT] = token
         }

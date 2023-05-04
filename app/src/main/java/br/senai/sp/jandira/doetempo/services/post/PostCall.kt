@@ -14,6 +14,6 @@ interface PostCall {
 
 
     @POST("/post/")
-    fun save(@Header("Authorization") token: String, @Body contact: Campanha): Call<CreatedPost>
+    fun save(@Header("Authorization") token: String, @Body contact: CreatePost): Call<CreatedPost>
 
 }

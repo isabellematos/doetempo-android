@@ -1,14 +1,13 @@
 package br.senai.sp.jandira.doetempo.model
 
-import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class Post(
     var id: String? = "",
     var content: String? = "",
-    var created_at: String = "",
-   // @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
-    @SerializedName("post_ngo") var ngo: List<Ong> = listOf(),
+    var created_at: String? = "",
+//    @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
+    @SerializedName("post_ngo") var ngo: List<Ong?>? = null,
 //        id = "",
 //        name = "",
 //        email = "",
@@ -18,7 +17,7 @@ data class Post(
 //        address = Address(postalCode = "", number = "", complement = ""),
 //        type = Type(name = ""),
 //    ),
-    @SerializedName("post_user") var user: List<User> = listOf(),
+   //@SerializedName("post_user") var user: List<User?>? = null,
 //        id = "",
 //        name = "",
 //        email = "",
@@ -28,6 +27,6 @@ data class Post(
 //        address = Address(postalCode = "", number = "", complement = ""),
 //        type = Type(name = "")
 //    ),
-    @SerializedName("post_photo") var post_photo: List<Uri> = listOf(),
-    @SerializedName("_count") var count: Count?
+    //@SerializedName("post_photo") var post_photo: List<Photo> = listOf(),
+    //@SerializedName("_count") var count: Count?
 )

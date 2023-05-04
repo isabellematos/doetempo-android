@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.Manifest
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -36,12 +37,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
 import br.senai.sp.jandira.doetempo.ImagePreviewItem
 import br.senai.sp.jandira.doetempo.R
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
+import br.senai.sp.jandira.doetempo.model.CreatePost
+import br.senai.sp.jandira.doetempo.model.CreatedPost
+import br.senai.sp.jandira.doetempo.model.Photo
 import br.senai.sp.jandira.doetempo.model.Post
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class NewPostActivity : ComponentActivity() {
@@ -86,6 +96,13 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+
+
+    val context = LocalContext.current
+
+    val datastore = DataStoreAppData(context)
+    val token = datastore.getToken.collectAsState(initial = "").value.toString()
+    val typeUser = datastore.getTypeUser.collectAsState(initial = "").value.toString()
 
     val permissionState = rememberPermissionState(
         permission = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -227,35 +244,35 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
             }
         }
 
-        val context = LocalContext.current
-
         Button(
             onClick = {
-               val contact = Post(
+               val contact = CreatePost(
                     content = newPublication,
-                    post_photo = state.listOfSelectedImages,
-                   count = null
+                    photos = listOf(state.listOfSelectedImages.toString()),
+                    typeUser = typeUser
                 )
 
-//                val callContactPost = PostCall.save(contact)
-//
-//                callContactPost.enqueue(object : Callback<CreatedPost> {
-//                    override fun onResponse(
-//                        call: Call<CreatedPost>,
-//                        response: Response<CreatedPost>
-//                    ) {
-//                        Log.i("ds3m", response.body()!!.toString())
-//
-//                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
-//
-//                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
-//                            .show()
-//
-//                    }
-//                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
-//                        Log.i("ds3m", t.message.toString())
-//                    }
-//                })
+                val retrofit = RetrofitFactory.getRetrofit()
+                val postCall = retrofit.create(PostCall::class.java)
+                val callContactPost = postCall.save("Bearer $token", contact)
+
+                callContactPost.enqueue(object : Callback<CreatedPost> {
+                    override fun onResponse(
+                        call: Call<CreatedPost>,
+                        response: Response<CreatedPost>
+                    ) {
+                      //  Log.i("post", response.body()!!.message)
+
+                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
+
+                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
+                            .show()
+
+                    }
+                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
+                        Log.i("ds3m", t.message.toString())
+                    }
+                })
 
 
                 storageRef.getReference("images").child(System.currentTimeMillis().toString())
@@ -263,7 +280,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                     .addOnSuccessListener { task ->
                         task.metadata!!.reference!!.downloadUrl
                             .addOnSuccessListener {
-                                Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT)
                                     .show()
                             }
                             .addOnFailureListener { error ->
