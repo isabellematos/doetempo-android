@@ -61,7 +61,12 @@
         <activity
             android:name=".bottomBarScreens.NewPostActivity"
             android:exported="false"
-            android:label="@string/title_activity_login"
+            android:label="@string/title_activity_newpost"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
+            android:name=".bottomBarScreens.FeedScreenActivity"
+            android:exported="false"
+            android:label="@string/title_activity_feed_screen"
             android:theme="@style/Theme.Doetempo" />
         <activity
             android:name=".SelectionActivity"

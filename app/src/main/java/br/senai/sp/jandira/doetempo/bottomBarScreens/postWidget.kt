@@ -38,9 +38,9 @@ fun PostWidget(post: Post) {
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
 
-//    val photoProfile = post.ngo?.photo_url.toString()
+//    val photoProfile = post.ngo?.photo_ngo.toString()
 //    Log.i("photo1", photoProfile)
-
+//
 //    val photoPost = post.post_photo
 //    if (photoPost != null) {
 //        Log.i("photo2", photoPost.toString())
@@ -69,6 +69,18 @@ fun PostWidget(post: Post) {
                 Row(
                     verticalAlignment = Alignment.Top
                 ) {
+                    Image(
+                        painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
+                        contentDescription = "logo",
+                        modifier =  Modifier
+                            .size(60.dp)
+                            .padding(start = 12.dp, top = 12.dp)
+                            .border(
+                                2.dp,
+                                color = Color(79, 121, 254),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                    )
 //                    AsyncImage(
 //                        model = photoProfile,
 //                        contentDescription = null,
@@ -80,7 +92,6 @@ fun PostWidget(post: Post) {
 //                                color = Color(79, 121, 254),
 //                                shape = RoundedCornerShape(8.dp)
 //                            )
-//                    )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(
                         modifier = Modifier.fillMaxWidth()
@@ -109,7 +120,8 @@ fun PostWidget(post: Post) {
                         post.created_at?.let {
                             Text(
                                 text = it,
-                                fontSize = 13.sp
+                                fontSize = 13.sp,
+                                color = Color.Black
                             )
                         }
                         post.content?.let {
@@ -117,7 +129,8 @@ fun PostWidget(post: Post) {
                                 text = it,
                                 modifier = Modifier.padding(end = 16.dp),
                                 fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black
                             )
                         }
                     }
@@ -130,18 +143,18 @@ fun PostWidget(post: Post) {
                 }
 
             }
-//            AsyncImage(
-//                model = photoPost,
-//                contentDescription = null,
-//                Modifier
-//                    .size(60.dp)
-//                    .padding(start = 12.dp, top = 12.dp)
-//                    .border(
-//                        2.dp,
-//                        color = Color(79, 121, 254),
-//                        shape = RoundedCornerShape(8.dp)
-//                    )
-//            )
+            Image(
+                painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
+                contentDescription = "logo",
+                Modifier
+                    .size(60.dp)
+                    .padding(start = 12.dp, top = 12.dp)
+                    .border(
+                        2.dp,
+                        color = Color(79, 121, 254),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {

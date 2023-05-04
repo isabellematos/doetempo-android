@@ -27,13 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.R
+import br.senai.sp.jandira.doetempo.model.User
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-@Preview(showBackground = true, showSystemUi = true)
-fun ProfileScreen() {
+//@Preview(showBackground = true, showSystemUi = true)
+fun ProfileScreen(user: User) {
     val weightFocusRequester = FocusRequester()
     val systemUi = rememberSystemUiController()
     val navController = rememberNavController()
@@ -80,7 +81,7 @@ fun ProfileScreen() {
                     .align(Alignment.BottomStart)
             )
             Text(
-                text = "{Nome do usuario}",
+                text = user.name,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 50.dp)
                     .align(Alignment.BottomCenter),
@@ -152,7 +153,7 @@ fun ProfileScreen() {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = "Estrada do macaco manco agúdo, 245",
+                    text = user.email,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 )
