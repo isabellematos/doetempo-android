@@ -20,6 +20,6 @@ interface CampanhaCall {
 
 
     @POST("/campaign/")
-    fun save(@Header("Authorization") token: String, @Body contact: Campanha): Call<CreatedCampanha>
+    fun save(@Header("Authorization") token: String, @Body contact: CreateCampanhaBody): Call<String>
 
 }

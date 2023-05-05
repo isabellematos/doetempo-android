@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
 import br.senai.sp.jandira.doetempo.model.Post
 import coil.compose.AsyncImage
+import java.text.DateFormat
 
 @Composable
 fun PostWidget(post: Post) {
@@ -41,6 +42,7 @@ fun PostWidget(post: Post) {
 //    val photoProfile = post.ngo?.photo_ngo.toString()
 //    Log.i("photo1", photoProfile)
 //
+
 //    val photoPost = post.post_photo
 //    if (photoPost != null) {
 //        Log.i("photo2", photoPost.toString())
@@ -72,7 +74,7 @@ fun PostWidget(post: Post) {
                     Image(
                         painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
                         contentDescription = "logo",
-                        modifier =  Modifier
+                        modifier = Modifier
                             .size(60.dp)
                             .padding(start = 12.dp, top = 12.dp)
                             .border(
@@ -93,70 +95,72 @@ fun PostWidget(post: Post) {
 //                                shape = RoundedCornerShape(8.dp)
 //                            )
                     Spacer(modifier = Modifier.width(10.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-//                    Row(verticalAlignment = Alignment.CenterVertically,modifier = Modifier.fillMaxWidth()) {
-//                        if (post.verified == true) {
-//                            post.tbl_ngo?.let {
-//                                Text(
-//                                    text = it.name,
-//                                    fontSize = 20.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                )
-//                            }
-//                            Spacer(modifier = Modifier.padding(3.dp))
-//                            Icon(imageVector = Icons.TwoTone.Verified, contentDescription = "Verified", modifier = Modifier.size(20.dp), tint = Color(69,201,165))
-//                        } else {
-//                            post.tbl_ngo?.let {
-//                                Text(
-//                                    text = it.name,
-//                                    fontSize = 20.sp,
-//                                    fontWeight = FontWeight.Bold
-//                                )
-//                            }
-//                        }
-//                    }
-                        post.created_at?.let {
-                            Text(
-                                text = it,
-                                fontSize = 13.sp,
-                                color = Color.Black
-                            )
-                        }
-                        post.content?.let {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(end = 16.dp),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.Black
-                            )
-                        }
-                    }
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Filled.MoreHoriz,
-                        contentDescription = "More Option"
-                    )
                 }
 
+//                    Column(
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            modifier = Modifier.fillMaxWidth()
+//                        ) {
+//                        if (post.ngo !== null) {
+//                            post.ngo?.let {
+//                                it[0]?.let { it1 ->
+//                                    Text(
+//                                        text = it1.name,
+//                                        fontSize = 20.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                }
+//                            }
+//                        }else
+//                            post.user?.let {
+//                                it[0]?.let { it1 ->
+//                                    Text(
+//                                        text = it1.name,
+//                                        fontSize = 20.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                }
+                        //}
+                    //    Spacer(modifier = Modifier.padding(3.dp))
+                    //}
+                    post.created_at?.let {
+                        Text(
+                            text = it,
+                            fontSize = 13.sp,
+                            color = Color.Black
+                        )
+                    }
+                    post.content?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.padding(end = 16.dp, top = 20.dp),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black
+                        )
+                    }
             }
-            Image(
-                painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
-                contentDescription = "logo",
-                Modifier
-                    .size(60.dp)
-                    .padding(start = 12.dp, top = 12.dp)
-                    .border(
-                        2.dp,
-                        color = Color(79, 121, 254),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            )
+            }
+//                IconButton(onClick = { ) {
+//                    Icon(
+//                        imageVector = Icons.Filled.MoreHoriz,
+//                        contentDescription = "More Option"
+//                    )
+//                }
+//
+//            AsyncImage(
+//                model = photoPost,
+//                contentDescription = null,
+//                Modifier
+//                    .size(20.dp)
+//                    .padding(start = 12.dp, top = 12.dp)
+//            )
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
             ) {
                 IconButton(onClick = { /*TODO*/ }) {
                     Icon(
@@ -168,7 +172,7 @@ fun PostWidget(post: Post) {
                 Text(
                     text = "200",
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 13.dp),
+                    modifier = Modifier.padding(bottom = 15.dp),
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Gray
                 )
@@ -182,21 +186,15 @@ fun PostWidget(post: Post) {
                 Text(
                     text = "130",
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 13.dp),
+                    modifier = Modifier.padding(bottom = 15.dp, end = 12.dp),
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Gray
                 )
             }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "───────────────────────────────")
-            }
-
         }
     }
-}
+
+
 
 
 //@Composable

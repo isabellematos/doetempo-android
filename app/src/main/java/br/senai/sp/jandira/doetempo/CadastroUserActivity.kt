@@ -475,27 +475,27 @@ fun CadastroUser() {
             )
 
             var genderList by remember {
-                mutableStateOf(listOf<GenderList>())
+                mutableStateOf(listOf<Gender>())
             }
 
             val retrofit = RetrofitFactory.getRetrofit()
             val genderCreateCall = retrofit.create(GenderCall::class.java)
             val genderCall = genderCreateCall.getAll()
 
-            genderCall.enqueue(object : Callback<Gender> {
-                override fun onResponse(call: Call<Gender>, response: Response<Gender>) {
+            genderCall.enqueue(object : Callback<GenderList> {
+                override fun onResponse(call: Call<GenderList>, response: Response<GenderList>) {
 //                    Log.i("ds3m", response.body()!!.genders[0].name)
                     genderList = response.body()!!.genders
                 }
 
-                override fun onFailure(call: Call<Gender>, t: Throwable) {
+                override fun onFailure(call: Call<GenderList>, t: Throwable) {
 //                    Log.i("ds3m", t.message.toString())
                 }
 
             })
 
             var genderState by remember {
-                mutableStateOf(GenderList())
+                mutableStateOf(Gender())
             }
 
             var genderStateString = genderState.toString()

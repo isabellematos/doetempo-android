@@ -1,9 +1,6 @@
 package br.senai.sp.jandira.doetempo.model
 
-import androidx.compose.runtime.MutableState
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
-import java.util.Date
 
 data class User(
     var id: String? = "",
@@ -14,7 +11,7 @@ data class User(
     var birthdate: String,
     var address: Address?,
     var rg: String? = "",
-    var gender: GenderList?,
+    var gender: Gender,
     var id_type: String = "",
     var photo_url: String? = "",
     @SerializedName("id_type") var idType: String? = "",

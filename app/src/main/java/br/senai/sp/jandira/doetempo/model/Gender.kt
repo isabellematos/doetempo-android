@@ -1,5 +1,8 @@
 package br.senai.sp.jandira.doetempo.model
 
 data class Gender(
-    var genders: List<GenderList>
+    var id: String? = "",
+    var name: String? = "",
+    var abbreviation: String? = ""
 )
+

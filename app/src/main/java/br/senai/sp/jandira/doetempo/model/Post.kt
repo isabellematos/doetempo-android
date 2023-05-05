@@ -17,7 +17,7 @@ data class Post(
 //        address = Address(postalCode = "", number = "", complement = ""),
 //        type = Type(name = ""),
 //    ),
-   //@SerializedName("post_user") var user: List<User?>? = null,
+//   @SerializedName("post_user") var user: List<User?>?,
 //        id = "",
 //        name = "",
 //        email = "",
@@ -27,6 +27,6 @@ data class Post(
 //        address = Address(postalCode = "", number = "", complement = ""),
 //        type = Type(name = "")
 //    ),
-    //@SerializedName("post_photo") var post_photo: List<Photo> = listOf(),
+//    @SerializedName("post_photo") var post_photo: List<Photo> = listOf(),
     //@SerializedName("_count") var count: Count?
 )

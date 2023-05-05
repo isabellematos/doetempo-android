@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.components
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -57,10 +58,12 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun bottom(
@@ -90,6 +93,10 @@ fun bottom(
 
     var sobreCampanhaState by remember {
         mutableStateOf("")
+    }
+
+    var imageItState by remember {
+        mutableStateOf(listOf(""))
     }
 
     var sobreCampanhaIsError by remember {
@@ -792,6 +799,9 @@ fun bottom(
     val context = LocalContext.current
 
     val datastore = DataStoreAppData(context)
+
+    val scope = rememberCoroutineScope()
+
     val token = datastore.getToken.collectAsState(initial = "").value.toString()
 
     Column(modifier = Modifier.selectableGroup()) {
@@ -879,8 +889,8 @@ fun bottom(
 
     callCause.enqueue(object : Callback<CauseList> {
         override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
-          //  causesState = response.body()!!.causes
-           // Log.i("causa", causesState.toString())
+            //  causesState = response.body()!!.causes
+            // Log.i("causa", causesState.toString())
         }
 
         override fun onFailure(call: Call<CauseList>, t: Throwable) {
@@ -1033,7 +1043,7 @@ fun bottom(
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
                     } else {
-                        val contact = Campanha(
+                        val contact = CreateCampanhaBody(
                             title = nomeCampanhaState,
                             description = sobreCampanhaState,
                             begin_date = beginDateState,
@@ -1047,50 +1057,60 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
+                            photo_url= imageItState,
                             //cause = causeName,
-                            causes = causesState
-                        )
-                        
-                        val photo = Photo(
-                            photo_url= state.listOfSelectedImages[0].toString()
+                            causes= causesState
                         )
 
-                        Log.i("ds3m", photo.toString())
 
-                        storageRef.getReference("images").child(System.currentTimeMillis().toString())
+
+                        storageRef.getReference("images")
+                            .child(System.currentTimeMillis().toString())
                             .putFile(state.listOfSelectedImages[0])
                             .addOnSuccessListener { task ->
                                 task.metadata!!.reference!!.downloadUrl
                                     .addOnSuccessListener {
+                                        imageItState = listOf(it.toString())
                                         Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
                                             .show()
                                     }
                                     .addOnFailureListener { error ->
-                                        Toast.makeText(context, state.listOfSelectedImages.toString(), Toast.LENGTH_SHORT)
+                                        Toast.makeText(
+                                            context,
+                                            state.listOfSelectedImages.toString(),
+                                            Toast.LENGTH_SHORT
+                                        )
                                             .show()
                                     }
                             }
+                        val photo = Photo(
+                            photo_url = imageItState[0]
+                        )
 
-                        Log.i("ds3m", contact.title.toString())
-                        Log.i("ds3m tokenn", token.toString())
+                        Log.i("ds3m", photo.toString())
+
+
+
+                      //  Log.i("ds3m", contact.title.toString())
+                      //  Log.i("ds3m tokenn", token.toString())
 
                         if (!token.isNullOrEmpty()) {
                             val retrofit = RetrofitFactory.getRetrofit()
                             val campanhaCall = retrofit.create(CampanhaCall::class.java)
 
                             val callContactPost = campanhaCall.save("Bearer $token", contact)
-                            callContactPost.enqueue(object : Callback<CreatedCampanha> {
+                            callContactPost.enqueue(object : Callback<String> {
                                 override fun onResponse(
-                                    call: Call<CreatedCampanha>,
-                                    response: Response<CreatedCampanha>
+                                    call: Call<String>,
+                                    response: Response<String>
                                 ) {
-                                    Log.i("headers", response.headers().names().toString())
-                                     Log.i("ds3m", response.body()!!.toString())
+                                      // Log.i("headers", response.headers().names().toString())
+                                      //Log.i("ds3m", response.body()!!.toString())
                                     viewModel.onAddClickCampanha()
                                 }
 
                                 override fun onFailure(
-                                    call: Call<CreatedCampanha>,
+                                    call: Call<String>,
                                     t: Throwable
                                 ) {
                                     Log.i("ds3m", t.message.toString())

@@ -4,14 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import br.senai.sp.jandira.doetempo.HomeActivities.Items_menu
 import br.senai.sp.jandira.doetempo.bottomBarScreens.CampanhaScreen
 import br.senai.sp.jandira.doetempo.bottomBarScreens.FeedScreen
 import br.senai.sp.jandira.doetempo.bottomBarScreens.ProfileScreen
-import br.senai.sp.jandira.doetempo.model.Address
-import br.senai.sp.jandira.doetempo.model.GenderList
-import br.senai.sp.jandira.doetempo.model.Type
-import br.senai.sp.jandira.doetempo.model.User
+import br.senai.sp.jandira.doetempo.model.*
 
 @Composable
 fun NavigationHost(navController: NavHostController) {
@@ -38,7 +34,7 @@ fun NavigationHost(navController: NavHostController) {
                         number = "",
                         complement = ""
                     ),
-                    gender = GenderList(),
+                    gender = Gender(),
                     id_type = "",
                     type = Type()
                 )

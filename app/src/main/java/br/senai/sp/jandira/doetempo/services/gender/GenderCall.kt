@@ -9,8 +9,8 @@ import retrofit2.http.GET
 interface GenderCall {
 
     @GET("gender")
-    fun getAll(): Call<Gender>
+    fun getAll(): Call<GenderList>
 
     @GET("genders")
-    fun save(contact: User): Call<GenderList>
+    fun save(contact: User): Call<Gender>
 }
