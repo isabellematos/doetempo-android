@@ -39,14 +39,11 @@ fun PostWidget(post: Post) {
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
 
-//    val photoProfile = post.ngo?.photo_ngo.toString()
-//    Log.i("photo1", photoProfile)
-//
+//    val photoProfile = post.ngo?.get(0)?.photo_url
+//        Log.i("", photoProfile.toString())
 
-//    val photoPost = post.post_photo
-//    if (photoPost != null) {
-//        Log.i("photo2", photoPost.toString())
-//    }
+
+
 
     Column(
         modifier = Modifier
@@ -57,7 +54,7 @@ fun PostWidget(post: Post) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp)
-                .size(width = 323.dp, height = 190.dp),
+                .size(width = 323.dp, height = 200.dp),
 
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
@@ -94,16 +91,17 @@ fun PostWidget(post: Post) {
 //                                color = Color(79, 121, 254),
 //                                shape = RoundedCornerShape(8.dp)
 //                            )
+//                    )
                     Spacer(modifier = Modifier.width(10.dp))
                 }
 
-//                    Column(
+//                Column(
+//                    modifier = Modifier.fillMaxWidth()
+//                ) {
+//                    Row(
+//                        verticalAlignment = Alignment.CenterVertically,
 //                        modifier = Modifier.fillMaxWidth()
 //                    ) {
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
 //                        if (post.ngo !== null) {
 //                            post.ngo?.let {
 //                                it[0]?.let { it1 ->
@@ -114,7 +112,7 @@ fun PostWidget(post: Post) {
 //                                    )
 //                                }
 //                            }
-//                        }else
+//                        } else
 //                            post.user?.let {
 //                                it[0]?.let { it1 ->
 //                                    Text(
@@ -123,27 +121,33 @@ fun PostWidget(post: Post) {
 //                                        fontWeight = FontWeight.Bold
 //                                    )
 //                                }
-                        //}
-                    //    Spacer(modifier = Modifier.padding(3.dp))
-                    //}
+//                            }
+//                        Spacer(modifier = Modifier.padding(3.dp))
+//                    }
+
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     post.created_at?.let {
                         Text(
                             text = it,
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
                             color = Color.Black
                         )
                     }
                     post.content?.let {
                         Text(
                             text = it,
-                            modifier = Modifier.padding(end = 16.dp, top = 20.dp),
-                            fontSize = 15.sp,
+                            modifier = Modifier.padding(top = 15.dp, start = 10.dp),
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Black
                         )
                     }
+                }
             }
-            }
+
+
 //                IconButton(onClick = { ) {
 //                    Icon(
 //                        imageVector = Icons.Filled.MoreHoriz,
@@ -151,11 +155,15 @@ fun PostWidget(post: Post) {
 //                    )
 //                }
 //
+
+           // Log.i("photopost", post.post_photo?.get(0)?.photoUrl.toString())
+          //  var photoPost =
+
 //            AsyncImage(
-//                model = photoPost,
+//                model = post.post_photo?.get(0)?.photoUrl.toString(),
 //                contentDescription = null,
 //                Modifier
-//                    .size(20.dp)
+//                    .size(60.dp)
 //                    .padding(start = 12.dp, top = 12.dp)
 //            )
             Row(
@@ -193,8 +201,7 @@ fun PostWidget(post: Post) {
             }
         }
     }
-
-
+}
 
 
 //@Composable

@@ -1084,7 +1084,7 @@ fun bottom(
                                     }
                             }
                         val photo = Photo(
-                            photo_url = imageItState[0]
+                            photoUrl = imageItState[0]
                         )
 
                         Log.i("ds3m", photo.toString())

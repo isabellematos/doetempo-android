@@ -184,6 +184,7 @@ fun AboutCampanha(campanha: Campanha) {
                 idOngState = response.body()!!.ngo?.id.toString()
                 photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
                 photoURLCampanhaState = response.body()!!.photo_url.toString()
+                Log.i("imgcampanha", photoURLCampanhaState)
                 idState = response.body()!!.id.toString()
             }
 
@@ -326,6 +327,7 @@ fun AboutCampanha(campanha: Campanha) {
                     textAlign = TextAlign.Justify,
                     modifier = Modifier.padding(end = 50.dp),
                     color = Color.Black,
+                    fontSize = 17.sp
                 )
                 Log.i("ds3m", descriptionState.toString())
                 Text(
@@ -336,17 +338,6 @@ fun AboutCampanha(campanha: Campanha) {
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
 
-                Row() {
-                    Icon(
-                        imageVector = Icons.Default.Alarm,
-                        contentDescription = "",
-                        modifier = Modifier.padding(bottom = 15.dp)
-                    )
-                    Text(
-                        text = "x horas de n coisas",
-                        modifier = Modifier.padding(top = 2.dp, start = 10.dp)
-                    )
-                }
 
                 var possibleHomeOffice = "Pode ser feito online"
                 var impossibleHomeOffice = "Não pode ser feito online"
@@ -419,6 +410,7 @@ fun AboutCampanha(campanha: Campanha) {
                             ) {
                                 AsyncImage(
                                     model = photoURLCampanhaState,
+
                                     contentDescription = null,
                                     Modifier.fillMaxSize()
                                 )
@@ -431,27 +423,27 @@ fun AboutCampanha(campanha: Campanha) {
                 //COMO CONTRIBUIR
                 Text(
                     text = "Como contribuir",
-                    modifier = Modifier.padding(top = 36.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(top = 36.dp, bottom = 14.dp),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp
                 )
 
                 Text(
                     text = howToContributeState,
-                    modifier = Modifier.padding(12.dp),
-                    fontSize = 12.sp,
+                    modifier = Modifier.padding(10.dp),
+                    fontSize = 17.sp,
                     textAlign = TextAlign.Justify
                 )
                 Text(
                     text = "Pré-requisitos:",
-                    modifier = Modifier.padding(start = 12.dp, top = 10.dp),
+                    modifier = Modifier.padding(top = 14.dp),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp
                 )
                 Text(
                     text = prerequisitesState,
-                    modifier = Modifier.padding(start = 12.dp, top = 3.dp),
-                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 12.dp, top = 20.dp, bottom = 15.dp),
+                    fontSize = 15.sp,
                     textAlign = TextAlign.Justify,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -465,11 +457,11 @@ fun AboutCampanha(campanha: Campanha) {
                         backgroundColor = Color(217, 217, 217)
                     )
                 }
-                Text(
-                    text = "X vagas Disponíveis",
-                    modifier = Modifier.padding(start = 185.dp, top = 5.dp),
-                    fontSize = 12.sp
-                )
+//                Text(
+//                    text = "X vagas Disponíveis",
+//                    modifier = Modifier.padding(start = 185.dp, top = 5.dp),
+//                    fontSize = 12.sp
+//                )
 
                 OpenSubscribedScreen(viewModel = CreateCampanhaViewModel(), campanha.id.toString())
 
@@ -508,7 +500,7 @@ fun OpenSubscribedScreen(viewModel: CreateCampanhaViewModel, campanhaId: String)
         Text(
             text = "INSCREVER-SE",
             color = Color.White,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         if (viewModel.isDialogShownCampanha) {
             subscribedCampanhaScreen(

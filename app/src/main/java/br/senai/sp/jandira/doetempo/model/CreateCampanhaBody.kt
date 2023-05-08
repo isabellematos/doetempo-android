@@ -12,6 +12,17 @@ data class CreateCampanhaBody (
     var how_to_contribute: String? = "",
     var prerequisites: String? = "",
     var id_ngo: String? = "",
+//    var ong: Ong? = Ong(
+//        id = "",
+//        name = "",
+//        foundationDate = "",
+//        type = Type(),
+//        address = Address(
+//        number = "",
+//        complement = "",
+//        postalCode = ""
+//        ),
+//    ),
 //@SerializedName("campaign_photos") var photos: String = "",
     var photo_url: List<String>? = listOf(""),
     var address: Address? = Address(

@@ -27,6 +27,6 @@ data class Post(
 //        address = Address(postalCode = "", number = "", complement = ""),
 //        type = Type(name = "")
 //    ),
-//    @SerializedName("post_photo") var post_photo: List<Photo> = listOf(),
+    @SerializedName("post_photo") var post_photo: List<Photo?>? = null,
     //@SerializedName("_count") var count: Count?
 )

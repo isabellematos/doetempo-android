@@ -176,17 +176,6 @@ fun Login() {
                     backgroundColor = Color.Transparent.copy()
                 )
             )
-            Text(
-                text = stringResource(id = R.string.forgotPassword),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 200.dp)
-                    .padding(top = 16.dp),
-                fontStyle = FontStyle.Italic,
-                textDecoration = TextDecoration.Underline,
-                color = Color.Blue
-            )
-
             val context = LocalContext.current
             var campanhasState by remember {
                 mutableStateOf(CampanhaList(listOf()))

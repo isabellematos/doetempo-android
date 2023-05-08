@@ -175,8 +175,8 @@ fun FeedScreen() {
         })
 
         LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(postState.size) { index ->
-                PostWidget(post = postState[index])
+            items(postState) {
+                PostWidget(post = it)
             }
         }
     }

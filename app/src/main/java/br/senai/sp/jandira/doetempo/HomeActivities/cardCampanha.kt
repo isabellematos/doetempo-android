@@ -24,12 +24,6 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
-import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
-import br.senai.sp.jandira.doetempo.model.CampanhaDetalhes
-import br.senai.sp.jandira.doetempo.model.OngList
-import br.senai.sp.jandira.doetempo.services.RetrofitFactory
-import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
-import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import coil.compose.AsyncImage
 import retrofit2.Call
 import retrofit2.Callback
@@ -94,11 +88,6 @@ fun cardCampanha(campanha: Campanha) {
                     Modifier
                         .size(60.dp)
                         .padding(start = 12.dp, top = 12.dp)
-                        .border(
-                            2.dp,
-                            color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(8.dp)
-                        )
                 )
             }
             campanha.title?.let {
