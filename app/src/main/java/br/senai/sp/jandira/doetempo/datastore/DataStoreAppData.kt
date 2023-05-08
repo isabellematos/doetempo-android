@@ -21,6 +21,7 @@ class DataStoreAppData(private val context: Context) {
         val ID_CAMPANHA = stringPreferencesKey("id_campanha")
         val NAME_USER = stringPreferencesKey("name_user")
         val TYPE_USER = stringPreferencesKey("type_user")
+        val EMAIL = stringPreferencesKey("email")
     }
 
     // Pegar o token
@@ -44,6 +45,10 @@ class DataStoreAppData(private val context: Context) {
         preferences[NAME_USER] ?: ""
     }
 
+    val getEmail: Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[EMAIL] ?: ""
+    }
+
     suspend fun saveIdUser(idUser: String) {
         context.dataStore.edit {preferences ->
             preferences[ID_USER] = idUser
@@ -65,6 +70,12 @@ class DataStoreAppData(private val context: Context) {
     suspend fun saveNameUser(nameUser: String) {
         context.dataStore.edit {preferences ->
             preferences[NAME_USER] = nameUser
+        }
+    }
+
+    suspend fun saveEmail(emailUser: String) {
+        context.dataStore.edit {preferences ->
+            preferences[EMAIL] = emailUser
         }
     }
 

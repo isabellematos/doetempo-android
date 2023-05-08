@@ -248,7 +248,7 @@ fun Login() {
 
                                     newActivity.putExtra("id_user", response.body()!!.dataUser?.id)
                                     newActivity.putExtra("type", response.body()!!.dataUser?.type)
-
+                                    newActivity.putExtra("email", response.body()!!.dataUser?.email)
 
                                     startActivity(context, newActivity, Bundle.EMPTY)
 

@@ -14,30 +14,71 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.R
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.User
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 //@Preview(showBackground = true, showSystemUi = true)
-fun ProfileScreen(user: User) {
+fun ProfileScreen() {
+
+    var userNameState by remember {
+        mutableStateOf("")
+    }
+
+    var userEmailState by remember {
+        mutableStateOf("")
+    }
+
     val weightFocusRequester = FocusRequester()
     val systemUi = rememberSystemUiController()
     val navController = rememberNavController()
+
+
+    val context = LocalContext.current
+
+    val intent = (context as HomeActivity).intent
+    var nameUser = intent.getStringExtra("name")
+    var token = intent.getStringExtra("key")
+    var idUser = intent.getStringExtra("id_user")
+    var emailUser = intent.getStringExtra("email")
+
+    val scope = rememberCoroutineScope()
+    val datastore = DataStoreAppData(context = context)
+
+
+    scope.launch {
+        if (token != null && idUser != null && nameUser != null && emailUser != null ) {
+            datastore.saveToken(token)
+            datastore.saveIdUser(idUser)
+            datastore.saveNameUser(nameUser)
+            datastore.saveEmail(emailUser)
+
+        }
+    }
+
+    userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
+    userEmailState = datastore.getEmail.collectAsState(initial = "").value.toString()
+
+
 //CONTENT
     Column(
         modifier = Modifier
@@ -81,7 +122,7 @@ fun ProfileScreen(user: User) {
                     .align(Alignment.BottomStart)
             )
             Text(
-                text = user.name,
+                text = userNameState,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 50.dp)
                     .align(Alignment.BottomCenter),
@@ -153,12 +194,12 @@ fun ProfileScreen(user: User) {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = user.email,
+                    text = userEmailState,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = Color.Black
+
                 )
-
-
             }
 
             Text(

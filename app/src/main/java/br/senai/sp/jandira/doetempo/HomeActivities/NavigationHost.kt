@@ -22,23 +22,7 @@ fun NavigationHost(navController: NavHostController) {
             FeedScreen()
         }
         composable(Items_menu.Screen3.route) {
-            ProfileScreen(
-                user = User(
-                    id = "",
-                    name = "",
-                    email = "",
-                    birthdate = "",
-                    address = Address(
-                        postalCode = "",
-                        id = "",
-                        number = "",
-                        complement = ""
-                    ),
-                    gender = Gender(),
-                    id_type = "",
-                    type = Type()
-                )
-            )
+            ProfileScreen()
         }
     }
 }

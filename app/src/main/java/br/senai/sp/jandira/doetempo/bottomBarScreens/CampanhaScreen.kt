@@ -51,6 +51,7 @@ fun CampanhaScreen() {
     val token = intent.getStringExtra("key")
     val idUser = intent.getStringExtra("id_user")
 
+
     val scope = rememberCoroutineScope()
     val datastore = DataStoreAppData(context = context)
 
