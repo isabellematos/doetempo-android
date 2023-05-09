@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,16 +25,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
+import br.senai.sp.jandira.doetempo.model.Ong
 import br.senai.sp.jandira.doetempo.model.User
+import br.senai.sp.jandira.doetempo.model.UserDetails
+import br.senai.sp.jandira.doetempo.services.RetrofitFactory
+import br.senai.sp.jandira.doetempo.services.ong.OngCall
+import br.senai.sp.jandira.doetempo.services.user.UserCall
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
@@ -48,6 +57,23 @@ fun ProfileScreen() {
         mutableStateOf("")
     }
 
+    var nameState by remember {
+        mutableStateOf("")
+    }
+
+    var emailState by remember() {
+        mutableStateOf("")
+    }
+
+    var stateState by remember() {
+        mutableStateOf("")
+    }
+
+    var descriptionState by remember() {
+        mutableStateOf("")
+    }
+
+
     val weightFocusRequester = FocusRequester()
     val systemUi = rememberSystemUiController()
     val navController = rememberNavController()
@@ -60,23 +86,74 @@ fun ProfileScreen() {
     var token = intent.getStringExtra("key")
     var idUser = intent.getStringExtra("id_user")
     var emailUser = intent.getStringExtra("email")
+    var dataType = intent.getStringExtra("type")
+    val typeUserOng = intent.getStringExtra("ONG")
+    val typeUser = intent.getStringExtra("USER")
 
     val scope = rememberCoroutineScope()
     val datastore = DataStoreAppData(context = context)
 
 
     scope.launch {
-        if (token != null && idUser != null && nameUser != null && emailUser != null ) {
+        if (token != null && idUser != null && nameUser != null && emailUser != null && dataType != null && typeUserOng != null && typeUser != null) {
             datastore.saveToken(token)
-            datastore.saveIdUser(idUser)
+            datastore.saveIdUser(idUser!!)
             datastore.saveNameUser(nameUser)
             datastore.saveEmail(emailUser)
-
+            datastore.saveTypeUser(dataType!!)
         }
     }
 
-    userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
-    userEmailState = datastore.getEmail.collectAsState(initial = "").value.toString()
+    idUser = datastore.getIdUser.collectAsState(initial = "").value.toString()
+    dataType = datastore.getTypeUser.collectAsState(initial = "").value.toString()
+
+    if(dataType == "ONG") {
+
+        val retrofit = RetrofitFactory.getRetrofit()
+        val ongCall = retrofit.create(OngCall::class.java)
+
+        val call = idUser?.let {
+            Log.i("idUser", it)
+            ongCall.getById(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<Ong> {
+                override fun onResponse(call: Call<Ong>, response: Response<Ong>) {
+                    nameState = response.body()!!.name
+                    emailState = response.body()!!.email.toString()
+                    stateState = response.body()!!.address?.postalCode.toString()
+                    descriptionState = response.body()!!.description.toString()
+                }
+
+                override fun onFailure(call: Call<Ong>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                }
+
+            })
+        }
+    }
+    else {
+        val retrofit = RetrofitFactory.getRetrofit()
+        val userCall = retrofit.create(UserCall::class.java)
+        val call = idUser?.let { userCall.getById("Bearer $token", it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<UserDetails> {
+                override fun onResponse(call: Call<UserDetails>, response: Response<UserDetails>) {
+                    response.body()?.let { Log.i("user", response.body()?.user.toString()) }
+                    nameState = response.body()?.user?.name.toString()
+                    emailState = response.body()?.user?.email.toString()
+                    stateState = response.body()?.user?.address?.postalCode.toString()
+                    descriptionState = response.body()?.user?.description.toString()
+
+                }
+
+                override fun onFailure(call: Call<UserDetails>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                }
+            })
+        }
+    }
 
 
 //CONTENT
@@ -122,7 +199,7 @@ fun ProfileScreen() {
                     .align(Alignment.BottomStart)
             )
             Text(
-                text = userNameState,
+                text = nameState,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 50.dp)
                     .align(Alignment.BottomCenter),
@@ -176,7 +253,7 @@ fun ProfileScreen() {
                 fontSize = 16.sp
             )
             Text(
-                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel pulvinar orci. Etiam augue urna, eleifend vitae dolor ut, varius aliquam est. Pellentesque commodo vehicula euismod. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+                text = descriptionState,
                 modifier = Modifier.padding(end = 10.dp)
             )
             Row(
@@ -194,7 +271,7 @@ fun ProfileScreen() {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    text = userEmailState,
+                    text = emailState,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     color = Color.Black

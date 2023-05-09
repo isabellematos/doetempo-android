@@ -49,6 +49,7 @@ fun CampanhaScreen() {
     var intent = (context as HomeActivity).intent
     val nameUser = intent.getStringExtra("name")
     val token = intent.getStringExtra("key")
+    val type = intent.getStringExtra("type")
     val idUser = intent.getStringExtra("id_user")
 
 
@@ -56,10 +57,11 @@ fun CampanhaScreen() {
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token != null && idUser != null && nameUser != null ) {
+        if (token != null && idUser != null && nameUser != null && type != null ) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
             datastore.saveNameUser(nameUser)
+            datastore.saveTypeUser(type)
         }
     }
 

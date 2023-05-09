@@ -1,8 +1,6 @@
 package br.senai.sp.jandira.doetempo.model
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
-import java.util.Date
 
 data class Ong(
     var id: String = "",

@@ -13,6 +13,9 @@ interface UserCall {
     @POST("user/")
     fun save(@Body contact: User): Call<CreatedUser>
 
+    @GET("/user/{id}")
+    fun getById(@Header("Authorization") auth: String, @Path("id")id: String): Call<UserDetails>
+
     @DELETE("user/{id}")
     fun delete(@Path("id") id: Long): Call<String>
 }

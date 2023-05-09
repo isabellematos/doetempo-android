@@ -3,18 +3,19 @@ package br.senai.sp.jandira.doetempo.model
 import com.google.gson.annotations.SerializedName
 
 data class User(
-    var id: String? = "",
-    var name: String = "",
+    var id: String? = null,
+    var name: String? = null,
     var email: String = "",
     var password: String? = "",
     var cpf: String = "",
     var birthdate: String,
+    var description: String?  = "",
+    @SerializedName("user_address")
     var address: Address?,
     var gender: Gender,
-    var id_type: String = "",
     var photo_url: String? = "",
     @SerializedName("id_type") var idType: String? = "",
-    var type: Type?,
+    //var type: Type?,
     @SerializedName("user_phone")
     var userPhone: UserPhone? = null,
 )

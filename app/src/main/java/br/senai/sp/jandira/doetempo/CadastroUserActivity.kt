@@ -834,7 +834,7 @@ fun CadastroUser() {
                                 complement = null
                             ),
                             gender = genderState,
-                            type = Type()
+                            //type = Type()
                         )
 
                         Log.i("ds3m", contact.birthdate.toString())
