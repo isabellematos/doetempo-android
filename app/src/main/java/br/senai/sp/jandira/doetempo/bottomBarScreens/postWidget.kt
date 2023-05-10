@@ -38,11 +38,8 @@ fun PostWidget(post: Post) {
     //val verifiedS
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
-
 //    val photoProfile = post.ngo?.get(0)?.photo_url
 //        Log.i("", photoProfile.toString())
-
-
 
 
     Column(
@@ -147,7 +144,6 @@ fun PostWidget(post: Post) {
                 }
             }
 
-
 //                IconButton(onClick = { ) {
 //                    Icon(
 //                        imageVector = Icons.Filled.MoreHoriz,
@@ -156,16 +152,22 @@ fun PostWidget(post: Post) {
 //                }
 //
 
-           // Log.i("photopost", post.post_photo?.get(0)?.photoUrl.toString())
-          //  var photoPost =
+            //post?.post_photo?.get(0)?.photoUrl?.toString()?.let { Log.i("photopost", it) }
+            var photoPost = post.post_photo?.get(0)?.photoUrl?.toString()
 
-//            AsyncImage(
-//                model = post.post_photo?.get(0)?.photoUrl.toString(),
-//                contentDescription = null,
-//                Modifier
-//                    .size(60.dp)
-//                    .padding(start = 12.dp, top = 12.dp)
-//            )
+            if (photoPost != null) {
+                if(photoPost.isNotEmpty()) {
+                    AsyncImage(
+                        model = photoPost?.toString(),
+                        contentDescription = null,
+                        Modifier
+                            .size(60.dp)
+                            .padding(start = 12.dp, top = 12.dp)
+                    )
+                }else{
+                    Log.i("paia", photoPost.toString())
+                }
+            }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.Bottom
@@ -202,7 +204,6 @@ fun PostWidget(post: Post) {
         }
     }
 }
-
 
 //@Composable
 //fun PostWidgetPrev() {
