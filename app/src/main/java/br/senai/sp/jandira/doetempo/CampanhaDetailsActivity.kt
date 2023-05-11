@@ -77,7 +77,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 number = "",
                                 complement = "",
                             ),
-                            photo_url = "",
+                            campaignPhotos = List<Photo>,
                             cause = "",
                             causes = listOf()
                         )
@@ -183,7 +183,7 @@ fun AboutCampanha(campanha: Campanha) {
                 ongState = response.body()!!.ngo?.name.toString()
                 idOngState = response.body()!!.ngo?.id.toString()
                 photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
-                photoURLCampanhaState = response.body()!!.photo_url.toString()
+                photoURLCampanhaState = response.body()!!.campaignPhotos[0].photoUrl.toString()
                 Log.i("imgcampanha", photoURLCampanhaState)
                 idState = response.body()!!.id.toString()
             }
@@ -410,14 +410,13 @@ fun AboutCampanha(campanha: Campanha) {
                             ) {
                                 AsyncImage(
                                     model = photoURLCampanhaState,
-
                                     contentDescription = null,
                                     Modifier.fillMaxSize()
                                 )
                             }
                         }
                     }
-                    cardCategoria()
+                   // cardCategoria()
                 }
 
                 //COMO CONTRIBUIR

@@ -13,6 +13,7 @@ data class Campanha(
     var prerequisites: String? = "",
     var id_ngo: String? = "",
    //@SerializedName("campaign_photos") var photos: String = "",
+    @SerializedName("campaign_photos") var campaignPhotos: List<Photo>,
     var photo_url: String? = "",
     var address: Address? = Address(
         number = "",

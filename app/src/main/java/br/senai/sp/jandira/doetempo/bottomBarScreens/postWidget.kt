@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,28 +19,55 @@ import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Verified
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
+import br.senai.sp.jandira.doetempo.HomeActivity
+import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
+import br.senai.sp.jandira.doetempo.model.Address
+import br.senai.sp.jandira.doetempo.model.Ong
 import br.senai.sp.jandira.doetempo.model.Post
+import br.senai.sp.jandira.doetempo.model.Type
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun PostWidget(post: Post) {
     //val verifiedS
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
-//    val photoProfile = post.ngo?.get(0)?.photo_url
-//        Log.i("", photoProfile.toString())
+
+    //Log.i("", photoProfile.toString())
+
+    var nameOngState by remember {
+        mutableStateOf("")
+    }
+
+    var photoProfileOng by remember {
+        mutableStateOf("")
+    }
+
+    var photoProfileUser by remember {
+        mutableStateOf("")
+    }
+
+    var nameUserState by remember {
+        mutableStateOf("")
+    }
+
+
+    var context = LocalContext.current
 
 
     Column(
@@ -65,84 +93,91 @@ fun PostWidget(post: Post) {
                 Row(
                     verticalAlignment = Alignment.Top
                 ) {
-                    Image(
-                        painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
-                        contentDescription = "logo",
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(start = 12.dp, top = 12.dp)
-                            .border(
-                                2.dp,
-                                color = Color(79, 121, 254),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                    )
-//                    AsyncImage(
-//                        model = photoProfile,
-//                        contentDescription = null,
-//                        Modifier
-//                            .size(60.dp)
-//                            .padding(start = 12.dp, top = 12.dp)
-//                            .border(
-//                                2.dp,
-//                                color = Color(79, 121, 254),
-//                                shape = RoundedCornerShape(8.dp)
-//                            )
-//                    )
+                    if (post.ngo != null) {
+                        AsyncImage(
+                            model = photoProfileOng,
+                            contentDescription = null,
+                            Modifier
+                                .size(60.dp)
+                                .padding(start = 12.dp, top = 12.dp)
+                        )
+                    } else {
+                        AsyncImage(
+                            model = photoProfileUser,
+                            contentDescription = null,
+                            Modifier
+                                .size(60.dp)
+                                .padding(start = 12.dp, top = 12.dp)
+                        )
+                    }
                     Spacer(modifier = Modifier.width(10.dp))
                 }
+                // post.ngo?.toString()?.let { Log.i("dadosong", it) }
+                // post.user?.toString()?.let { Log.i("dadosuser", it) }
 
-//                Column(
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        modifier = Modifier.fillMaxWidth()
-//                    ) {
-//                        if (post.ngo !== null) {
-//                            post.ngo?.let {
-//                                it[0]?.let { it1 ->
-//                                    Text(
-//                                        text = it1.name,
-//                                        fontSize = 20.sp,
-//                                        fontWeight = FontWeight.Bold
-//                                    )
-//                                }
-//                            }
-//                        } else
-//                            post.user?.let {
-//                                it[0]?.let { it1 ->
-//                                    Text(
-//                                        text = it1.name,
-//                                        fontSize = 20.sp,
-//                                        fontWeight = FontWeight.Bold
-//                                    )
-//                                }
-//                            }
-//                        Spacer(modifier = Modifier.padding(3.dp))
-//                    }
+
+                if(post.ngo!!.size > 0) {
+                    nameOngState = post.ngo?.get(0)?.ngo?.name?.toString().toString()
+                    photoProfileOng = post.ngo?.get(0)?.ngo?.photo_url.toString()
+                }
+
+
+                if(post.user!!.size > 0) {
+                    nameOngState = post.user?.get(0)?.user?.name?.toString().toString()
+                    photoProfileUser = post.user?.get(0)?.user?.photo_url.toString()
+                    Log.i("userphoto", photoProfileUser)
+                }
+
+                Log.i("varnameong", nameOngState.toString())
+//                nameUserState = post.user?.get(0)?.user?.name?.toString().toString()
+//                Log.i("nomeuser", post.user?.get(0)?.user?.name.toString())
+                //post.ngo?.get(0)?.ngo?.let { Log.i("nomeong", it.name) }
+                // Log.i("nomeong",post.ngo?.get(0)?.name.toString())
 
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    post.created_at?.let {
-                        Text(
-                            text = it,
-                            fontSize = 12.sp,
-                            color = Color.Black
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        if (post.ngo != null) {
+                            Text(
+                                text = nameOngState,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        } else {
+                            Text(
+                                text = nameUserState,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(3.dp))
                     }
-                    post.content?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(top = 15.dp, start = 10.dp),
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.Black
-                        )
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        post.created_at?.let {
+                            Text(
+                                text = it,
+                                fontSize = 12.sp,
+                                color = Color.Black
+                            )
+                        }
+                        post.content?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(top = 15.dp, start = 10.dp),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black
+                            )
+                        }
                     }
                 }
-            }
 
 //                IconButton(onClick = { ) {
 //                    Icon(
@@ -152,21 +187,21 @@ fun PostWidget(post: Post) {
 //                }
 //
 
-            //post?.post_photo?.get(0)?.photoUrl?.toString()?.let { Log.i("photopost", it) }
-            var photoPost = post.post_photo?.get(0)?.photoUrl?.toString()
-
-            if (photoPost != null) {
-                if(photoPost.isNotEmpty()) {
-                    AsyncImage(
-                        model = photoPost?.toString(),
-                        contentDescription = null,
-                        Modifier
-                            .size(60.dp)
-                            .padding(start = 12.dp, top = 12.dp)
-                    )
-                }else{
-                    Log.i("paia", photoPost.toString())
-                }
+                //post?.post_photo?.get(0)?.photoUrl?.toString()?.let { Log.i("photopost", it) }
+//            var photoPost = post.post_photo?.get(0)?.photoUrl?.toString()
+//
+//            if (photoPost != null) {
+//                if(photoPost.isNotEmpty()) {
+//                    AsyncImage(
+//                        model = photoPost?.toString(),
+//                        contentDescription = null,
+//                        Modifier
+//                            .size(60.dp)
+//                            .padding(start = 12.dp, top = 12.dp)
+//                    )
+//                }else{
+//                    Log.i("paia", photoPost.toString())
+//                }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -204,21 +239,3 @@ fun PostWidget(post: Post) {
         }
     }
 }
-
-//@Composable
-//fun PostWidgetPrev() {
-//    PostWidget(
-//        PostInfo(
-//        name = "Nome teste",
-//        profilePic = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.mansmiling),
-//        date = "27 dez. às 14:33",
-//        verified = false,
-//        postText = "Lore epsum ragatanga arigato konichua bafome vem na minha casa bafome pra ver se eu nao encho de porrada.",
-//        postPhoto = null,
-//        postVideo = "",
-//        comment = "",
-//        commentCount = 10,
-//        likeCount = 300
-//    )
-//    )
-//}
