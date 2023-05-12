@@ -59,6 +59,11 @@
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Doetempo" />
         <activity
+            android:name=".bottomBarScreens.CommentsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_comments"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
             android:name=".bottomBarScreens.NewPostActivity"
             android:exported="false"
             android:label="@string/title_activity_newpost"

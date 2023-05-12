@@ -28,5 +28,6 @@ data class Post(
 //        type = Type(name = "")
 //    ),
     @SerializedName("post_photo") var post_photo: List<Photo?>? = null,
-    //@SerializedName("_count") var count: Count?
+    var comment: Comment,
+    @SerializedName("_count") var count: Count?
 )

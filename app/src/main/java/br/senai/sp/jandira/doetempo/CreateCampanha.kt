@@ -87,22 +87,6 @@ fun adcionarCampanha() {
                     .verticalScroll(scrollState)
             ) {
 
-                //MAIN
-                Image(
-                    painter = painterResource(id = br.senai.sp.jandira.doetempo.R.drawable.luizamelllogo),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(start = 12.dp, top = 12.dp)
-                        .border(
-                            2.dp,
-                            color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .clip(shape = RoundedCornerShape(8.dp)),
-                    alignment = Alignment.TopStart,
-
-                    )
                     //CreateCampanhaScreen()
                     //middleInfos(viewModel())
                 bottom(viewModel = CreateCampanhaViewModel())

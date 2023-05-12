@@ -75,7 +75,7 @@ fun MainScreen() {
         MinFabItem(
             label = "Nova Publicação",
             identifier = "",
-//            onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
+            //onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
         ),
         MinFabItem(
             label = "Achar vagas",

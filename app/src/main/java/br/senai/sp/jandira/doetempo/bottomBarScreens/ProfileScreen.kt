@@ -37,6 +37,7 @@ import br.senai.sp.jandira.doetempo.model.UserDetails
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.user.UserCall
+import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -54,6 +55,10 @@ fun ProfileScreen() {
     }
 
     var userEmailState by remember {
+        mutableStateOf("")
+    }
+
+    var photoUrlState by remember {
         mutableStateOf("")
     }
 
@@ -123,6 +128,8 @@ fun ProfileScreen() {
                     emailState = response.body()!!.email.toString()
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
+                    photoUrlState = response.body()!!.photo_url.toString()
+
                 }
 
                 override fun onFailure(call: Call<Ong>, t: Throwable) {
@@ -145,6 +152,7 @@ fun ProfileScreen() {
                     emailState = response.body()?.user?.email.toString()
                     stateState = response.body()?.user?.address?.postalCode.toString()
                     descriptionState = response.body()?.user?.description.toString()
+                    photoUrlState = response.body()?.user?.photo_url.toString()
 
                 }
 
@@ -171,7 +179,7 @@ fun ProfileScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(70.dp)
+                    .size(80.dp)
                     .background(Color(79, 254, 199))
             ) {
                 IconButton(
@@ -185,19 +193,28 @@ fun ProfileScreen() {
                     )
                 }
             }
-            Image(
-                painter = painterResource(id = R.drawable.mansmiling),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .size(70.dp)
-                    .border(
-                        2.dp, color = Color(79, 121, 254),
-                        shape = RoundedCornerShape(8.dp)
-                    )
+            AsyncImage(
+                model = photoUrlState,
+                contentDescription = null,
+                Modifier
+                    .size(90.dp)
+                    .padding(start = 20.dp, top = 12.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
                     .align(Alignment.BottomStart)
             )
+//            Image(
+//                painter = painterResource(id = R.drawable.mansmiling),
+//                contentDescription = "",
+//                modifier = Modifier
+//                    .padding(start = 20.dp)
+//                    .size(70.dp)
+//                    .border(
+//                        2.dp, color = Color(79, 121, 254),
+//                        shape = RoundedCornerShape(8.dp)
+//                    )
+//                    .clip(shape = RoundedCornerShape(8.dp))
+//                    .align(Alignment.BottomStart)
+//            )
             Text(
                 text = nameState,
                 modifier = Modifier

@@ -77,7 +77,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 number = "",
                                 complement = "",
                             ),
-                            campaignPhotos = List<Photo>,
+                            campaignPhotos = listOf(),
                             cause = "",
                             causes = listOf()
                         )
@@ -404,7 +404,6 @@ fun AboutCampanha(campanha: Campanha) {
                                 .fillMaxWidth()
                                 .size(335.dp, 240.dp)
                                 .padding(bottom = 12.dp),
-                            border = BorderStroke(2.dp, color = Color(79, 121, 254))
                         ) {
                             Column(
                             ) {
