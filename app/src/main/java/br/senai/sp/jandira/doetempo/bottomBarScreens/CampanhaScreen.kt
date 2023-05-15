@@ -2,6 +2,7 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -57,7 +58,7 @@ fun CampanhaScreen() {
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token != null && idUser != null && nameUser != null && type != null ) {
+        if (token != null && idUser != null && nameUser != null && type != null) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
             datastore.saveNameUser(nameUser)
@@ -65,7 +66,7 @@ fun CampanhaScreen() {
         }
     }
 
-     userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
+    userNameState = datastore.getNameUser.collectAsState(initial = "").value.toString()
 
     //Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
     //Log.i("datastore", datastore.getNameUser.collectAsState(initial = "").value.toString())
@@ -91,7 +92,7 @@ fun CampanhaScreen() {
                 fontWeight = FontWeight.SemiBold,
             )
 
-            IconButton(onClick = {  }) {
+            IconButton(onClick = { }) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "",
@@ -114,11 +115,14 @@ fun CampanhaScreen() {
 
         call.enqueue(object : Callback<CampanhaList> {
             override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
+
                 campanhasState = response.body()!!.campaigns
             }
 
             override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
                 Log.i("ds3m", t.message.toString())
+                Toast.makeText(context, "Campo de campanhas vazio!", Toast.LENGTH_SHORT)
+                    .show()
             }
 
         })

@@ -886,6 +886,8 @@ fun bottom(
         mutableStateOf(listOf<Cause>())
     }
 
+    causesState = listOf(Cause(id = "9aeba436-f31a-11ed-ad6b-6045bdf0a5e7"))
+
     callCause.enqueue(object : Callback<CauseList> {
         override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
             //  causesState = response.body()!!.causes

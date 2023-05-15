@@ -4,18 +4,18 @@ import com.google.gson.JsonArray
 import com.google.gson.annotations.SerializedName
 
 data class Comment(
-    val id: String = "",
-    val content: String = "",
+    val id: String? = null,
+    val content: String? =  null,
 
     @SerializedName("created_at")
-    val createdAt: String = "",
+    val createdAt: String? = null,
 
     @SerializedName("comment_user")
-    val commentUser: List<UserDetails>,
+    val commentUser: List<UserDetails>? = null,
 
     @SerializedName("comment_ngo")
-    val commentNgo: List<OngDetails>,
+    val commentNgo: List<OngDetails>? = null,
 
     @SerializedName("_count")
-    val count: Count
+    val count: Count? = null
 )

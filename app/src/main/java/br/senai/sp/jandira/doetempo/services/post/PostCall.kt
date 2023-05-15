@@ -12,7 +12,7 @@ interface PostCall {
     @GET("/post/{id}")
     fun getById(@Path("id")id: String): Call<Post>
 
-    @GET("/post/{id}/comment")
+    @POST("/post/{id}/comment")
     fun saveComment(@Header("Authorization") token: String, @Path("id")id: String, @Body() contact: SendComment ): Call<ResponseComment>
 
 

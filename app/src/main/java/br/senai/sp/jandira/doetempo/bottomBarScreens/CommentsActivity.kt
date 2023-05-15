@@ -11,35 +11,26 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import br.senai.sp.jandira.doetempo.HomeActivity
-import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -69,6 +60,26 @@ class CommentsActivity : ComponentActivity() {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HudComentarios(intent: Intent) {
+    var commentState2 by remember {
+        mutableStateOf(listOf(Comment()))
+    }
+    val retrofit = RetrofitFactory.getRetrofit()
+    val postCall = retrofit.create(PostCall::class.java)
+    var callComments = postCall.getAll()
+
+    callComments.enqueue(object : Callback<PostList> {
+        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+
+            commentState2 = response.body()!!.allPosts[0].comment
+
+        }
+
+        override fun onFailure(call: Call<PostList>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+
+
+    })
 
     var commentState by remember {
         mutableStateOf("")
@@ -79,25 +90,9 @@ fun HudComentarios(intent: Intent) {
 
     var context = LocalContext.current
 
-
-    val token = intent.getStringExtra("key")
     val idPost = intent.getStringExtra("idPost")
-    val idUser = intent.getStringExtra("id_user")
-    val nameUser = intent.getStringExtra("name")
-    val typeUser = intent.getStringExtra("type")
-
-    val scope = rememberCoroutineScope()
-    val datastore = DataStoreAppData(context = context)
-
-    scope.launch {
-        if (token !== null && idUser !== null && nameUser !== null && typeUser !== null) {
-            datastore.saveToken(token)
-            datastore.saveIdUser(idUser)
-            datastore.saveNameUser(nameUser)
-            datastore.saveTypeUser(typeUser)
-        }
-    }
-
+    val datastore = DataStoreAppData(context)
+    val token = datastore.getToken.collectAsState(initial = "").value.toString()
 
     val scrollState = rememberScrollState()
 
@@ -196,8 +191,15 @@ fun HudComentarios(intent: Intent) {
                                 call: Call<ResponseComment>,
                                 response: Response<ResponseComment>
                             ) {
-                                Toast.makeText(context, "Comentário feito com sucesso!", Toast.LENGTH_SHORT)
-                                    .show()
+                                if (response.isSuccessful) {
+                                    Toast.makeText(
+                                        context,
+                                        "Comentário feito com sucesso!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                Log.i("comentario", response.body()!!.toString())
                             }
 
                             override fun onFailure(call: Call<ResponseComment>, t: Throwable) {
@@ -221,28 +223,23 @@ fun HudComentarios(intent: Intent) {
         }
 
 
-        var commentState by remember {
-            mutableStateOf(listOf<Comment>())
-        }
+//        var commentState by remember {
+//            mutableStateOf(listOf<Comment>())
+//        }
 
-        val retrofit = RetrofitFactory.getRetrofit()
-        val postCall = retrofit.create(PostCall::class.java)
-        var callPosts = postCall.getAll()
+        var commentState1 = PostList(allPosts = listOf())
 
-        callPosts.enqueue(object : Callback<PostList> {
-            override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
-                commentState = listOf(response.body()!!.allPosts[0].comment)
-            }
+//        var commentState2 = commentState1?.allPosts?.get(0)?.comment
 
-            override fun onFailure(call: Call<PostList>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
-            }
 
-        })
+
+
 
         LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(commentState) {
-                ListComments(comment = it)
+            commentState2?.let {
+                items(it.size) { index->
+                    ListComments(comment = commentState2!![index])
+                }
             }
         }
     }

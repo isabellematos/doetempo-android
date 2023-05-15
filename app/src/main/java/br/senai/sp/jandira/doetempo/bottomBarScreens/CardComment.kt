@@ -22,24 +22,24 @@ import coil.compose.AsyncImage
 fun ListComments(comment: Comment){
 
 
-    if (comment.commentNgo!!.size > 0) {
-
-    }
-
-
-    if (comment.commentUser!!.size > 0) {
-
-    }
+//    if (comment.commentNgo!!.size > 0) {
+//
+//    }
+//
+//
+//    if (comment.commentUser!!.size > 0) {
+//
+//    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp)
+            .padding()
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp)
-                .size(width = 323.dp, height = 250.dp),
+                .size(width = 323.dp, height = 150.dp),
 
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
@@ -53,22 +53,22 @@ fun ListComments(comment: Comment){
                 Row(
                     verticalAlignment = Alignment.Top
                 ) {
-                    if (comment.commentNgo!!.size > 0) {
-                        AsyncImage(
-                            model = comment.commentNgo[0]?.ngo?.photo_url,
-                            contentDescription = null,
-                            Modifier
-                                .size(60.dp)
-                                .padding(start = 12.dp, top = 12.dp)
-                        )
-                    } else {
-                        AsyncImage(
-                            model = comment.commentUser[0]?.user?.photo_url,
-                            contentDescription = null,
-                            Modifier
-                                .size(60.dp)
-                                .padding(start = 12.dp, top = 12.dp)
-                        )
+//                    if (comment.commentNgo!!.size > 0) {
+//                        AsyncImage(
+//                            model = comment.commentNgo[0]?.ngo?.photo_url,
+//                            contentDescription = null,
+//                            Modifier
+//                                .size(60.dp)
+//                                .padding(start = 12.dp, top = 12.dp)
+//                        )
+//                    } else {
+//                        AsyncImage(
+//                            model = comment.commentUser?.get(0)?.user?.photo_url,
+//                            contentDescription = null,
+//                            Modifier
+//                                .size(60.dp)
+//                                .padding(start = 12.dp, top = 12.dp)
+//                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(
@@ -87,16 +87,17 @@ fun ListComments(comment: Comment){
 //                            Spacer(modifier = Modifier.padding(3.dp))
 //                            Icon(imageVector = Icons.TwoTone.Verified, contentDescription = "Verified", modifier = Modifier.size(20.dp), tint = Color(69,201,165))
 //                        } else {
-                            if (comment.commentNgo[0].ngo.name != null) {
-                                comment.commentNgo[0]?.ngo?.name?.let {
+                            if (!comment.commentNgo.isNullOrEmpty()) {
+                                comment.commentNgo?.get(0)?.ngo?.name?.let {
                                     Text(
                                         text = it,
+                                        modifier = Modifier.padding(bottom = 5.dp),
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                             } else {
-                                comment.commentUser[0]?.user?.name?.let {
+                                comment.commentUser?.get(0)?.user?.name?.let {
                                     Text(
                                         text = it,
                                         fontSize = 20.sp,
@@ -105,39 +106,21 @@ fun ListComments(comment: Comment){
                                 }
                             }
                         }
-                        Text(
-                            text = comment.createdAt,
-                            fontSize = 13.sp
-                        )
-                        Text(
-                            text = comment.content,
-                            modifier = Modifier.padding(top = 12.dp),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        comment.createdAt?.let {
+                            Text(
+                                text = it,
+                                fontSize = 13.sp
+                            )
+                        }
+                        comment.content?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(top = 12.dp),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
-
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 20.dp)
-                ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.TwoTone.Favorite,
-                            modifier = Modifier.size(25.dp),
-                            contentDescription = "Like"
-                        )
-                    }
-                    Text(
-                        text = "xxx",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(top = 14.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray
-                    )
                 }
 //        Column(
 //            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -150,4 +133,3 @@ fun ListComments(comment: Comment){
             }
         }
     } //nao apaga esse
-}
