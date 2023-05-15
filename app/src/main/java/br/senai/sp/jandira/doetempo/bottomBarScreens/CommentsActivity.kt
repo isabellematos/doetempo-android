@@ -9,6 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -37,6 +39,7 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,6 +58,7 @@ class CommentsActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     HudComentarios(intentComment)
+                    //ListComments(comment = Comment(commentNgo = listOf(), commentUser = listOf(), count = Count()))
                 }
             }
         }
@@ -64,7 +68,7 @@ class CommentsActivity : ComponentActivity() {
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun HudComentarios(intent: Intent, comment: Comment) {
+fun HudComentarios(intent: Intent) {
 
     var commentState by remember {
         mutableStateOf("")
@@ -86,7 +90,7 @@ fun HudComentarios(intent: Intent, comment: Comment) {
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token !== null && idUser !== null && nameUser !== null  && typeUser !== null) {
+        if (token !== null && idUser !== null && nameUser !== null && typeUser !== null) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
             datastore.saveNameUser(nameUser)
@@ -187,19 +191,20 @@ fun HudComentarios(intent: Intent, comment: Comment) {
                     val call = idPost?.let { postCall.saveComment("Bearer $token", it, contact) }
 
                     if (call != null) {
-                call.enqueue(object: Callback<ResponseComment>{
-                    override fun onResponse(
-                        call: Call<ResponseComment>,
-                        response: Response<ResponseComment>
-                    ) {
-                        TODO("Not yet implemented")
-                    }
+                        call.enqueue(object : Callback<ResponseComment> {
+                            override fun onResponse(
+                                call: Call<ResponseComment>,
+                                response: Response<ResponseComment>
+                            ) {
+                                Toast.makeText(context, "Comentário feito com sucesso!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
 
-                    override fun onFailure(call: Call<ResponseComment>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
+                            override fun onFailure(call: Call<ResponseComment>, t: Throwable) {
+                                TODO("Not yet implemented")
+                            }
 
-                })
+                        })
                     }
 
                 }) {
@@ -213,96 +218,34 @@ fun HudComentarios(intent: Intent, comment: Comment) {
                     )
                 }
             }
+        }
 
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.mansmiling),
-                        modifier = Modifier
-                            .border(
-                                2.dp,
-                                color = Color(79, 121, 254),
-                                shape = RoundedCornerShape(50.dp)
-                            )
-                            .size(45.dp)
-                            .clip(CircleShape),
-                        contentDescription = "Profile Pic"
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-//                        if (post.verified == true) {
-//                            Text(
-//                                text = post.name,
-//                                fontSize = 20.sp,
-//                                fontWeight = FontWeight.Bold
-//                            )
-//                            Spacer(modifier = Modifier.padding(3.dp))
-//                            Icon(imageVector = Icons.TwoTone.Verified, contentDescription = "Verified", modifier = Modifier.size(20.dp), tint = Color(69,201,165))
-//                        } else {
-                            Text(
-                                text = "Miguel Santos Souza",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Text(
-                            text = "3 dias atrás",
-                            fontSize = 13.sp
-                        )
-                        Text(
-                            text = "Adorei muito esse dia! Pudemos ajudar muitos animais que estavam precisando de nossa ajuda!",
-                            modifier = Modifier.padding(top = 12.dp),
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+        var commentState by remember {
+            mutableStateOf(listOf<Comment>())
+        }
 
-                }
+        val retrofit = RetrofitFactory.getRetrofit()
+        val postCall = retrofit.create(PostCall::class.java)
+        var callPosts = postCall.getAll()
+
+        callPosts.enqueue(object : Callback<PostList> {
+            override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+                commentState = listOf(response.body()!!.allPosts[0].comment)
             }
 
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 20.dp)
-        ) {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.TwoTone.Favorite,
-                    modifier = Modifier.size(25.dp),
-                    contentDescription = "Like"
-                )
+            override fun onFailure(call: Call<PostList>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
             }
-            Text(
-                text = "xxx",
-                fontSize = 14.sp,
-                modifier = Modifier.padding(top = 14.dp),
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Gray
-            )
+
+        })
+
+        LazyColumn(modifier = Modifier.padding(16.dp)) {
+            items(commentState) {
+                ListComments(comment = it)
+            }
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "────────────────────────────────────────",
-                color = Color.LightGray
-            )
-        }
-    } //nao apaga esse
+    }
 }
+
 

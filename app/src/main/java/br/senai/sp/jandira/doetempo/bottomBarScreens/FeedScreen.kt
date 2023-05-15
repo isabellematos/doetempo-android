@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.platform.LocalContext
 import br.senai.sp.jandira.doetempo.*
-import br.senai.sp.jandira.doetempo.CampanhaComponents.datas
 import br.senai.sp.jandira.doetempo.HomeActivities.cardCampanha
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*

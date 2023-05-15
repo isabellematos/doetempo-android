@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.components
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -10,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.doetempo.HomeActivity
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -23,8 +26,10 @@ fun addCampanhaHeader() {
     Row(
     ) {
 
+        val context = LocalContext.current
+
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {  context.startActivity(Intent(context, HomeActivity::class.java))},
             modifier = Modifier
                 .size(40.dp)
                 .padding(top = 12.dp, start = 12.dp)

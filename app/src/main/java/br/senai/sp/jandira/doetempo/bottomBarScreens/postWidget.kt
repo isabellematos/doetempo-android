@@ -4,50 +4,35 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.twotone.Favorite
-import androidx.compose.material.icons.twotone.Verified
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import br.senai.sp.jandira.doetempo.CampanhaDetailsActivity
-import br.senai.sp.jandira.doetempo.HomeActivity
-import br.senai.sp.jandira.doetempo.LoginActivity
-import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
-import br.senai.sp.jandira.doetempo.services.RetrofitFactory
-import br.senai.sp.jandira.doetempo.services.post.PostCall
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.DateFormat
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
+
 fun PostWidget(post: Post) {
     //val verifiedS
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
@@ -74,7 +59,6 @@ fun PostWidget(post: Post) {
     var nameUserState by remember {
         mutableStateOf("")
     }
-
 
     var context = LocalContext.current
 
@@ -225,47 +209,49 @@ fun PostWidget(post: Post) {
                 )
             }
             Text(
-                text = "200",
+                text = post.count?.postLikes.toString(),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 15.dp),
                 fontWeight = FontWeight.SemiBold,
                 color = Color.Gray
             )
             IconButton(onClick = {
-                context.startActivity(
+                val newActivity =
                     Intent(
                         context,
-                        CommentsActivity::class.java
-                    ).putExtra("idPost", post.id),
-                    context.putExtra("comments", post.comment)
-                    )
-                )
+                        CommentsActivity::class.java).putExtra("idPost", post.id)
 
-                val retrofit = RetrofitFactory.getRetrofit()
-                val postCall = retrofit.create(PostCall::class.java)
-                var callPosts = postCall.getAll()
+                ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
+                   // newActivity.putExtra("comments", post.comment)
 
-                var postState by remember {
-                    mutableStateOf(listOf<Post>())
-                }
 
-                callPosts.enqueue(object : Callback<PostList> {
-                    override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
-                        postState = response.body()!!.allPosts
-                    }
+//                val retrofit = RetrofitFactory.getRetrofit()
+//                val postCall = retrofit.create(PostCall::class.java)
+//                var callPosts = postCall.getAll()
+//
+//                var commentState by remember {
+//                    mutableStateOf(listOf<Comment>())
+//                }
+//
+//                callPosts.enqueue(object : Callback<CommentList> {
+//                    override fun onResponse(call: Call<CommentList>, response: Response<CommentList>) {
+//                        commentState = response.body()!!.comments
+//                    }
+//
+//                    override fun onFailure(call: Call<CommentList>, t: Throwable) {
+//                        Log.i("ds3m", t.message.toString())
+//                    }
+//
+//                })
+//
+//                LazyColumn(modifier = Modifier.padding(16.dp)) {
+//                    items(commentState) {
+//                        ListComments(comment = it)
+//                    }
+//                }
+            })
 
-                    override fun onFailure(call: Call<PostList>, t: Throwable) {
-                        Log.i("ds3m", t.message.toString())
-                    }
-
-                })
-
-                LazyColumn(modifier = Modifier.padding(16.dp)) {
-                    items(postState) {
-                        PostWidget(post = it)
-                    }
-                }
-            }) {
+            {
                 Icon(
                     imageVector = Icons.Outlined.Comment,
                     modifier = Modifier.size(25.dp),
@@ -273,7 +259,7 @@ fun PostWidget(post: Post) {
                 )
             }
             Text(
-                text = "130",
+                text = post.count?.comment.toString(),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 15.dp, end = 12.dp),
                 fontWeight = FontWeight.SemiBold,
