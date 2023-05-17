@@ -1,6 +1,6 @@
 package br.senai.sp.jandira.doetempo.model
 
-data class CreateCampanhaBody (
+data class CreateCampanhaBody(
     var id: String? = "",
     var title: String? = "",
     var description: String? = "",
@@ -28,5 +28,5 @@ data class CreateCampanhaBody (
     complement = "",
     postalCode = ""
 ),
-    var causes: List<Cause>?,
+    var campaign_causes: List<Cause>
 )

@@ -20,8 +20,8 @@ data class Campanha(
         complement = "",
         postalCode = ""
     ),
-    @SerializedName("campaign_causes") var causes: List<Cause>?,
-    var cause: String? = "",
+    //@SerializedName("campaign_causes") var causes: List<Cause>?,
+    //var cause: String? = "",
     var ngo: Ong? = Ong(
         id = "",
         name = "",

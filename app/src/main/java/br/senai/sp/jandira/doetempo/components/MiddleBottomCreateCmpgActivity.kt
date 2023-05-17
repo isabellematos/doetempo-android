@@ -10,11 +10,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,16 +30,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
@@ -63,7 +66,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun bottom(
     viewModel: CreateCampanhaViewModel = viewModel()
@@ -833,7 +836,6 @@ fun bottom(
                 } else {
                     homeOfficeState = false
                 }
-                Log.i("ds3m", homeOfficeState.toString())
             }
         }
         Column(
@@ -849,59 +851,6 @@ fun bottom(
 
     }
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val causesCall = retrofit.create(CausesCall::class.java)
-
-    if (!token.isNullOrEmpty()) {
-
-        val call = causesCall.save("Bearer $token", contact = Cause())
-
-        call.enqueue(object : Callback<CreatedCause> {
-            override fun onResponse(call: Call<CreatedCause>, response: Response<CreatedCause>) {
-                Log.i("headers", response.headers().names().toString())
-                Log.i("ds3m", response.body()!!.toString())
-                //causesState = response.headers().names().toString()
-                //Log.i("causanome", causesState.toString())
-
-            }
-
-            override fun onFailure(call: Call<CreatedCause>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
-            }
-
-        })
-    }
-
-
-    val retrofit1 = RetrofitFactory.getRetrofit()
-    val causeCall = retrofit1.create(CausesCall::class.java)
-    val callCause = causeCall.getAll()
-
-
-    var causeName by remember {
-        mutableStateOf("")
-    }
-
-    var causesState by remember {
-        mutableStateOf(listOf<Cause>())
-    }
-
-    causesState = listOf(Cause(id = "9aeba436-f31a-11ed-ad6b-6045bdf0a5e7"))
-
-    callCause.enqueue(object : Callback<CauseList> {
-        override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
-            //  causesState = response.body()!!.causes
-            // Log.i("causa", causesState.toString())
-        }
-
-        override fun onFailure(call: Call<CauseList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-
-    })
-
-
-
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -913,46 +862,119 @@ fun bottom(
             fontWeight = FontWeight.SemiBold,
             color = Color.DarkGray
         )
-        Text(
-            text = "(Até três)",
-            modifier = Modifier.padding(start = 20.dp, bottom = 24.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.DarkGray
-        )
 
-        Card(
-            modifier = Modifier
-                .padding(start = 20.dp, bottom = 10.dp),
-            shape = RoundedCornerShape(50.dp),
-            backgroundColor = Color(165, 218, 230)
-        ) {
-            Text(
-                text = "educacao",
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .size(105.dp, 26.dp),
-                textAlign = TextAlign.Center
+//        Card(
+//            modifier = Modifier
+//                .padding(start = 20.dp, bottom = 10.dp),
+//            shape = RoundedCornerShape(50.dp),
+//            backgroundColor = Color(165, 218, 230)
+//        ) {
+//            Text(
+//                text = "Educação",
+//                modifier = Modifier
+//                    .padding(top = 5.dp)
+//                    .size(105.dp, 26.dp),
+//                textAlign = TextAlign.Center
+//
+//            )
+//        }
 
-            )
+        val retrofit1 = RetrofitFactory.getRetrofit()
+        val causeCall = retrofit1.create(CausesCall::class.java)
+        val callCause = causeCall.getAll()
+
+        var causesState by remember {
+            mutableStateOf(listOf(Cause()))
         }
 
-        Card(
-            modifier = Modifier
-                .padding(start = 20.dp, bottom = 10.dp),
-            shape = RoundedCornerShape(50.dp),
-            backgroundColor = Color(165, 218, 230)
-        ) {
-            Text(
-                text = "Educação",
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .size(105.dp, 26.dp),
-                textAlign = TextAlign.Center
+        // causesState = listOf(Cause(id = "9aeba436-f31a-11ed-ad6b-6045bdf0a5e7"))
 
-            )
+        callCause.enqueue(object : Callback<CauseList> {
+            override fun onResponse(call: Call<CauseList>, response: Response<CauseList>) {
+                causesState = response.body()!!.causes
+                Log.i("causa", causesState.toString())
+            }
+
+            override fun onFailure(call: Call<CauseList>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
+            }
+
+        })
+
+        var idCause by remember {
+            mutableStateOf("")
         }
-        dropDownList()
+
+        var selectedOptionText by remember {
+            mutableStateOf("")
+        }
+
+        Column(
+        ) {
+
+            var options = causesState
+            var expended by remember {
+                mutableStateOf(false)
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = expended,
+                onExpandedChange = {
+                    expended = !expended
+                },
+                modifier = Modifier.padding(start = 20.dp, bottom = 24.dp)
+            )
+            {
+                TextField(
+                    value = selectedOptionText,
+                    onValueChange = { selectedOptionText = it },
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(color = Color(157, 231, 253)),
+                    label = {
+                        Text(text = "Tags")
+                    },
+                    singleLine = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expended) },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors()
+                )
+
+                val filterinOption = options.filter { options!!.contains(it) }
+
+                if (filterinOption.isNotEmpty()) {
+                    ExposedDropdownMenu(
+                        expanded = expended,
+                        onDismissRequest = { expended = false }) {
+
+                        options.forEach { option ->
+                            DropdownMenuItem(onClick = {
+                                selectedOptionText = option.title.toString()
+                                idCause = option.id.toString()
+                                expended = false
+                            }) {
+                                Text(text = option.title.toString())
+                            }
+                        }
+                    }
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .padding(start = 20.dp, bottom = 10.dp),
+                shape = RoundedCornerShape(50.dp),
+                backgroundColor = Color(165, 218, 230)
+            ) {
+                Text(
+                    text = selectedOptionText,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .size(105.dp, 26.dp),
+                    textAlign = TextAlign.Center
+
+                )
+            }
+
+        }
 
 
         OutlinedTextField(
@@ -1058,12 +1080,10 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photo_url= imageItState,
+                            photo_url = listOf(state.listOfSelectedImages[0].toString()),
                             //cause = causeName,
-                            causes= causesState
+                            campaign_causes = listOf(idCause)
                         )
-
-
 
                         storageRef.getReference("images")
                             .child(System.currentTimeMillis().toString())
@@ -1091,9 +1111,8 @@ fun bottom(
                         Log.i("ds3m", photo.toString())
 
 
-
-                      //  Log.i("ds3m", contact.title.toString())
-                      //  Log.i("ds3m tokenn", token.toString())
+                        //  Log.i("ds3m", contact.title.toString())
+                        //  Log.i("ds3m tokenn", token.toString())
 
                         if (!token.isNullOrEmpty()) {
                             val retrofit = RetrofitFactory.getRetrofit()
@@ -1105,8 +1124,8 @@ fun bottom(
                                     call: Call<String>,
                                     response: Response<String>
                                 ) {
-                                      // Log.i("headers", response.headers().names().toString())
-                                      //Log.i("ds3m", response.body()!!.toString())
+                                    // Log.i("headers", response.headers().names().toString())
+                                    //Log.i("ds3m", response.body()!!.toString())
                                     viewModel.onAddClickCampanha()
                                 }
 

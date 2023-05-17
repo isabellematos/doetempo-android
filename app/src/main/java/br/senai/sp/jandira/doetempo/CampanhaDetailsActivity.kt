@@ -78,8 +78,8 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                 complement = "",
                             ),
                             campaignPhotos = listOf(),
-                            cause = "",
-                            causes = listOf()
+                            //cause = "",
+                            //causes = listOf()
                         )
                     )
                 }
