@@ -848,13 +848,8 @@ fun CadastroUser() {
                             ) {
                                 Log.i("ds3m", response.body()!!.toString())
 
-                                val newActivity =
-                                    Intent(context, HomeActivity::class.java).putExtra(
-                                        "name",
-                                        response.body()!!.payload.name
-                                    )
+                                context.startActivity(Intent(context, LoginActivity::class.java))
 
-                                ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
                             }
                             override fun onFailure(call: Call<CreatedUser>, t: Throwable) {
                                 Log.i("ds3m", t.message.toString())

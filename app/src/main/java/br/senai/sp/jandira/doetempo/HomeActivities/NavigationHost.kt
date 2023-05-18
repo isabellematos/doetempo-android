@@ -1,5 +1,6 @@
 package br.senai.sp.jandira.doetempo.HomeActivities
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,7 +20,7 @@ fun NavigationHost(navController: NavHostController) {
             CampanhaScreen()
         }
         composable(Items_menu.Screen2.route) {
-            FeedScreen()
+            FeedScreen(intent = Intent())
         }
         composable(Items_menu.Screen3.route) {
             ProfileScreen()

@@ -78,6 +78,10 @@ fun ProfileScreen() {
         mutableStateOf("")
     }
 
+    var connectionState by remember() {
+        mutableStateOf("")
+    }
+
 
     val weightFocusRequester = FocusRequester()
     val systemUi = rememberSystemUiController()
@@ -129,6 +133,8 @@ fun ProfileScreen() {
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
+                    connectionState = response.body()!!.
+
 
                 }
 
@@ -238,7 +244,7 @@ fun ProfileScreen() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "{XXX}",
+                    text = ,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(79, 121, 254)

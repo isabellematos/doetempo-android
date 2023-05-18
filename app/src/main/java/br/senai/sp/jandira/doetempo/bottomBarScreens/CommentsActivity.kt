@@ -26,11 +26,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import br.senai.sp.jandira.doetempo.LoginActivity
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,7 +45,7 @@ class CommentsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var intentComment  = this.intent
+            var intentComment = this.intent
             DoetempoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -56,13 +60,21 @@ class CommentsActivity : ComponentActivity() {
     }
 }
 
-
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HudComentarios(intent: Intent) {
+
+    var commentState by remember {
+        mutableStateOf("")
+    }
+    var commentIsError by remember {
+        mutableStateOf(false)
+    }
+
     var commentState2 by remember {
         mutableStateOf(listOf(Comment()))
     }
+
     val retrofit = RetrofitFactory.getRetrofit()
     val postCall = retrofit.create(PostCall::class.java)
     var callComments = postCall.getAll()
@@ -77,16 +89,8 @@ fun HudComentarios(intent: Intent) {
         override fun onFailure(call: Call<PostList>, t: Throwable) {
             Log.i("ds3m", t.message.toString())
         }
-
-
     })
 
-    var commentState by remember {
-        mutableStateOf("")
-    }
-    var commentIsError by remember {
-        mutableStateOf(false)
-    }
 
     var context = LocalContext.current
 
@@ -119,7 +123,9 @@ fun HudComentarios(intent: Intent) {
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Botão voltar",
                     tint = Color(79, 121, 254),
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable {
+                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
+                    }
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
@@ -205,10 +211,8 @@ fun HudComentarios(intent: Intent) {
                             override fun onFailure(call: Call<ResponseComment>, t: Throwable) {
                                 TODO("Not yet implemented")
                             }
-
                         })
                     }
-
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Send,
@@ -221,28 +225,37 @@ fun HudComentarios(intent: Intent) {
                 }
             }
         }
-
-
 //        var commentState by remember {
 //            mutableStateOf(listOf<Comment>())
 //        }
 
-        var commentState1 = PostList(allPosts = listOf())
 
 //        var commentState2 = commentState1?.allPosts?.get(0)?.comment
+        var refreshing by remember { mutableStateOf(false) }
+        LaunchedEffect(refreshing) {
+            if (refreshing) {
+                delay(3000)
+                refreshing = false
+            }
+        }
 
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshing),
+            onRefresh = { refreshing = true },
+        ) {
 
+            var commentState1 = PostList(allPosts = listOf())
 
-
-
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            commentState2?.let {
-                items(it.size) { index->
-                    ListComments(comment = commentState2!![index])
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                commentState2?.let {
+                    items(it.size) { index ->
+                        ListComments(comment = commentState2!![index])
+                    }
                 }
             }
         }
     }
 }
+
 
 

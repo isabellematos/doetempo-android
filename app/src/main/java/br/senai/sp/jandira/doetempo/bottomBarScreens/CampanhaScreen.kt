@@ -25,6 +25,9 @@ import br.senai.sp.jandira.doetempo.model.Campanha
 import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -127,10 +130,25 @@ fun CampanhaScreen() {
 
         })
 
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(campanhasState.size) { index ->
-                cardCampanha(campanha = campanhasState[index])
+        var refreshing by remember { mutableStateOf(false) }
+        LaunchedEffect(refreshing) {
+            if (refreshing) {
+                delay(3000)
+                refreshing = false
             }
+        }
+
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshing),
+            onRefresh = { refreshing = true },
+        ) {
+
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                items(campanhasState.size) { index ->
+                    cardCampanha(campanha = campanhasState[index])
+                }
+            }
+
         }
     }
 }

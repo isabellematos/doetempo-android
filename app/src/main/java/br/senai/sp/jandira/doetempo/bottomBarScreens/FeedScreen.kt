@@ -26,6 +26,9 @@ import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,7 +40,7 @@ import retrofit2.create
 class FeedScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        var intentFeed  = this.intent
         setContent {
             DoetempoTheme {
                 // A surface container using the 'background' color from the theme
@@ -45,7 +48,7 @@ class FeedScreenActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    FeedScreen()
+                    FeedScreen(intentFeed)
                 }
             }
         }
@@ -54,7 +57,7 @@ class FeedScreenActivity : ComponentActivity() {
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun FeedScreen() {
+fun FeedScreen(intent: Intent) {
 
 //    val systemUi = rememberSystemUiController()
 //    val navController = rememberNavController()
@@ -65,21 +68,17 @@ fun FeedScreen() {
 
     val context = LocalContext.current
 
-
-    var intent = (context as HomeActivity).intent
     val token = intent.getStringExtra("key")
     val idUser = intent.getStringExtra("id_user")
-    val nameUser = intent.getStringExtra("name")
     val typeUser = intent.getStringExtra("type")
 
     val scope = rememberCoroutineScope()
     val datastore = DataStoreAppData(context = context)
 
     scope.launch {
-        if (token !== null && idUser !== null && nameUser !== null  && typeUser !== null) {
+        if (token !== null && idUser !== null && typeUser !== null) {
             datastore.saveToken(token)
             datastore.saveIdUser(idUser)
-            datastore.saveNameUser(nameUser)
             datastore.saveTypeUser(typeUser)
         }
     }
@@ -173,9 +172,23 @@ fun FeedScreen() {
 
         })
 
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(postState) {
-                PostWidget(post = it)
+        var refreshing by remember { mutableStateOf(false) }
+        LaunchedEffect(refreshing) {
+            if (refreshing) {
+                delay(3000)
+                refreshing = false
+            }
+        }
+
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshing),
+            onRefresh = { refreshing = true },
+        ) {
+
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                items(postState) {
+                    PostWidget(post = it)
+                }
             }
         }
     }

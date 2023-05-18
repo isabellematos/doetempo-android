@@ -4,10 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -34,6 +44,35 @@ import retrofit2.Response
 @Composable
 
 fun PostWidget(post: Post) {
+
+    var countLike by remember {
+    mutableStateOf(0)
+}
+//    val interactionSource = remember { MutableInteractionSource() }
+//
+//    val draggable = Modifier.draggable(
+//        interactionSource = interactionSource,
+//        orientation = Orientation.Horizontal,
+//        state = rememberDraggableState { countLike }
+//    )
+//
+//    val clickable = Modifier.clickable(
+//        interactionSource = interactionSource,
+//        indication = LocalIndication.current
+//    ) { countLike }
+//
+//// Observe changes to the binary state for these interactions
+//    val isPressed by interactionSource.collectIsPressedAsState()
+//
+//// Use the state to change our UI
+//    val (text, color) = when {
+//        isPressed -> "Pressed" to Color.Red
+//        // Default / baseline state
+//        else -> "Drag me horizontally, or press me!" to Color.Black
+//    }
+//
+
+
     //val verifiedS
     // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
 
@@ -55,6 +94,8 @@ fun PostWidget(post: Post) {
     var photoProfileUser by remember {
         mutableStateOf("")
     }
+
+    val scrollState = rememberScrollState()
 
     var nameUserState by remember {
         mutableStateOf("")
@@ -167,7 +208,7 @@ fun PostWidget(post: Post) {
                         post.content?.let {
                             Text(
                                 text = it,
-                                modifier = Modifier.padding(top = 15.dp, start = 10.dp),
+                                modifier = Modifier.padding(top = 15.dp, start = 10.dp).verticalScroll(scrollState),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.Black
@@ -201,15 +242,21 @@ fun PostWidget(post: Post) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                 countLike = post.count?.postLikes!!.toInt() + 1
+
+            })
+
+            {
                 Icon(
                     imageVector = Icons.TwoTone.Favorite,
                     modifier = Modifier.size(25.dp),
-                    contentDescription = "Like"
+                    contentDescription = "Like",
+                    tint = Color.Red
                 )
             }
             Text(
-                text = post.count?.postLikes.toString(),
+                text = countLike.toString(),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 15.dp),
                 fontWeight = FontWeight.SemiBold,
@@ -219,10 +266,11 @@ fun PostWidget(post: Post) {
                 val newActivity =
                     Intent(
                         context,
-                        CommentsActivity::class.java).putExtra("idPost", post.id)
+                        CommentsActivity::class.java
+                    ).putExtra("idPost", post.id)
 
                 ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
-                   // newActivity.putExtra("comments", post.comment)
+                // newActivity.putExtra("comments", post.comment)
 
 
 //                val retrofit = RetrofitFactory.getRetrofit()

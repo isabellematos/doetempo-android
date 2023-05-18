@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import br.senai.sp.jandira.doetempo.bottomBarScreens.FeedScreenActivity
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
@@ -756,12 +757,8 @@ fun CadastroOng() {
                             ) {
                                 Log.i("ds3m", response.body()!!.toString())
 
-                                val newActivity = Intent(context, HomeActivity::class.java).putExtra(
-                                        "name",
-                                        response.body()!!.payload.name
-                                    )
+                                context.startActivity(Intent(context, LoginActivity::class.java))
 
-                                ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
                             }
                             override fun onFailure(call: Call<CreatedOng>, t: Throwable) {
                                 Log.i("ds3m", t.message.toString())

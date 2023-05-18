@@ -1082,7 +1082,9 @@ fun bottom(
                             ),
                             photo_url = listOf(state.listOfSelectedImages[0].toString()),
                             //cause = causeName,
-                            campaign_causes = listOf(idCause)
+                            causes = listOf(Cause(
+                                id = idCause
+                            ))
                         )
 
                         storageRef.getReference("images")

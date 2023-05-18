@@ -3,9 +3,7 @@ package br.senai.sp.jandira.doetempo.HomeActivities
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -52,6 +50,8 @@ fun cardCampanha(campanha: Campanha) {
     var photoCampanhaState1 by remember {
         mutableStateOf("")
     }
+
+    val scrollState = rememberScrollState()
 
     val context = LocalContext.current
 
@@ -117,7 +117,7 @@ fun cardCampanha(campanha: Campanha) {
                 campanha.description?.let {
                     Text(
                         text = it,
-                        modifier = Modifier.padding(start = 14.dp),
+                        modifier = Modifier.padding(start = 14.dp).verticalScroll(scrollState),
                         color = Color(136, 136, 136),
                         fontWeight = FontWeight.SemiBold
                     )

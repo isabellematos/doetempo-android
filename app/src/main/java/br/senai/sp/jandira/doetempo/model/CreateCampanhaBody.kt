@@ -1,5 +1,7 @@
 package br.senai.sp.jandira.doetempo.model
 
+import com.google.gson.annotations.SerializedName
+
 data class CreateCampanhaBody(
     var id: String? = "",
     var title: String? = "",
@@ -28,5 +30,4 @@ data class CreateCampanhaBody(
     complement = "",
     postalCode = ""
 ),
-    var campaign_causes: List<Cause>
-)
+    var causes: List<Cause>? = listOf(Cause(id = "")))
