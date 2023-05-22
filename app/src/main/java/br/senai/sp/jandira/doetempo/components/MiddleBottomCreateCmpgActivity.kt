@@ -975,8 +975,6 @@ fun bottom(
             }
 
         }
-
-
         OutlinedTextField(
             value = comoContribuirState,
             onValueChange = { newComoContribuir ->
@@ -1082,9 +1080,11 @@ fun bottom(
                             ),
                             photo_url = listOf(state.listOfSelectedImages[0].toString()),
                             //cause = causeName,
-                            causes = listOf(Cause(
-                                id = idCause
-                            ))
+                            causes = listOf(
+                                Cause(
+                                    id = idCause
+                                )
+                            )
                         )
 
                         storageRef.getReference("images")

@@ -2,6 +2,7 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -40,19 +41,20 @@ import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.CreatePost
 import br.senai.sp.jandira.doetempo.model.CreatedPost
-import br.senai.sp.jandira.doetempo.model.Photo
-import br.senai.sp.jandira.doetempo.model.Post
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 
 class NewPostActivity : ComponentActivity() {
@@ -78,6 +80,31 @@ class NewPostActivity : ComponentActivity() {
 @Composable
 fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
 
+    var newPublication by remember {
+        mutableStateOf("")
+    }
+
+    var bitmapLink by remember {
+        mutableStateOf("")
+    }
+
+    var imageLink by remember {
+        mutableStateOf(listOf(""))
+    }
+
+
+    var newPublicationisError by remember {
+        mutableStateOf(false)
+    }
+
+    var file by remember {
+        mutableStateOf("")
+    }
+
+    val weightFocusRequester = FocusRequester()
+
+    var context = LocalContext.current
+
     var galleryLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetMultipleContents(),
@@ -93,13 +120,14 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
     storageRef = FirebaseStorage.getInstance()
 
 
+//    var storage = FirebaseStorage.getInstance()
+//    var storageRef = storage.reference
+
     val state = viewModel.state
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-
-    val context = LocalContext.current
 
     val datastore = DataStoreAppData(context)
     val token = datastore.getToken.collectAsState(initial = "").value.toString()
@@ -111,17 +139,6 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
     SideEffect {
         permissionState.launchPermissionRequest()
     }
-
-
-    var newPublication by remember {
-        mutableStateOf("")
-    }
-    var newPublicationisError by remember {
-        mutableStateOf(false)
-    }
-
-    val weightFocusRequester = FocusRequester()
-
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -223,6 +240,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                 }
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -235,8 +253,54 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                         galleryLauncher.launch("image/*")
                     } else
                         permissionState.launchPermissionRequest()
+
+                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
+
+                    Log.i("uriphoto", Uri.fromFile(file).toString())
+
+                    // var imageRef = storageRef.child("images")
+
+
+                    storageRef.getReference("images")
+                        .child(System.currentTimeMillis().toString())
+                        .putFile(state.listOfSelectedImages[0])
+                        .addOnSuccessListener { task ->
+                            task.metadata!!.reference!!.downloadUrl
+                                .addOnSuccessListener {
+                                    imageLink = listOf(it.path.toString())
+                                    Toast.makeText(
+                                        context,
+                                        "Imagem enviada com sucesso!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                .addOnFailureListener { error ->
+                                    Toast.makeText(
+                                        context,
+                                        "erro no carregamento de imagem",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                        }
+//                    val imageUrl =
+//                        "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%${file}" // Substitua pelo seu link de imagem
+//
+//                    Glide.with(context)
+//                        .asBitmap()
+//                        .load(imageUrl)
+//                        .into(object : SimpleTarget<Bitmap>() {
+//                            override fun onResourceReady(
+//                                resource: Bitmap,
+//                                transition: Transition<in Bitmap>?
+//                            ) {
+//                                bitmapLink = state.listOfSelectedImages[0].path.toString()
+//                            }
+//                        })
                 }
-            ) {
+            )
+            {
                 Icon(
                     imageVector = Icons.Outlined.AddAPhoto,
                     modifier = Modifier.size(30.dp),
@@ -245,11 +309,15 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
             }
         }
 
+        //file = state.listOfSelectedImages[0].path?.let { File(it) }.toString()
+
+        Log.i("photopost", state.listOfSelectedImages.toString())
+
         Button(
             onClick = {
-               val contact = CreatePost(
+                val contact = CreatePost(
                     content = newPublication,
-                    photos = listOf(state.listOfSelectedImages.toString()),
+                    photos = imageLink,
                     typeUser = typeUser
                 )
 
@@ -262,7 +330,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                         call: Call<CreatedPost>,
                         response: Response<CreatedPost>
                     ) {
-                      //  Log.i("post", response.body()!!.message)
+                        //  Log.i("post", response.body()!!.message)
 
                         context.startActivity(Intent(context, FeedScreenActivity::class.java))
 
@@ -270,29 +338,29 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                             .show()
 
                     }
+
                     override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
                         Log.i("ds3m", t.message.toString())
                     }
                 })
-
-
-                storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                    .putFile(state.listOfSelectedImages[0])
-                    .addOnSuccessListener { task ->
-                        task.metadata!!.reference!!.downloadUrl
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            .addOnFailureListener { error ->
-                                Toast.makeText(
-                                    context,
-                                    state.listOfSelectedImages.toString(),
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                    }
+//
+//                storageRef.getReference("images").child(System.currentTimeMillis().toString())
+//                    .putFile(state.listOfSelectedImages[0])
+//                    .addOnSuccessListener { task ->
+//                        task.metadata!!.reference!!.downloadUrl
+//                            .addOnSuccessListener {
+//                                Toast.makeText(context, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                            .addOnFailureListener { error ->
+//                                Toast.makeText(
+//                                    context,
+//                                    state.listOfSelectedImages.toString(),
+//                                    Toast.LENGTH_SHORT
+//                                )
+//                                    .show()
+//                            }
+//                    }
             },
             modifier = Modifier
                 .fillMaxWidth()

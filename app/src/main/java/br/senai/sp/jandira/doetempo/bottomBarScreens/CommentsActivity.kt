@@ -95,6 +95,7 @@ fun HudComentarios(intent: Intent) {
     var context = LocalContext.current
 
     val idPost = intent.getStringExtra("idPost")
+    Log.i("idpost", idPost.toString())
     val datastore = DataStoreAppData(context)
     val token = datastore.getToken.collectAsState(initial = "").value.toString()
 
@@ -245,6 +246,7 @@ fun HudComentarios(intent: Intent) {
         ) {
 
             var commentState1 = PostList(allPosts = listOf())
+
 
             LazyColumn(modifier = Modifier.padding(16.dp)) {
                 commentState2?.let {

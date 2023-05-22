@@ -133,7 +133,7 @@ fun ProfileScreen() {
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
-                    connectionState = response.body()!!.
+                    //connectionState = response.body()!!.
 
 
                 }
@@ -244,7 +244,7 @@ fun ProfileScreen() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = ,
+                    text = "12" ,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(79, 121, 254)
@@ -309,103 +309,103 @@ fun ProfileScreen() {
             )
 
 
-            Card(
-                modifier = Modifier
-                    .padding(end = 20.dp, top = 16.dp)
-                    .fillMaxWidth()
-                    .border(
-                        BorderStroke(0.5.dp, color = Color.Black),
-                        shape = RoundedCornerShape(30.dp)
-                    )
-                    .clip(shape = RoundedCornerShape(30.dp))
-                    .size(width = 320.dp, height = 160.dp)
-                    .background(Color(248, 248, 248))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-
-                    Row(
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.mansmiling),
-                            modifier = Modifier
-                                .border(
-                                    2.dp,
-                                    color = Color(79, 121, 254),
-                                    shape = RoundedCornerShape(50.dp)
-                                )
-                                .size(45.dp)
-                                .clip(CircleShape),
-                            contentDescription = "Profile Pic"
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Marcelo do grau",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = "26 jan 2000",
-                                fontSize = 13.sp
-                            )
-                            Column(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 6.dp)) {
-                                Text(text = "skdjfnksdfnsdkjfhsdkfjhsdifh")
-                            }
-
-                        }
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.MoreHoriz,
-                            contentDescription = "More Option"
-                        )
-                    }
-
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.TwoTone.Favorite,
-                        modifier = Modifier.size(25.dp),
-                        contentDescription = "Like"
-                    )
-                }
-                Text(
-                    text = "xxx",
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 13.dp),
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Gray
-                )
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Outlined.Comment,
-                        modifier = Modifier.size(25.dp),
-                        contentDescription = "Comment"
-                    )
-                }
-                Text(
-                    text = "xxx",
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 13.dp),
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Gray
-                )
-            }
+//            Card(
+//                modifier = Modifier
+//                    .padding(end = 20.dp, top = 16.dp)
+//                    .fillMaxWidth()
+//                    .border(
+//                        BorderStroke(0.5.dp, color = Color.Black),
+//                        shape = RoundedCornerShape(30.dp)
+//                    )
+//                    .clip(shape = RoundedCornerShape(30.dp))
+//                    .size(width = 320.dp, height = 160.dp)
+//                    .background(Color(248, 248, 248))
+//            ) {
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(10.dp),
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//
+//
+//                    Row(
+//                        verticalAlignment = Alignment.Top
+//                    ) {
+//                        Image(
+//                            painter = painterResource(id = R.drawable.mansmiling),
+//                            modifier = Modifier
+//                                .border(
+//                                    2.dp,
+//                                    color = Color(79, 121, 254),
+//                                    shape = RoundedCornerShape(50.dp)
+//                                )
+//                                .size(45.dp)
+//                                .clip(CircleShape),
+//                            contentDescription = "Profile Pic"
+//                        )
+//                        Spacer(modifier = Modifier.width(10.dp))
+//                        Column(
+//                            modifier = Modifier.fillMaxWidth()
+//                        ) {
+//                            Text(
+//                                text = "Marcelo do grau",
+//                                fontSize = 15.sp,
+//                                fontWeight = FontWeight.SemiBold
+//                            )
+//                            Text(
+//                                text = "26 jan 2000",
+//                                fontSize = 13.sp
+//                            )
+//                            Column(modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(top = 6.dp)) {
+//                                Text(text = "skdjfnksdfnsdkjfhsdkfjhsdifh")
+//                            }
+//
+//                        }
+//                    }
+//                    IconButton(onClick = { /*TODO*/ }) {
+//                        Icon(
+//                            imageVector = Icons.Filled.MoreHoriz,
+//                            contentDescription = "More Option"
+//                        )
+//                    }
+//
+//                }
+//            }
+//            Row(
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                IconButton(onClick = { /*TODO*/ }) {
+//                    Icon(
+//                        imageVector = Icons.TwoTone.Favorite,
+//                        modifier = Modifier.size(25.dp),
+//                        contentDescription = "Like"
+//                    )
+//                }
+//                Text(
+//                    text = "xxx",
+//                    fontSize = 14.sp,
+//                    modifier = Modifier.padding(top = 13.dp),
+//                    fontWeight = FontWeight.SemiBold,
+//                    color = Color.Gray
+//                )
+//                IconButton(onClick = { /*TODO*/ }) {
+//                    Icon(
+//                        imageVector = Icons.Outlined.Comment,
+//                        modifier = Modifier.size(25.dp),
+//                        contentDescription = "Comment"
+//                    )
+//                }
+//                Text(
+//                    text = "xxx",
+//                    fontSize = 14.sp,
+//                    modifier = Modifier.padding(top = 13.dp),
+//                    fontWeight = FontWeight.SemiBold,
+//                    color = Color.Gray
+//                )
+//            }
         }
     }
 }
