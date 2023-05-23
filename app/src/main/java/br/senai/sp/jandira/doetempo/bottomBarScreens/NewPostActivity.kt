@@ -2,8 +2,6 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.Manifest
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -44,9 +42,9 @@ import br.senai.sp.jandira.doetempo.model.CreatedPost
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+//import com.bumptech.glide.Glide
+//import com.bumptech.glide.request.target.SimpleTarget
+//import com.bumptech.glide.request.transition.Transition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -55,9 +53,18 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 
 
 class NewPostActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,6 +82,7 @@ class NewPostActivity : ComponentActivity() {
     }
 }
 
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -85,6 +93,10 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
     }
 
     var bitmapLink by remember {
+        mutableStateOf("")
+    }
+
+    var filePath by remember {
         mutableStateOf("")
     }
 
@@ -139,6 +151,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
     SideEffect {
         permissionState.launchPermissionRequest()
     }
+
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -254,20 +267,13 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                     } else
                         permissionState.launchPermissionRequest()
 
-                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
-
-                    Log.i("uriphoto", Uri.fromFile(file).toString())
-
-                    // var imageRef = storageRef.child("images")
-
-
                     storageRef.getReference("images")
                         .child(System.currentTimeMillis().toString())
                         .putFile(state.listOfSelectedImages[0])
                         .addOnSuccessListener { task ->
                             task.metadata!!.reference!!.downloadUrl
                                 .addOnSuccessListener {
-                                    imageLink = listOf(it.path.toString())
+                                    filePath = listOf(it.path.toString()).toString()
                                     Toast.makeText(
                                         context,
                                         "Imagem enviada com sucesso!",
@@ -284,6 +290,89 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
                                         .show()
                                 }
                         }
+
+
+
+//                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
+//
+//                    Log.i("uriphoto", Uri.fromFile(file).toString())
+
+                    // var imageRef = storageRef.child("images")
+
+
+                    fun convertUriToFilePath(context: Context, uri: Uri): String {
+                        filePath[0].toString()
+
+                        if (true && DocumentsContract.isDocumentUri(context, uri)) {
+                            if ("com.android.providers.media.documents" == uri.authority) {
+                                val documentId = DocumentsContract.getDocumentId(uri)
+                                val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                                val selection = MediaStore.Images.Media._ID + "=?"
+                                val selectionArgs = arrayOf(documentId.split(":")[1])
+                                context.contentResolver.query(contentUri, null, selection, selectionArgs, null)?.use { cursor ->
+                                    if (cursor.moveToFirst()) {
+                                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                                        if (columnIndex != -1) {
+                                            filePath = cursor.getString(columnIndex)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        return filePath
+                    }
+
+
+// Exemplo de uso
+                    val uriString = "content://com.android.providers.media.documents/document/"
+                    val uri = Uri.parse(uriString)
+                    val filePath = convertUriToFilePath(context, uri)
+                    if (filePath != null) {
+
+                        println(filePath)
+                    } else {
+                        // Não foi possível obter o caminho do arquivo
+                        println("Caminho do arquivo não encontrado")
+                    }
+
+
+
+
+
+                   // var uri = Uri.EMPTY
+
+//                    @RequiresApi(Build.VERSION_CODES.P)
+//                    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+//                    if (true && DocumentsContract.isDocumentUri(context, uri)) {
+//                        if ("com.android.providers.media.documents" == uri.authority) {
+//                            val documentId = DocumentsContract.getDocumentId(uri)
+//                            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//                            val selection = MediaStore.Images.Media._ID + "=?"
+//                            val selectionArgs = arrayOf(documentId.split(":")[1])
+//                            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)?.use { cursor ->
+//                                if (cursor.moveToFirst()) {
+//                                    val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+//                                    if (columnIndex != -1) {
+//                                        filePath = cursor.getString(columnIndex)
+//                                        var source = ImageDecoder.createSource(context.contentResolver, Uri.parse(filePath))
+//                                        ImageDecoder.decodeBitmap(source)
+//                                    } else {
+//                                        null
+//                                    }
+//                                } else {
+//                                    null
+//                                }
+//                            }
+//                        } else {
+//                            null
+//                        }
+//                    } else {
+//                        null
+//                    }
+
+
+
 //                    val imageUrl =
 //                        "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%${file}" // Substitua pelo seu link de imagem
 //
@@ -317,7 +406,7 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
             onClick = {
                 val contact = CreatePost(
                     content = newPublication,
-                    photos = imageLink,
+                    photos = listOf(filePath),
                     typeUser = typeUser
                 )
 
