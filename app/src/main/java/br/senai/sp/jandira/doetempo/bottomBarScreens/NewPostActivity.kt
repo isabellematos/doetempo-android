@@ -76,302 +76,276 @@ class NewPostActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     NewPost()
+                   //getBitmapFromUri(context = LocalContext.current , uri = Uri.EMPTY)
                 }
             }
         }
     }
 }
 
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
-
-    var newPublication by remember {
-        mutableStateOf("")
-    }
-
-    var bitmapLink by remember {
-        mutableStateOf("")
-    }
-
-    var filePath by remember {
-        mutableStateOf("")
-    }
-
-    var imageLink by remember {
-        mutableStateOf(listOf(""))
-    }
-
-
-    var newPublicationisError by remember {
-        mutableStateOf(false)
-    }
-
-    var file by remember {
-        mutableStateOf("")
-    }
-
-    val weightFocusRequester = FocusRequester()
-
-    var context = LocalContext.current
-
-    var galleryLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetMultipleContents(),
-            onResult = {
-                viewModel.updateSelectedImageList(
-                    listOfImages = it
-                )
-            }
-        )
-
-    var storageRef: FirebaseStorage
-
-    storageRef = FirebaseStorage.getInstance()
-
-
-//    var storage = FirebaseStorage.getInstance()
-//    var storageRef = storage.reference
-
-    val state = viewModel.state
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
-
-    val datastore = DataStoreAppData(context)
-    val token = datastore.getToken.collectAsState(initial = "").value.toString()
-    val typeUser = datastore.getTypeUser.collectAsState(initial = "").value.toString()
-
-    val permissionState = rememberPermissionState(
-        permission = Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-    SideEffect {
-        permissionState.launchPermissionRequest()
-    }
-
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Escreva sobre sua ultima boa ação!",
-            modifier = Modifier.padding(15.dp),
-            color = Color.Black,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Normal,
-        )
-        OutlinedTextField(
-            value = newPublication,
-            onValueChange = { altPublication ->
-                if (altPublication.length == 0) {
-                    newPublicationisError = true
-                    altPublication
-                } else {
-                    newPublicationisError = false
-                }
-                newPublication = altPublication
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp)
-                .size(300.dp, 100.dp)
-                .focusRequester(weightFocusRequester),
-            label = {
-                Text(
-                    text = "Faça uma publicação",
-                    fontWeight = FontWeight.Normal
-                )
-            },
-            trailingIcon = {
-                if (newPublicationisError) Icon(
-                    imageVector = Icons.Rounded.Warning,
-                    contentDescription = ""
-                )
-            },
-            shape = RoundedCornerShape(10.dp)
-        )
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 55.dp, top = 30.dp, end = 55.dp)
-                .clickable {
-                    if (permissionState.status.isGranted) {
-                        galleryLauncher.launch("image/*")
-                    } else
-                        permissionState.launchPermissionRequest()
-                },
-            backgroundColor = Color(246, 246, 246)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.paste),
-                modifier = Modifier
-                    .padding(top = 60.dp)
-                    .size(100.dp),
-                contentDescription = ""
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(screenWidth * 0.5f)
-            ) {
-
-                val context = LocalContext.current
-
-                if (state.listOfSelectedImages.isNotEmpty()) {
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                    ) {
-                        itemsIndexed(state.listOfSelectedImages) { index: Int, item: Uri ->
-                            Log.i("ds3m", item.toString())
-                            ImagePreviewItem(
-                                uri = item,
-                                height = screenHeight * 0.5f,
-                                width = screenWidth * 0.6f,
-                                onClick = {
-                                    viewModel.onItemRemove(index)
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-
-                        }
-                    }
-                }
-                if (state.listOfSelectedImages.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                    }
-
-                }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(
-                onClick = {
-                    if (permissionState.status.isGranted) {
-                        galleryLauncher.launch("image/*")
-                    } else
-                        permissionState.launchPermissionRequest()
-
-                    storageRef.getReference("images")
-                        .child(System.currentTimeMillis().toString())
-                        .putFile(state.listOfSelectedImages[0])
-                        .addOnSuccessListener { task ->
-                            task.metadata!!.reference!!.downloadUrl
-                                .addOnSuccessListener {
-                                    filePath = listOf(it.path.toString()).toString()
-                                    Toast.makeText(
-                                        context,
-                                        "Imagem enviada com sucesso!",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
-                                .addOnFailureListener { error ->
-                                    Toast.makeText(
-                                        context,
-                                        "erro no carregamento de imagem",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
-                        }
-
-
-
-//                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
-//
-//                    Log.i("uriphoto", Uri.fromFile(file).toString())
-
-                    // var imageRef = storageRef.child("images")
-
-
-                    fun convertUriToFilePath(context: Context, uri: Uri): String {
-                        filePath[0].toString()
-
-                        if (true && DocumentsContract.isDocumentUri(context, uri)) {
-                            if ("com.android.providers.media.documents" == uri.authority) {
-                                val documentId = DocumentsContract.getDocumentId(uri)
-                                val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                                val selection = MediaStore.Images.Media._ID + "=?"
-                                val selectionArgs = arrayOf(documentId.split(":")[1])
-                                context.contentResolver.query(contentUri, null, selection, selectionArgs, null)?.use { cursor ->
-                                    if (cursor.moveToFirst()) {
-                                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                                        if (columnIndex != -1) {
-                                            filePath = cursor.getString(columnIndex)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        return filePath
-                    }
-
-
-// Exemplo de uso
-                    val uriString = "content://com.android.providers.media.documents/document/"
-                    val uri = Uri.parse(uriString)
-                    val filePath = convertUriToFilePath(context, uri)
-                    if (filePath != null) {
-
-                        println(filePath)
-                    } else {
-                        // Não foi possível obter o caminho do arquivo
-                        println("Caminho do arquivo não encontrado")
-                    }
-
-
-
-
-
-                   // var uri = Uri.EMPTY
-
-//                    @RequiresApi(Build.VERSION_CODES.P)
-//                    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-//                    if (true && DocumentsContract.isDocumentUri(context, uri)) {
-//                        if ("com.android.providers.media.documents" == uri.authority) {
-//                            val documentId = DocumentsContract.getDocumentId(uri)
-//                            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//                            val selection = MediaStore.Images.Media._ID + "=?"
-//                            val selectionArgs = arrayOf(documentId.split(":")[1])
-//                            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)?.use { cursor ->
-//                                if (cursor.moveToFirst()) {
-//                                    val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-//                                    if (columnIndex != -1) {
-//                                        filePath = cursor.getString(columnIndex)
-//                                        var source = ImageDecoder.createSource(context.contentResolver, Uri.parse(filePath))
-//                                        ImageDecoder.decodeBitmap(source)
-//                                    } else {
-//                                        null
-//                                    }
-//                                } else {
-//                                    null
-//                                }
-//                            }
+//@RequiresApi(Build.VERSION_CODES.P)
+//fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+//   return if (true && DocumentsContract.isDocumentUri(context, uri)) {
+//        if ("com.android.providers.media.documents" == uri.authority) {
+//            val documentId = DocumentsContract.getDocumentId(uri)
+//            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//            val selection = MediaStore.Images.Media._ID + "=?"
+//            val selectionArgs = arrayOf(documentId.split(":")[1])
+//            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)
+//                ?.use { cursor ->
+//                    if (cursor.moveToFirst()) {
+//                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+//                        if (columnIndex != -1) {
+//                            var filePath = cursor.getString(columnIndex)
+//                            var source = ImageDecoder.createSource(
+//                                context.contentResolver,
+//                                Uri.parse(filePath)
+//                            )
+//                            ImageDecoder.decodeBitmap(source)
 //                        } else {
 //                            null
 //                        }
 //                    } else {
 //                        null
 //                    }
+//                }
+//        } else {
+//            null
+//        }
+//    } else {
+//        null
+//    }
+//}
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
+
+        var newPublication by remember {
+            mutableStateOf("")
+        }
+
+        var bitmapLink by remember {
+            mutableStateOf("")
+        }
+
+        var imageLink by remember {
+            mutableStateOf(listOf(""))
+        }
+
+
+        var newPublicationisError by remember {
+            mutableStateOf(false)
+        }
+
+        var file by remember {
+            mutableStateOf("")
+        }
+
+        var filePath by remember {
+            mutableStateOf("")
+        }
+
+        val weightFocusRequester = FocusRequester()
+
+        var context = LocalContext.current
+
+        var galleryLauncher =
+            rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetMultipleContents(),
+                onResult = {
+                    viewModel.updateSelectedImageList(
+                        listOfImages = it
+                    )
+                }
+            )
+
+        var storageRef: FirebaseStorage
+
+        storageRef = FirebaseStorage.getInstance()
+
+
+//    var storage = FirebaseStorage.getInstance()
+//    var storageRef = storage.reference
+
+        val state = viewModel.state
+        val configuration = LocalConfiguration.current
+        val screenHeight = configuration.screenHeightDp.dp
+        val screenWidth = configuration.screenWidthDp.dp
+
+
+        val datastore = DataStoreAppData(context)
+        val token = datastore.getToken.collectAsState(initial = "").value.toString()
+        val typeUser = datastore.getTypeUser.collectAsState(initial = "").value.toString()
+
+        val permissionState = rememberPermissionState(
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        SideEffect {
+            permissionState.launchPermissionRequest()
+        }
+
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Escreva sobre sua ultima boa ação!",
+                modifier = Modifier.padding(15.dp),
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+            )
+            OutlinedTextField(
+                value = newPublication,
+                onValueChange = { altPublication ->
+                    if (altPublication.length == 0) {
+                        newPublicationisError = true
+                        altPublication
+                    } else {
+                        newPublicationisError = false
+                    }
+                    newPublication = altPublication
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+                    .size(300.dp, 100.dp)
+                    .focusRequester(weightFocusRequester),
+                label = {
+                    Text(
+                        text = "Faça uma publicação",
+                        fontWeight = FontWeight.Normal
+                    )
+                },
+                trailingIcon = {
+                    if (newPublicationisError) Icon(
+                        imageVector = Icons.Rounded.Warning,
+                        contentDescription = ""
+                    )
+                },
+                shape = RoundedCornerShape(10.dp)
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 55.dp, top = 30.dp, end = 55.dp)
+                    .clickable {
+                        if (permissionState.status.isGranted) {
+                            galleryLauncher.launch("image/*")
+                        } else
+                            permissionState.launchPermissionRequest()
+                    },
+                backgroundColor = Color(246, 246, 246)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.paste),
+                    modifier = Modifier
+                        .padding(top = 60.dp)
+                        .size(100.dp),
+                    contentDescription = ""
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(screenWidth * 0.5f)
+                ) {
+
+                    val context = LocalContext.current
+
+                    if (state.listOfSelectedImages.isNotEmpty()) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center)
+                        ) {
+                            itemsIndexed(state.listOfSelectedImages) { index: Int, item: Uri ->
+                                Log.i("ds3m", item.toString())
+                                ImagePreviewItem(
+                                    uri = item,
+                                    height = screenHeight * 0.5f,
+                                    width = screenWidth * 0.6f,
+                                    onClick = {
+                                        viewModel.onItemRemove(index)
+                                    }
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+
+                            }
+                        }
+                    }
+                    if (state.listOfSelectedImages.isNotEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                        }
+
+                    }
+                }
+            }
+
+
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                IconButton(
+                    onClick = {
+                        if (permissionState.status.isGranted) {
+                            galleryLauncher.launch("image/*")
+                        } else
+                            permissionState.launchPermissionRequest()
+
+
+                        // file = state.listOfSelectedImages[0].path.toString()
+
+//                                 var uri = Uri.parse(file)
+//
+//                                var filePath = getBitmapFromUri(context, uri)
+
+//                           if (filePath != null) {
+//
+//                           }
+
+
+//                        var filePath = getBitmapFromUri(context, uri)
+//
+//                        if (filePath != null)
+//                            imageLink = listOf(filePath.toString())
+                        // Log.i("agrvai", imageLink.toString())
+
+
+//                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
+//
+//                    Log.i("uriphoto", Uri.fromFile(file).toString())
+
+                        // var imageRef = storageRef.child("images")
+
+
+//
+//
+//                            // Exemplo de uso
+//                            val uriString =
+//                                "content://com.android.providers.media.documents/document/"
+//                            val uri = Uri.parse(uriString)
+
+
+//                                Log.i("photopost", filePath.toString())
+//                                println(filePath)
+//                            } else {
+//                                // Não foi possível obter o caminho do arquivo
+//                                println("Caminho do arquivo não encontrado")
+//                            }
+                        // var uri = Uri.EMPTY
 
 //                    val imageUrl =
 //                        "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%${file}" // Substitua pelo seu link de imagem
@@ -387,51 +361,101 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
 //                                bitmapLink = state.listOfSelectedImages[0].path.toString()
 //                            }
 //                        })
+                    }
+                )
+                {
+                    Icon(
+                        imageVector = Icons.Outlined.AddAPhoto,
+                        modifier = Modifier.size(30.dp),
+                        contentDescription = ""
+                    )
                 }
-            )
-            {
-                Icon(
-                    imageVector = Icons.Outlined.AddAPhoto,
-                    modifier = Modifier.size(30.dp),
-                    contentDescription = ""
-                )
-            }
-        }
 
-        //file = state.listOfSelectedImages[0].path?.let { File(it) }.toString()
 
-        Log.i("photopost", state.listOfSelectedImages.toString())
+                //file = state.listOfSelectedImages[0].path?.let { File(it) }.toString()
 
-        Button(
-            onClick = {
-                val contact = CreatePost(
-                    content = newPublication,
-                    photos = listOf(filePath),
-                    typeUser = typeUser
-                )
+                //Log.i("photopost", filePath.toString())
 
-                val retrofit = RetrofitFactory.getRetrofit()
-                val postCall = retrofit.create(PostCall::class.java)
-                val callContactPost = postCall.save("Bearer $token", contact)
+                Button(
 
-                callContactPost.enqueue(object : Callback<CreatedPost> {
-                    override fun onResponse(
-                        call: Call<CreatedPost>,
-                        response: Response<CreatedPost>
-                    ) {
-                        //  Log.i("post", response.body()!!.message)
+                    onClick = {
+                        storageRef.getReference("images")
+                            .child(System.currentTimeMillis().toString())
+                            .putFile(state.listOfSelectedImages[0])
+                            .addOnSuccessListener { task ->
+                                task.metadata!!.reference!!.downloadUrl
+                                    .addOnSuccessListener {
+                                        filePath = it.path.toString()
+                                        Toast.makeText(
+                                            context,
+                                            "Imagem enviada com sucesso!",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(
+                                            context,
+                                            "erro no carregamento de imagem",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
 
-                        context.startActivity(Intent(context, FeedScreenActivity::class.java))
+                                // Create a reference with an initial file path and name
+                                val pathReference = storageRef.("images")
 
-                        Toast.makeText(context, "Post feito com sucesso!", Toast.LENGTH_SHORT)
-                            .show()
+// Create a reference to a file from a Google Cloud Storage URI
+                              //  val gsReference = storageRef.getReferenceFromUrl("gs://doe-tempo-50ccb.appspot.com/images/1684851659427")
 
-                    }
+// Create a reference from an HTTPS URL
+// Note that in the URL, characters are URL escaped!
+                                val httpsReference = storageRef.getReferenceFromUrl(
+                                    "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2F1684851659427?alt=media&token=af179fbe-82a2-4f03-959f-fa3bb9f799ff")
 
-                    override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
-                        Log.i("ds3m", t.message.toString())
-                    }
-                })
+                            }
+
+
+
+
+                        val contact = CreatePost(
+                            content = newPublication,
+                            photos = listOf(state.listOfSelectedImages[0].toString()),
+                            typeUser = typeUser
+                        )
+
+
+                        val retrofit = RetrofitFactory.getRetrofit()
+                        val postCall = retrofit.create(PostCall::class.java)
+                        val callContactPost = postCall.save("Bearer $token", contact)
+
+                        callContactPost.enqueue(object : Callback<CreatedPost> {
+                            override fun onResponse(
+                                call: Call<CreatedPost>,
+                                response: Response<CreatedPost>
+                            ) {
+                                //  Log.i("post", response.body()!!.message)
+
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        FeedScreenActivity::class.java
+                                    )
+                                )
+
+                                Toast.makeText(
+                                    context,
+                                    "Post feito com sucesso!",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+
+                            }
+
+                            override fun onFailure(call: Call<CreatedPost>, t: Throwable) {
+                                Log.i("ds3m", t.message.toString())
+                            }
+                        })
 //
 //                storageRef.getReference("images").child(System.currentTimeMillis().toString())
 //                    .putFile(state.listOfSelectedImages[0])
@@ -450,20 +474,91 @@ fun NewPost(viewModel: CreateCampanhaViewModel = viewModel()) {
 //                                    .show()
 //                            }
 //                    }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 38.dp, end = 38.dp, bottom = 10.dp)
-                .size(40.dp),
-            shape = RoundedCornerShape(30.dp),
-            colors = ButtonDefaults.buttonColors(Color(79, 254, 199))
-        )
-        {
-            Text(
-                text = stringResource(id = R.string.send),
-                color = Color.Black,
-                fontSize = 18.sp
-            )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 38.dp, end = 38.dp, bottom = 10.dp)
+                        .size(40.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(Color(79, 254, 199))
+                )
+                {
+                    Text(
+                        text = stringResource(id = R.string.send),
+                        color = Color.Black,
+                        fontSize = 18.sp
+                    )
+                }
+            }
         }
     }
-}
+
+//fun convertUriToFilePath(context: Context, uri: Uri): String? {
+//    filePath.toString()
+//
+//
+//    if (true && DocumentsContract.isDocumentUri(context, uri)) {
+//        if ("com.android.providers.media.documents" == uri.authority) {
+//            val documentId = DocumentsContract.getDocumentId(uri)
+//            val contentUri =
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//            val selection = MediaStore.Images.Media._ID + "=?"
+//            val selectionArgs = arrayOf(documentId.split(":")[1])
+//            context.contentResolver.query(
+//                contentUri,
+//                null,
+//                selection,
+//                selectionArgs,
+//                null
+//            )?.use { cursor ->
+//                if (cursor.moveToFirst()) {
+//                    val columnIndex =
+//                        cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+//                    if (columnIndex != -1) {
+//                        filePath = cursor.getString(columnIndex)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    return filePath
+//
+//}
+
+//@RequiresApi(Build.VERSION_CODES.P)
+//fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+//   return if (true && DocumentsContract.isDocumentUri(context, uri)) {
+//        if ("com.android.providers.media.documents" == uri.authority) {
+//            val documentId = DocumentsContract.getDocumentId(uri)
+//            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//            val selection = MediaStore.Images.Media._ID + "=?"
+//            val selectionArgs = arrayOf(documentId.split(":")[1])
+//            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)
+//                ?.use { cursor ->
+//                    if (cursor.moveToFirst()) {
+//                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+//                        if (columnIndex != -1) {
+//                            var filePath = cursor.getString(columnIndex)
+//                            var source = ImageDecoder.createSource(
+//                                context.contentResolver,
+//                                Uri.parse(filePath)
+//                            )
+//                            ImageDecoder.decodeBitmap(source)
+//                        } else {
+//                            null
+//                        }
+//                    } else {
+//                        null
+//                    }
+//                }
+//        } else {
+//            null
+//        }
+//    } else {
+//        null
+//    }
+//}
+
+
+
+
