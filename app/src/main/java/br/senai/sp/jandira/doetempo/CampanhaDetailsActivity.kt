@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.CampanhaComponents.cardCategoria
 import br.senai.sp.jandira.doetempo.components.subscribedCampanhaScreen
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*

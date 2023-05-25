@@ -3,6 +3,7 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -153,10 +154,12 @@ fun PostWidget(post: Post) {
                 }
 
 
-//                if (post.post_photo?.isNotEmpty() == true){
-//                    photoPostState = post?.post_photo?.get(0)?.photoUrl.toString()
-//                }
-//                Log.i("hmm", post.post_photo!![0]?.photoUrl.toString())
+                if (post.post_photo!!.size > 0) {
+                    photoPostState = post.post_photo!![0]?.photoUrl.toString()
+                    Log.i("hmm", post.post_photo!![0]?.photoUrl.toString())
+
+                }
+
 
 //                nameUserState = post.user?.get(0)?.user?.name?.toString().toString()
 //                Log.i("nomeuser", post.user?.get(0)?.user?.name.toString())
@@ -199,7 +202,8 @@ fun PostWidget(post: Post) {
                         post.content?.let {
                             Text(
                                 text = it,
-                                modifier = Modifier.padding(top = 15.dp, start = 10.dp).verticalScroll(scrollState),
+                                modifier = Modifier.padding(top = 15.dp, start = 10.dp)
+                                    .verticalScroll(scrollState),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.Black
@@ -207,27 +211,17 @@ fun PostWidget(post: Post) {
                         }
                     }
                 }
-
-//                IconButton(onClick = { ) {
-//                    Icon(
-//                        imageVector = Icons.Filled.MoreHoriz,
-//                        contentDescription = "More Option"
-//                    )
-//                }
-//
-//
-//                    if(post.post_photo!!.isNotEmpty()) {
-//                        AsyncImage(
-//                            model = photoPostState,
-//                            contentDescription = null,
-//                            Modifier
-//                                .size(70.dp)
-//                                .padding(start = 12.dp, top = 12.dp)
-//                        )
-//                    }else{
-//                        Text(text = "NAO TEM NADA")
-//                    }
             }
+                    if(post.post_photo!!.isNotEmpty()) {
+                        AsyncImage(
+                            model = photoPostState,
+                            contentDescription = null,
+                            Modifier
+                                .size(20.dp)
+                                .padding(start = 15.dp, top = 100.dp)
+                        )
+                    }
+
         }
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -237,7 +231,6 @@ fun PostWidget(post: Post) {
                  countLike = post.count?.postLikes!!.toInt() + 1
 
             })
-
             {
                 Icon(
                     imageVector = Icons.TwoTone.Favorite,
@@ -289,7 +282,6 @@ fun PostWidget(post: Post) {
 //                    }
 //                }
             })
-
             {
                 Icon(
                     imageVector = Icons.Outlined.Comment,

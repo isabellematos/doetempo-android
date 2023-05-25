@@ -37,8 +37,6 @@ import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
 import br.senai.sp.jandira.doetempo.ImagePreviewItem
 import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
-import br.senai.sp.jandira.doetempo.model.CreatePost
-import br.senai.sp.jandira.doetempo.model.CreatedPost
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
@@ -52,15 +50,13 @@ import com.google.firebase.storage.FirebaseStorage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
+import br.senai.sp.jandira.doetempo.model.*
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import java.io.File
 
 
 class NewPostActivity : ComponentActivity() {
@@ -132,7 +128,7 @@ class NewPostActivity : ComponentActivity() {
         }
 
         var imageLink by remember {
-            mutableStateOf(listOf(""))
+            mutableStateOf("")
         }
 
 
@@ -370,8 +366,6 @@ class NewPostActivity : ComponentActivity() {
                         contentDescription = ""
                     )
                 }
-
-
                 //file = state.listOfSelectedImages[0].path?.let { File(it) }.toString()
 
                 //Log.i("photopost", filePath.toString())
@@ -402,25 +396,22 @@ class NewPostActivity : ComponentActivity() {
                                             .show()
                                     }
 
-                                // Create a reference with an initial file path and name
-                                val pathReference = storageRef.("images")
 
-// Create a reference to a file from a Google Cloud Storage URI
-                              //  val gsReference = storageRef.getReferenceFromUrl("gs://doe-tempo-50ccb.appspot.com/images/1684851659427")
-
-// Create a reference from an HTTPS URL
-// Note that in the URL, characters are URL escaped!
-                                val httpsReference = storageRef.getReferenceFromUrl(
-                                    "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2F1684851659427?alt=media&token=af179fbe-82a2-4f03-959f-fa3bb9f799ff")
+//                                val pathReference = storageRef.("images")
+//
+//
+//                                val gsReference = storageRef.getReferenceFromUrl("gs://doe-tempo-50ccb.appspot.com/images/1684851659427")
+//
+//                                val httpsReference = storageRef.getReferenceFromUrl(
+//                                    "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2F1684851659427?alt=media&token=af179fbe-82a2-4f03-959f-fa3bb9f799ff")
 
                             }
 
 
 
-
                         val contact = CreatePost(
                             content = newPublication,
-                            photos = listOf(state.listOfSelectedImages[0].toString()),
+                            photos = listOf(imageLink),
                             typeUser = typeUser
                         )
 
@@ -482,6 +473,7 @@ class NewPostActivity : ComponentActivity() {
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(Color(79, 254, 199))
                 )
+
                 {
                     Text(
                         text = stringResource(id = R.string.send),
@@ -489,9 +481,29 @@ class NewPostActivity : ComponentActivity() {
                         fontSize = 18.sp
                     )
                 }
+                val retrofit = RetrofitFactory.getRetrofit()
+                val postCall = retrofit.create(PostCall::class.java)
+                val call = postCall.getAll()
+                call.enqueue(object : Callback<PostList> {
+
+                    override fun onResponse(
+                        call: Call<PostList>,
+                        response: Response<PostList>
+                    ) {
+//                        photoURLCampanhaState = response.body()!!.campaignPhotos[0].photoUrl.toString()
+                        imageLink = response.body()!!.allPosts[0]?.post_photo.toString()
+                    }
+
+                    override fun onFailure(call: Call<PostList>, t: Throwable) {
+                        Log.i("ds3m", t.message.toString())
+                    }
+
+                })
+
             }
         }
     }
+
 
 //fun convertUriToFilePath(context: Context, uri: Uri): String? {
 //    filePath.toString()

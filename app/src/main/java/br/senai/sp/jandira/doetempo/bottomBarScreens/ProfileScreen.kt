@@ -82,6 +82,10 @@ fun ProfileScreen() {
         mutableStateOf("")
     }
 
+    var attachedLink by remember() {
+        mutableStateOf("")
+    }
+
 
     val weightFocusRequester = FocusRequester()
     val systemUi = rememberSystemUiController()
@@ -133,9 +137,7 @@ fun ProfileScreen() {
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
-                    //connectionState = response.body()!!.
-
-
+                    attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
                 }
 
                 override fun onFailure(call: Call<Ong>, t: Throwable) {
@@ -156,9 +158,11 @@ fun ProfileScreen() {
                     response.body()?.let { Log.i("user", response.body()?.user.toString()) }
                     nameState = response.body()?.user?.name.toString()
                     emailState = response.body()?.user?.email.toString()
-                    stateState = response.body()?.user?.address?.postalCode.toString()
+                    stateState = response.body()?.user?.userAddress?.address?.postalCode.toString()
                     descriptionState = response.body()?.user?.description.toString()
                     photoUrlState = response.body()?.user?.photo_url.toString()
+                   // connectionState = response.body()!!.user.count?.following.toString()
+                    attachedLink = response.body()!!.user.attachedLink?.get(0)?.attachedLink.toString()
 
                 }
 
@@ -244,7 +248,7 @@ fun ProfileScreen() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "12" ,
+                    text = "21" ,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(79, 121, 254)
@@ -300,6 +304,15 @@ fun ProfileScreen() {
                     color = Color.Black
 
                 )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = attachedLink,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+
+                )
+
             }
 
             Text(
@@ -365,7 +378,7 @@ fun ProfileScreen() {
 //
 //                        }
 //                    }
-//                    IconButton(onClick = { /*TODO*/ }) {
+//                    IconButton(onClick = {  }) {
 //                        Icon(
 //                            imageVector = Icons.Filled.MoreHoriz,
 //                            contentDescription = "More Option"
@@ -377,7 +390,7 @@ fun ProfileScreen() {
 //            Row(
 //                horizontalArrangement = Arrangement.SpaceEvenly
 //            ) {
-//                IconButton(onClick = { /*TODO*/ }) {
+//                IconButton(onClick = { / }) {
 //                    Icon(
 //                        imageVector = Icons.TwoTone.Favorite,
 //                        modifier = Modifier.size(25.dp),
@@ -391,7 +404,7 @@ fun ProfileScreen() {
 //                    fontWeight = FontWeight.SemiBold,
 //                    color = Color.Gray
 //                )
-//                IconButton(onClick = { /*TODO*/ }) {
+//                IconButton(onClick = {  }) {
 //                    Icon(
 //                        imageVector = Icons.Outlined.Comment,
 //                        modifier = Modifier.size(25.dp),

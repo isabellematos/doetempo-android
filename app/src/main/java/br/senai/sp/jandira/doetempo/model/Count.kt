@@ -15,5 +15,10 @@ data class Count(
     val postUser: Long? = null,
 
     @SerializedName("post_likes")
-    val postLikes: Long? = null
+    val postLikes: Long? = null,
+
+    @SerializedName("supported_campaigns")
+    val supportedCampaigns: Long? = null,
+
+    val following: Long? = null
 )

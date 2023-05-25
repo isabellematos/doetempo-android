@@ -10,14 +10,20 @@ data class User(
     var cpf: String = "",
     var birthdate: String,
     var description: String?  = "",
-    @SerializedName("user_address")
     var address: Address?,
-    var gender: Gender,
+    var gender: String = "",
     var photo_url: String? = "",
-    @SerializedName("id_type") var idType: String? = "",
-    //var type: Type?,
+
+
+    var type: Type?,
     @SerializedName("user_phone")
     var userPhone: UserPhone? = null,
+    @SerializedName("user_address")
+    val userAddress: UserAddress? = null,
+    @SerializedName("attached_link")
+    val attachedLink: List<AttachedLink>? = null,
+    @SerializedName("_count")
+    val count: Count? = null
 )
 //"cpf": "414214124142",
 //            "birthdate": "2023-02-15T00:00:00.000Z",

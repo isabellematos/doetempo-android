@@ -35,8 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
-import br.senai.sp.jandira.doetempo.bottomBarScreens.FeedScreenActivity
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory

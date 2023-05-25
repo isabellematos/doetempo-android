@@ -10,7 +10,7 @@ interface UserCall {
     @GET("test/users")
     fun getAll(): Call<UserList>
 
-    @POST("user/")
+    @POST("/user")
     fun save(@Body contact: User): Call<CreatedUser>
 
     @GET("/user/{id}")

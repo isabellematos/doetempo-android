@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.gender.GenderCall
 import br.senai.sp.jandira.doetempo.services.user.UserCall
@@ -110,6 +109,14 @@ fun CadastroUser() {
     }
 
     var bairroState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var genderStateString by rememberSaveable() {
+        mutableStateOf("")
+    }
+
+    var genderId by rememberSaveable() {
         mutableStateOf("")
     }
 
@@ -498,7 +505,8 @@ fun CadastroUser() {
                 mutableStateOf(Gender())
             }
 
-            var genderStateString = genderState.toString()
+
+            var genderStateAbbreviation = genderState.toString()
 
             if (!genderList.isEmpty()) {
                 val (selectedOption, onOptionSelected) = remember { mutableStateOf(genderList[0]) }
@@ -513,6 +521,8 @@ fun CadastroUser() {
                                     onClick = {
                                         onOptionSelected(text)
                                         genderStateString = text.id.toString()
+                                        Log.i("genderid", genderStateString.toString())
+                                        genderStateAbbreviation = text.abbreviation.toString()
 //                                        Log.i("ds3m", genderState)
                                     },
                                     role = Role.RadioButton
@@ -529,6 +539,7 @@ fun CadastroUser() {
                     }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -800,6 +811,8 @@ fun CadastroUser() {
 
             val context = LocalContext.current
 
+            genderStateString = genderId
+
             Button(
                 onClick = {
                     isNameError = nameState.length == 0
@@ -828,15 +841,17 @@ fun CadastroUser() {
                                 DateTimeFormatter.ofPattern("yyyy-MM-dd")
                             ).toString(),
                             cpf = cpfState,
-                            address = Address(
+
+                                address = Address(
                                 number = numberState,
                                 postalCode = cepState,
                                 complement = null
-                            ),
-                            gender = genderState,
-                            //type = Type()
+                                ),
+                            gender = genderId,
+                            type = Type()
                         )
 
+                        Log.i("idgendercontact", contact.gender)
                         Log.i("ds3m", contact.birthdate.toString())
 
                         val callContactPost = userCall.save(contact)
