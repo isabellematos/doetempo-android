@@ -116,40 +116,45 @@ fun CampanhaScreen() {
             mutableStateOf(listOf<Campanha>())
         }
 
-        call.enqueue(object : Callback<CampanhaList> {
-            override fun onResponse(call: Call<CampanhaList>, response: Response<CampanhaList>) {
 
-                campanhasState = response.body()!!.campaigns
-            }
+            call.enqueue(object : Callback<CampanhaList> {
+                override fun onResponse(
+                    call: Call<CampanhaList>,
+                    response: Response<CampanhaList>
+                ) {
 
-            override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
-                Toast.makeText(context, "Campo de campanhas vazio!", Toast.LENGTH_SHORT)
-                    .show()
-            }
+                    campanhasState = response.body()!!.campaigns
+                }
 
-        })
+                override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                    Toast.makeText(context, "Campo de campanhas vazio!", Toast.LENGTH_SHORT)
+                        .show()
+                }
 
-        var refreshing by remember { mutableStateOf(false) }
-        LaunchedEffect(refreshing) {
-            if (refreshing) {
-                delay(3000)
-                refreshing = false
-            }
-        }
+            })
 
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = refreshing),
-            onRefresh = { refreshing = true },
-        ) {
 
-            LazyColumn(modifier = Modifier.padding(16.dp)) {
-                items(campanhasState.size) { index ->
-                    cardCampanha(campanha = campanhasState[index])
+            var refreshing by remember { mutableStateOf(false) }
+            LaunchedEffect(refreshing) {
+                if (refreshing) {
+                    delay(3000)
+                    refreshing = false
                 }
             }
 
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = refreshing),
+                onRefresh = { refreshing = true },
+            ) {
+
+                LazyColumn(modifier = Modifier.padding(16.dp)) {
+                    items(campanhasState.size) { index ->
+                        cardCampanha(campanha = campanhasState[index])
+                    }
+                }
+
+            }
         }
     }
-}
 

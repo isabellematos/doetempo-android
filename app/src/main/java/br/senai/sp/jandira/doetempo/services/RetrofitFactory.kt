@@ -4,6 +4,7 @@ import android.net.Uri
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import br.senai.sp.jandira.doetempo.constants.Constants
+import br.senai.sp.jandira.doetempo.services.user.UserCall
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -35,5 +36,10 @@ class RetrofitFactory {
 
             return instance
         }
+        fun retrofitUserServices(): UserCall {
+            instance = getRetrofit()
+            return instance.create(UserCall::class.java)
+        }
+
     }
 }

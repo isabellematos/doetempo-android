@@ -162,7 +162,7 @@ fun ProfileScreen() {
                     descriptionState = response.body()?.user?.description.toString()
                     photoUrlState = response.body()?.user?.photo_url.toString()
                    // connectionState = response.body()!!.user.count?.following.toString()
-                    attachedLink = response.body()!!.user.attachedLink?.get(0)?.attachedLink.toString()
+                    //attachedLink = response.body()!!.user.attachedLink?.get(0)?.attachedLink.toString()
 
                 }
 

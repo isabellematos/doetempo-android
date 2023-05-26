@@ -1,7 +1,13 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
+//import com.bumptech.glide.Glide
+//import com.bumptech.glide.request.target.SimpleTarget
+//import com.bumptech.glide.request.transition.Transition
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +15,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,26 +43,18 @@ import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
 import br.senai.sp.jandira.doetempo.ImagePreviewItem
 import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
+import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-//import com.bumptech.glide.Glide
-//import com.bumptech.glide.request.target.SimpleTarget
-//import com.bumptech.glide.request.transition.Transition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.net.toUri
-import br.senai.sp.jandira.doetempo.model.*
-import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
-import java.io.File
 
 
 class NewPostActivity : ComponentActivity() {
@@ -114,6 +112,7 @@ class NewPostActivity : ComponentActivity() {
 //}
 
 
+    @SuppressLint("MutableCollectionMutableState")
     @RequiresApi(Build.VERSION_CODES.P)
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
@@ -124,7 +123,7 @@ class NewPostActivity : ComponentActivity() {
         }
 
         var bitmapLink by remember {
-            mutableStateOf("")
+            mutableStateOf(HashMap<String, Any>())
         }
 
         var imageLink by remember {
@@ -161,6 +160,9 @@ class NewPostActivity : ComponentActivity() {
         var storageRef: FirebaseStorage
 
         storageRef = FirebaseStorage.getInstance()
+
+        val db = FirebaseFirestore.getInstance()
+
 
 
 //    var storage = FirebaseStorage.getInstance()
@@ -368,9 +370,14 @@ class NewPostActivity : ComponentActivity() {
                 }
                 //file = state.listOfSelectedImages[0].path?.let { File(it) }.toString()
 
+                var mapImage by remember {
+                    mutableStateOf(HashMap<String, Any>())
+                }
+
                 //Log.i("photopost", filePath.toString())
 
                 Button(
+
 
                     onClick = {
                         storageRef.getReference("images")
@@ -396,6 +403,39 @@ class NewPostActivity : ComponentActivity() {
                                             .show()
                                     }
 
+                                 storageRef.getReference("images").child(System.currentTimeMillis().toString())
+                                     .putFile(state.listOfSelectedImages[0])
+                                    .addOnSuccessListener { task ->
+                                        //if (task.onSuccess) {
+                                            task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+
+                                                 mapImage = HashMap()
+                                                mapImage["pic"] = uri.toString()
+
+
+
+                                                db.collection("images").add(mapImage).addOnCompleteListener { firestoreTask ->
+
+                                                    if (firestoreTask.isSuccessful){
+                                                        Toast.makeText(context, "Uploaded Successfully", Toast.LENGTH_SHORT).show()
+
+                                                    }else{
+                                                        Toast.makeText(context, firestoreTask.exception?.message, Toast.LENGTH_SHORT).show()
+
+                                                    }
+                                                    mapImage = bitmapLink
+                                                    Log.i("smt", bitmapLink.toString())
+//                                binding.progressBar.visibility = View.GONE
+//                                binding.imageView.setImageResource(R.drawable.vector)
+
+                                                }
+                                            }
+                                      //  } else {
+                                         //   Toast.makeText(context, task.exception?.message, Toast.LENGTH_SHORT).show()
+//                        binding.progressBar.visibility = View.GONE
+//                        binding.imageView.setImageResource(R.drawable.vector)
+                                        }
+                                    }
 
 //                                val pathReference = storageRef.("images")
 //
@@ -405,15 +445,17 @@ class NewPostActivity : ComponentActivity() {
 //                                val httpsReference = storageRef.getReferenceFromUrl(
 //                                    "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2F1684851659427?alt=media&token=af179fbe-82a2-4f03-959f-fa3bb9f799ff")
 
-                            }
+                           // }
+
 
 
 
                         val contact = CreatePost(
                             content = newPublication,
-                            photos = listOf(imageLink),
+                            photos = listOf(mapImage),
                             typeUser = typeUser
                         )
+
 
 
                         val retrofit = RetrofitFactory.getRetrofit()

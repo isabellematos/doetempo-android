@@ -34,10 +34,5 @@ data class Campanha(
         description = "",
         type = Type()
     ),
-    var campaign_address: Address? = Address(
-        id = "",
-        number = "",
-        complement = "",
-        postalCode = ""
-    ),
+    var campaign_address: Address? = null,
 )

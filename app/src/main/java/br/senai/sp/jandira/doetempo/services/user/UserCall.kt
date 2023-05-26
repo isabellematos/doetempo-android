@@ -18,4 +18,8 @@ interface UserCall {
 
     @DELETE("user/{id}")
     fun delete(@Path("id") id: Long): Call<String>
+
+    @POST("user/campaign/")
+    fun registerUserInCampaign(@Header("Authorization") token: String, @Query("idCampaign") idCampaign: String): Call<RegisterUserInCampaignResponse>
+
 }
