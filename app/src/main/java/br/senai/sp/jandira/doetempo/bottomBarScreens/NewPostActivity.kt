@@ -1,8 +1,5 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
-//import com.bumptech.glide.Glide
-//import com.bumptech.glide.request.target.SimpleTarget
-//import com.bumptech.glide.request.transition.Transition
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -38,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.CreateCampanhaViewModel
 import br.senai.sp.jandira.doetempo.ImagePreviewItem
@@ -77,41 +75,6 @@ class NewPostActivity : ComponentActivity() {
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.P)
-//fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-//   return if (true && DocumentsContract.isDocumentUri(context, uri)) {
-//        if ("com.android.providers.media.documents" == uri.authority) {
-//            val documentId = DocumentsContract.getDocumentId(uri)
-//            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//            val selection = MediaStore.Images.Media._ID + "=?"
-//            val selectionArgs = arrayOf(documentId.split(":")[1])
-//            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)
-//                ?.use { cursor ->
-//                    if (cursor.moveToFirst()) {
-//                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-//                        if (columnIndex != -1) {
-//                            var filePath = cursor.getString(columnIndex)
-//                            var source = ImageDecoder.createSource(
-//                                context.contentResolver,
-//                                Uri.parse(filePath)
-//                            )
-//                            ImageDecoder.decodeBitmap(source)
-//                        } else {
-//                            null
-//                        }
-//                    } else {
-//                        null
-//                    }
-//                }
-//        } else {
-//            null
-//        }
-//    } else {
-//        null
-//    }
-//}
-
-
     @SuppressLint("MutableCollectionMutableState")
     @RequiresApi(Build.VERSION_CODES.P)
     @OptIn(ExperimentalPermissionsApi::class)
@@ -122,21 +85,12 @@ class NewPostActivity : ComponentActivity() {
             mutableStateOf("")
         }
 
-        var bitmapLink by remember {
-            mutableStateOf(HashMap<String, Any>())
-        }
-
         var imageLink by remember {
             mutableStateOf("")
         }
 
-
         var newPublicationisError by remember {
             mutableStateOf(false)
-        }
-
-        var file by remember {
-            mutableStateOf("")
         }
 
         var filePath by remember {
@@ -303,62 +257,6 @@ class NewPostActivity : ComponentActivity() {
                         } else
                             permissionState.launchPermissionRequest()
 
-
-                        // file = state.listOfSelectedImages[0].path.toString()
-
-//                                 var uri = Uri.parse(file)
-//
-//                                var filePath = getBitmapFromUri(context, uri)
-
-//                           if (filePath != null) {
-//
-//                           }
-
-
-//                        var filePath = getBitmapFromUri(context, uri)
-//
-//                        if (filePath != null)
-//                            imageLink = listOf(filePath.toString())
-                        // Log.i("agrvai", imageLink.toString())
-
-
-//                    var file = state.listOfSelectedImages[0].path?.let { File(it) }
-//
-//                    Log.i("uriphoto", Uri.fromFile(file).toString())
-
-                        // var imageRef = storageRef.child("images")
-
-
-//
-//
-//                            // Exemplo de uso
-//                            val uriString =
-//                                "content://com.android.providers.media.documents/document/"
-//                            val uri = Uri.parse(uriString)
-
-
-//                                Log.i("photopost", filePath.toString())
-//                                println(filePath)
-//                            } else {
-//                                // Não foi possível obter o caminho do arquivo
-//                                println("Caminho do arquivo não encontrado")
-//                            }
-                        // var uri = Uri.EMPTY
-
-//                    val imageUrl =
-//                        "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%${file}" // Substitua pelo seu link de imagem
-//
-//                    Glide.with(context)
-//                        .asBitmap()
-//                        .load(imageUrl)
-//                        .into(object : SimpleTarget<Bitmap>() {
-//                            override fun onResourceReady(
-//                                resource: Bitmap,
-//                                transition: Transition<in Bitmap>?
-//                            ) {
-//                                bitmapLink = state.listOfSelectedImages[0].path.toString()
-//                            }
-//                        })
                     }
                 )
                 {
@@ -403,60 +301,30 @@ class NewPostActivity : ComponentActivity() {
                                             .show()
                                     }
 
-                                 storageRef.getReference("images").child(System.currentTimeMillis().toString())
-                                     .putFile(state.listOfSelectedImages[0])
-                                    .addOnSuccessListener { task ->
-                                        //if (task.onSuccess) {
-                                            task.metadata!!.reference!!.downloadUrl.addOnSuccessListener { uri ->
+                                val storageRef = FirebaseStorage.getInstance().reference.child("images/${filePath.toUri().lastPathSegment}")
 
-                                                 mapImage = HashMap()
-                                                mapImage["pic"] = uri.toString()
-
-
-
-                                                db.collection("images").add(mapImage).addOnCompleteListener { firestoreTask ->
-
-                                                    if (firestoreTask.isSuccessful){
-                                                        Toast.makeText(context, "Uploaded Successfully", Toast.LENGTH_SHORT).show()
-
-                                                    }else{
-                                                        Toast.makeText(context, firestoreTask.exception?.message, Toast.LENGTH_SHORT).show()
-
-                                                    }
-                                                    mapImage = bitmapLink
-                                                    Log.i("smt", bitmapLink.toString())
-//                                binding.progressBar.visibility = View.GONE
-//                                binding.imageView.setImageResource(R.drawable.vector)
-
-                                                }
-                                            }
-                                      //  } else {
-                                         //   Toast.makeText(context, task.exception?.message, Toast.LENGTH_SHORT).show()
-//                        binding.progressBar.visibility = View.GONE
-//                        binding.imageView.setImageResource(R.drawable.vector)
+                                val uploadTask = storageRef.putFile(filePath.toUri())
+                                uploadTask.continueWithTask { task ->
+                                    if (!task.isSuccessful) {
+                                        task.exception?.let {
+                                            throw it
                                         }
                                     }
+                                    storageRef.downloadUrl
+                                }.addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        imageLink = task.result.toString()
+                                    } else {
 
-//                                val pathReference = storageRef.("images")
-//
-//
-//                                val gsReference = storageRef.getReferenceFromUrl("gs://doe-tempo-50ccb.appspot.com/images/1684851659427")
-//
-//                                val httpsReference = storageRef.getReferenceFromUrl(
-//                                    "https://firebasestorage.googleapis.com/v0/b/doe-tempo-50ccb.appspot.com/o/images%2F1684851659427?alt=media&token=af179fbe-82a2-4f03-959f-fa3bb9f799ff")
+                                    }
+                                }
 
-                           // }
-
-
-
-
+                                    }
                         val contact = CreatePost(
                             content = newPublication,
-                            photos = listOf(mapImage),
+                            photos = listOf(imageLink),
                             typeUser = typeUser
                         )
-
-
 
                         val retrofit = RetrofitFactory.getRetrofit()
                         val postCall = retrofit.create(PostCall::class.java)
@@ -523,96 +391,6 @@ class NewPostActivity : ComponentActivity() {
                         fontSize = 18.sp
                     )
                 }
-                val retrofit = RetrofitFactory.getRetrofit()
-                val postCall = retrofit.create(PostCall::class.java)
-                val call = postCall.getAll()
-                call.enqueue(object : Callback<PostList> {
-
-                    override fun onResponse(
-                        call: Call<PostList>,
-                        response: Response<PostList>
-                    ) {
-//                        photoURLCampanhaState = response.body()!!.campaignPhotos[0].photoUrl.toString()
-                        imageLink = response.body()!!.allPosts[0]?.post_photo.toString()
-                    }
-
-                    override fun onFailure(call: Call<PostList>, t: Throwable) {
-                        Log.i("ds3m", t.message.toString())
-                    }
-
-                })
-
             }
         }
     }
-
-
-//fun convertUriToFilePath(context: Context, uri: Uri): String? {
-//    filePath.toString()
-//
-//
-//    if (true && DocumentsContract.isDocumentUri(context, uri)) {
-//        if ("com.android.providers.media.documents" == uri.authority) {
-//            val documentId = DocumentsContract.getDocumentId(uri)
-//            val contentUri =
-//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//            val selection = MediaStore.Images.Media._ID + "=?"
-//            val selectionArgs = arrayOf(documentId.split(":")[1])
-//            context.contentResolver.query(
-//                contentUri,
-//                null,
-//                selection,
-//                selectionArgs,
-//                null
-//            )?.use { cursor ->
-//                if (cursor.moveToFirst()) {
-//                    val columnIndex =
-//                        cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-//                    if (columnIndex != -1) {
-//                        filePath = cursor.getString(columnIndex)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    return filePath
-//
-//}
-
-//@RequiresApi(Build.VERSION_CODES.P)
-//fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
-//   return if (true && DocumentsContract.isDocumentUri(context, uri)) {
-//        if ("com.android.providers.media.documents" == uri.authority) {
-//            val documentId = DocumentsContract.getDocumentId(uri)
-//            val contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//            val selection = MediaStore.Images.Media._ID + "=?"
-//            val selectionArgs = arrayOf(documentId.split(":")[1])
-//            context.contentResolver.query(contentUri, null, selection, selectionArgs, null)
-//                ?.use { cursor ->
-//                    if (cursor.moveToFirst()) {
-//                        val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-//                        if (columnIndex != -1) {
-//                            var filePath = cursor.getString(columnIndex)
-//                            var source = ImageDecoder.createSource(
-//                                context.contentResolver,
-//                                Uri.parse(filePath)
-//                            )
-//                            ImageDecoder.decodeBitmap(source)
-//                        } else {
-//                            null
-//                        }
-//                    } else {
-//                        null
-//                    }
-//                }
-//        } else {
-//            null
-//        }
-//    } else {
-//        null
-//    }
-//}
-
-
-
-

@@ -31,6 +31,9 @@ import coil.compose.AsyncImage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -40,36 +43,6 @@ fun PostWidget(post: Post) {
     var countLike by remember {
     mutableStateOf(0)
 }
-//    val interactionSource = remember { MutableInteractionSource() }
-//
-//    val draggable = Modifier.draggable(
-//        interactionSource = interactionSource,
-//        orientation = Orientation.Horizontal,
-//        state = rememberDraggableState { countLike }
-//    )
-//
-//    val clickable = Modifier.clickable(
-//        interactionSource = interactionSource,
-//        indication = LocalIndication.current
-//    ) { countLike }
-//
-//// Observe changes to the binary state for these interactions
-//    val isPressed by interactionSource.collectIsPressedAsState()
-//
-//// Use the state to change our UI
-//    val (text, color) = when {
-//        isPressed -> "Pressed" to Color.Red
-//        // Default / baseline state
-//        else -> "Drag me horizontally, or press me!" to Color.Black
-//    }
-//
-
-
-    //val verifiedS
-    // ign = br.senai.sp.jandira.doetempo.R.drawable.verifiesimbol
-
-
-    //Log.i("", photoProfile.toString())
 
     var nameOngState by remember {
         mutableStateOf("")
@@ -88,6 +61,11 @@ fun PostWidget(post: Post) {
     }
 
     val scrollState = rememberScrollState()
+
+    val zonedDateTime = ZonedDateTime.parse(post.created_at.toString())
+    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+    val formattedDateTime = localDate.format(formatterPattern)
 
     var nameUserState by remember {
         mutableStateOf("")
@@ -192,7 +170,7 @@ fun PostWidget(post: Post) {
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        post.created_at?.let {
+                        formattedDateTime.toString()?.let {
                             Text(
                                 text = it,
                                 fontSize = 12.sp,

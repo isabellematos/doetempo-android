@@ -40,8 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
-import br.senai.sp.jandira.doetempo.components.addCampanhaHeader
-import br.senai.sp.jandira.doetempo.components.bottom
+import br.senai.sp.jandira.doetempo.campanhaComponents.addCampanhaHeader
+import br.senai.sp.jandira.doetempo.campanhaComponents.bottom
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 

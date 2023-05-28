@@ -1,4 +1,4 @@
-package br.senai.sp.jandira.doetempo.components
+package br.senai.sp.jandira.doetempo.campanhaComponents
 
 import android.content.Intent
 import androidx.compose.foundation.layout.*

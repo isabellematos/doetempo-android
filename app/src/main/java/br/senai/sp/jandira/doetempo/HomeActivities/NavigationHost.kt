@@ -23,7 +23,7 @@ fun NavigationHost(navController: NavHostController) {
             FeedScreen(intent = Intent())
         }
         composable(Items_menu.Screen3.route) {
-            ProfileScreen()
+            ProfileScreen(user = User(), ong = Ong() )
         }
     }
 }
