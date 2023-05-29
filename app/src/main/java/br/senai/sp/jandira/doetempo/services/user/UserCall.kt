@@ -11,7 +11,7 @@ interface UserCall {
     fun getAll(): Call<UserList>
 
     @POST("/user")
-    fun save(@Body contact: User): Call<CreatedUser>
+    fun save(@Body contact: CreateUser): Call<CreatedUser>
 
     @GET("/user/{id}")
     fun getById(@Header("Authorization") auth: String, @Path("id")id: String): Call<UserDetails>

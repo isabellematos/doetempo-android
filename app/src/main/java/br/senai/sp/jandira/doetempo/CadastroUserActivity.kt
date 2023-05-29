@@ -539,8 +539,6 @@ fun CadastroUser() {
                     }
                 }
             }
-
-
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -832,7 +830,7 @@ fun CadastroUser() {
                         val toast = Toast.makeText(context, text, duration)
                         toast.show()
                     } else {
-                        val contact = User(
+                        val contact = CreateUser(
                             name = nameState,
                             email = emailState,
                             password = passwordState,
@@ -851,7 +849,7 @@ fun CadastroUser() {
                             type = Type()
                         )
 
-                        Log.i("idgendercontact", contact.gender)
+                        contact.gender?.let { Log.i("idgendercontact", it) }
                         Log.i("ds3m", contact.birthdate.toString())
 
                         val callContactPost = userCall.save(contact)

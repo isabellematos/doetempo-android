@@ -218,7 +218,6 @@ fun bottom(
         }
     }
 
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -232,7 +231,6 @@ fun bottom(
                 .size(100.dp),
             contentDescription = ""
         )
-
         Column(
             modifier = Modifier
                 .padding(20.dp)

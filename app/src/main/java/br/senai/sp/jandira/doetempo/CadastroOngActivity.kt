@@ -166,18 +166,20 @@ fun CadastroOng() {
 
     val retrofit = RetrofitFactory.getRetrofit()
     val ongCall = retrofit.create(OngCall::class.java)
-    val call = ongCall.getAll()
 
-    call.enqueue(object : Callback<OngList> {
-        override fun onResponse(call: Call<OngList>, response: Response<OngList>) {
-            Log.i("ds3m", response.body()!!.ngos[0].name)
-        }
 
-        override fun onFailure(call: Call<OngList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-
-    })
+//    val call = ongCall.getAll()
+//
+//    call.enqueue(object : Callback<OngList> {
+//        override fun onResponse(call: Call<OngList>, response: Response<OngList>) {
+//            response.body()!!.ngos[0].name?.let { Log.i("ds3m", it) }
+//        }
+//
+//        override fun onFailure(call: Call<OngList>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//
+//    })
 
     class DateTransformation() : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {

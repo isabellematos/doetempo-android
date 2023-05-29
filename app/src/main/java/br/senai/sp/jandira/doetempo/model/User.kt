@@ -13,7 +13,6 @@ data class User(
     //var address: Address?,
     var gender: String? = null,
     var photo_url: String? = null,
-
        @SerializedName("user_address")
        val address: Address? = null,
     var type: Type? = null,

@@ -30,8 +30,6 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
 import br.senai.sp.jandira.doetempo.services.cep.RetrofitApiViaCep
-import br.senai.sp.jandira.doetempo.services.cep.RetrofitFactoryCep
-import br.senai.sp.jandira.doetempo.services.user.UserCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController

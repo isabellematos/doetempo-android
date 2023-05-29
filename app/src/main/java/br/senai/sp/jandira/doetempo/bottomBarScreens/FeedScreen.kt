@@ -83,25 +83,6 @@ fun FeedScreen(intent: Intent) {
         }
     }
 
-//    val users = listOf(
-//        post.tbl_ngo?.let {
-//            post.content?.let { it1 ->
-//                PostInfo(
-//                    name = it.name,
-//                    profilePic = photoProfile,
-//                    date = post.created_at,
-//                    verified = false,
-//                    postText = it1,
-//                    postPhoto = post.post_photo,
-//                    postVideo = "",
-//                    comment = "",
-//                    commentCount = 10,
-//                    likeCount = 300
-//                )
-//            }
-//        },
-//    )
-
 //CONTENT
 
     Column(
@@ -132,26 +113,6 @@ fun FeedScreen(intent: Intent) {
                 )
             }
         }
-
-//        Scaffold(
-//            scaffoldState = scaffoldState,
-//            floatingActionButton = {
-//            },
-//            backgroundColor = Color(248, 248, 248),
-//            isFloatingActionButtonDocked = true
-//        ) { innerPadding ->
-//            LazyColumn(
-//                modifier = Modifier.padding(innerPadding)
-//            ) {
-//                item { Divider() }
-//                items(users) { post ->
-//                    if (post != null) {
-//                        PostWidget(post = Post())
-//                    }
-//                    Spacer(modifier = Modifier.height(30.dp))
-//                }
-//            }
-//        }
 
         val retrofit = RetrofitFactory.getRetrofit()
         val postCall = retrofit.create(PostCall::class.java)
@@ -186,8 +147,8 @@ fun FeedScreen(intent: Intent) {
         ) {
 
             LazyColumn(modifier = Modifier.padding(16.dp)) {
-                items(postState) {
-                    PostWidget(post = it)
+                items(postState.size) {index ->
+                    PostWidget(post = postState[index])
                 }
             }
         }
