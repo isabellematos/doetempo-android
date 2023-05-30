@@ -37,6 +37,9 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CampanhaDetailsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -178,6 +181,11 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)
+
+        val zonedDateTime = ZonedDateTime.parse(campanha.begin_date.toString())
+        val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+        val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+        val formattedDateTime = localDate.format(formatterPattern)
 
 
         var titleState by remember {
@@ -368,7 +376,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
                 }
                 Text(
-                    text = beginDateState,
+                    text = formattedDateTime.toString(),
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 11.sp

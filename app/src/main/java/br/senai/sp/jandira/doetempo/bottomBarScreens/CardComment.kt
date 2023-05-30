@@ -17,19 +17,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.senai.sp.jandira.doetempo.model.Comment
 import coil.compose.AsyncImage
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun ListComments(comment: Comment){
 
+    val zonedDateTime = ZonedDateTime.parse(comment.createdAt.toString())
+    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+    val formattedDateTime = localDate.format(formatterPattern)
 
-//    if (comment.commentNgo!!.size > 0) {
-//
-//    }
-//
-//
-//    if (comment.commentUser!!.size > 0) {
-//
-//    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +105,7 @@ fun ListComments(comment: Comment){
                                 }
                             }
                         }
-                        comment.createdAt?.let {
+                        formattedDateTime.toString()?.let {
                             Text(
                                 text = it,
                                 fontSize = 13.sp

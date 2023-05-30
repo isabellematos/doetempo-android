@@ -185,24 +185,6 @@ fun CadastroUser() {
     }
 
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val userCall = retrofit.create(UserCall::class.java)
-//    val call = userCall.getAll()
-//
-//    var usersState by remember {
-//        mutableStateOf(UserList(listOf()))
-//    }
-//
-//    call.enqueue(object : Callback<UserList> {
-//        override fun onResponse(call: Call<UserList>, response: Response<UserList>) {
-////            Log.i("ds3m", response.body()!!.users[0].name)
-//        }
-//
-//        override fun onFailure(call: Call<UserList>, t: Throwable) {
-////            Log.i("ds3m", t.message.toString())
-//        }
-//
-//    })
     class DateTransformation() : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             return dateFilter(text)
@@ -483,6 +465,10 @@ fun CadastroUser() {
 
             var genderList by remember {
                 mutableStateOf(listOf<Gender>())
+            }
+
+            var allGenders by rememberSaveable {
+                mutableStateOf(listOf(Gender()))
             }
 
             val retrofit = RetrofitFactory.getRetrofit()
@@ -852,6 +838,9 @@ fun CadastroUser() {
                         contact.gender?.let { Log.i("idgendercontact", it) }
                         Log.i("ds3m", contact.birthdate.toString())
 
+
+                        val retrofit = RetrofitFactory.getRetrofit()
+                        val userCall = retrofit.create(UserCall::class.java)
                         val callContactPost = userCall.save(contact)
 
                         callContactPost.enqueue(object : Callback<CreatedUser> {

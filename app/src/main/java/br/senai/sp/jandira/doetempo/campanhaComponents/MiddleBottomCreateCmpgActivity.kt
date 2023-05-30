@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
@@ -86,6 +88,14 @@ fun bottom(
     }
 
     var nomeCampanhaState by remember {
+        mutableStateOf("")
+    }
+
+    var imageLink by remember {
+        mutableStateOf("")
+    }
+
+    var filePath by remember {
         mutableStateOf("")
     }
 
@@ -221,7 +231,13 @@ fun bottom(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 55.dp, top = 30.dp, end = 55.dp),
+            .padding(start = 55.dp, top = 30.dp, end = 55.dp)
+            .clickable {
+                if (permissionState.status.isGranted) {
+                    galleryLauncher.launch("image/*")
+                } else
+                    permissionState.launchPermissionRequest()
+            },
         backgroundColor = Color(246, 246, 246)
     ) {
         Icon(
@@ -259,6 +275,8 @@ fun bottom(
                                 }
                             )
                             Spacer(modifier = Modifier.width(5.dp))
+
+                            filePath = item.toString()
                         }
                     }
                 }
@@ -279,6 +297,46 @@ fun bottom(
                         galleryLauncher.launch("image/*")
                     } else
                         permissionState.launchPermissionRequest()
+
+                    storageRef.getReference("images")
+                        .child(System.currentTimeMillis().toString())
+                        .putFile(state.listOfSelectedImages[0])
+                        .addOnSuccessListener { task ->
+                            task.metadata!!.reference!!.downloadUrl
+                                .addOnSuccessListener {
+                                    imageItState = listOf(it.toString())
+                                    Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                .addOnFailureListener { error ->
+                                    Toast.makeText(
+                                        context,
+                                        state.listOfSelectedImages.toString(),
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                        }
+
+                    val storageRef =
+                        FirebaseStorage.getInstance().reference.child("images/${filePath.toUri().lastPathSegment}")
+
+                    val uploadTask = storageRef.putFile(filePath.toUri())
+                    uploadTask.continueWithTask { task ->
+                        if (!task.isSuccessful) {
+                            task.exception?.let {
+                                throw it
+                            }
+                        }
+                        storageRef.downloadUrl
+                    }.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            imageLink = task.result.toString()
+                            Log.i("imagelink", imageLink)
+                        } else {
+
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1077,35 +1135,14 @@ fun bottom(
                                 complement = complementoState
                             ),
                             photo_url = listOf(state.listOfSelectedImages[0].toString()),
-                            //cause = causeName,
                             causes = listOf(
                                 Cause(
                                     id = idCause
                                 )
                             )
                         )
-
-                        storageRef.getReference("images")
-                            .child(System.currentTimeMillis().toString())
-                            .putFile(state.listOfSelectedImages[0])
-                            .addOnSuccessListener { task ->
-                                task.metadata!!.reference!!.downloadUrl
-                                    .addOnSuccessListener {
-                                        imageItState = listOf(it.toString())
-                                        Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
-                                            .show()
-                                    }
-                                    .addOnFailureListener { error ->
-                                        Toast.makeText(
-                                            context,
-                                            state.listOfSelectedImages.toString(),
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    }
-                            }
                         val photo = Photo(
-                            photoUrl = imageItState[0]
+                            photoUrl = imageLink
                         )
 
                         Log.i("ds3m", photo.toString())
