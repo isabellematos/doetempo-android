@@ -479,6 +479,8 @@ fun CadastroUser() {
                 override fun onResponse(call: Call<GenderList>, response: Response<GenderList>) {
 //                    Log.i("ds3m", response.body()!!.genders[0].name)
                     genderList = response.body()!!.genders
+                    genderStateString = response.body()!!.genders[0].id.toString()
+                    Log.i("ididid", genderStateString.toString())
                 }
 
                 override fun onFailure(call: Call<GenderList>, t: Throwable) {
@@ -492,7 +494,7 @@ fun CadastroUser() {
             }
 
 
-            var genderStateAbbreviation = genderState.toString()
+           // var genderStateAbbreviation = genderState.toString()
 
             if (!genderList.isEmpty()) {
                 val (selectedOption, onOptionSelected) = remember { mutableStateOf(genderList[0]) }
@@ -508,7 +510,6 @@ fun CadastroUser() {
                                         onOptionSelected(text)
                                         genderStateString = text.id.toString()
                                         Log.i("genderid", genderStateString.toString())
-                                        genderStateAbbreviation = text.abbreviation.toString()
 //                                        Log.i("ds3m", genderState)
                                     },
                                     role = Role.RadioButton
@@ -542,11 +543,11 @@ fun CadastroUser() {
                     if (newCep.length == 8) {
 //                        Log.i("ds3m", newCep)
                         buscarCep(newCep) {
-                            cityState = it.cidade
-                            logradouroState = it.logradouro
-                            stateState = it.estado
-                            bairroState = it.bairro
-                            cepState = it.cep
+                            cityState = it.cidade.toString()
+                            logradouroState = it.logradouro.toString()
+                            stateState = it.estado.toString()
+                            bairroState = it.bairro.toString()
+                            cepState = it.cep.toString()
                         }.toString()
                     }
                 },
@@ -831,12 +832,9 @@ fun CadastroUser() {
                                 postalCode = cepState,
                                 complement = null
                                 ),
-                            gender = genderId,
+                            gender = genderStateString,
                             type = Type()
                         )
-
-                        contact.gender?.let { Log.i("idgendercontact", it) }
-                        Log.i("ds3m", contact.birthdate.toString())
 
 
                         val retrofit = RetrofitFactory.getRetrofit()

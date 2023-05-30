@@ -37,6 +37,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.Period
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -45,6 +47,11 @@ class CampanhaDetailsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            var address by remember {
+                mutableStateOf(Cep())
+            }
+
             var campaignDetailsState by remember {
                 mutableStateOf(
                     Campanha(
@@ -78,23 +85,11 @@ class CampanhaDetailsActivity : ComponentActivity() {
                 )
             }
 
-            var address by remember {
-                mutableStateOf(
-                    Cep(
-                        cep = "",
-                        logradouro = "",
-                        complemento = "",
-                        bairro = "",
-                        cidade = "",
-                        estado = ""
-                    )
-                )
-            }
             val dataStore = DataStoreAppData(this)
             val typeUser = dataStore.getTypeUser.collectAsState(initial = "").value.toString()
 
-            if (campaignDetailsState.address != null) {
-                val cep = campaignDetailsState.address?.postalCode.toString()
+            if (campaignDetailsState.campaignAddress != null) {
+                val cep = campaignDetailsState.campaignAddress?.postalCode.toString()
                 val callViaCep =
                     RetrofitApiViaCep.getViaCepService().getAddress(cep)
 
@@ -110,6 +105,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                         TODO("Not yet implemented")
                     }
                 })
+            }
 
                 DoetempoTheme {
                     // A surface container using the 'background' color from the theme
@@ -172,7 +168,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
                 }
             }
         }
-    }
 
     //@Preview(showBackground = true, showSystemUi = true)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
@@ -181,11 +176,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)
-
-        val zonedDateTime = ZonedDateTime.parse(campanha.begin_date.toString())
-        val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
-        val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
-        val formattedDateTime = localDate.format(formatterPattern)
 
 
         var titleState by remember {
@@ -197,10 +187,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
         }
 
         var idOngState by remember {
-            mutableStateOf("")
-        }
-
-        var addressState by remember {
             mutableStateOf("")
         }
 
@@ -217,6 +203,10 @@ class CampanhaDetailsActivity : ComponentActivity() {
         }
 
         var photoURlNGOState by remember {
+            mutableStateOf("")
+        }
+
+        var addressState by remember {
             mutableStateOf("")
         }
 
@@ -274,7 +264,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     ongState = response.body()!!.ngo?.name.toString()
                     idOngState = response.body()!!.ngo?.id.toString()
                     photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
-                    photoURLCampanhaState = response.body()!!.campaignPhotos[0].photoUrl.toString()
+                    photoURLCampanhaState = response.body()!!.campaignPhotos?.get(0)?.photoUrl.toString()
                     Log.i("imgcampanha", photoURLCampanhaState)
                     idState = response.body()!!.id.toString()
                 }
@@ -289,6 +279,8 @@ class CampanhaDetailsActivity : ComponentActivity() {
             Log.i("ds3m", "erro: id vazio")
 
         }
+
+
 
 
         val scrollState = rememberScrollState()
@@ -362,6 +354,13 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     }
 
                 }
+
+
+//                val zonedDateTime = ZonedDateTime.parse(beginDateState)
+//                val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+//                val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+//                val formattedDateTime = localDate.format(formatterPattern)
+
                 Row(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.Center,
@@ -376,7 +375,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
                 }
                 Text(
-                    text = formattedDateTime.toString(),
+                    text = beginDateState,
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 11.sp
@@ -420,7 +419,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
                         color = Color.Black,
                         fontSize = 17.sp
                     )
-                    Log.i("ds3m", descriptionState.toString())
                     Text(
                         text = "Detalhes",
                         modifier = Modifier.padding(top = 52.dp),
@@ -429,6 +427,27 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
+                    Row(Modifier.fillMaxWidth(), Arrangement.Start, Alignment.CenterVertically) {
+                        Icon(painter = painterResource(id = R.drawable.clock_icon), contentDescription = "icone ilustrativo", Modifier.size(27.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        if (campanha.end_date != null && campanha.begin_date != null ) {
+                            val expireDate =   Period.between(LocalDate.now() ,convertIsoStringToLocalDate(campanha.end_date.toString()))
+                            if (expireDate.isNegative) {
+                                Text(
+                                    text = "Campanha encerrada!",
+                                    style = MaterialTheme.typography.body1,
+                                    color = Color(0xB2000000)
+                                )
+                            } else {
+                                Text(
+                                    text = "Encerra em ${expireDate.months} mes(es) e ${expireDate.days} dia(s)",
+                                    style = MaterialTheme.typography.body1,
+                                    color = Color(0xB2000000)
+                                )
+                            }
+                            // Period.between(convertIsoStringToLocalDate(campaign.beginDate.toString()), convertIsoStringToLocalDate(campaign.endDate.toString()))
+                        }
+                    }
 
                     var possibleHomeOffice = "Pode ser feito online"
                     var impossibleHomeOffice = "Não pode ser feito online"
@@ -447,10 +466,12 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             modifier = Modifier.padding(bottom = 15.dp)
                         )
                         Text(
-                            text = "${address.logradouro}, ${campanha.address?.number} - ${address.bairro}, ${address.cidade} - ${address.estado}",
+                            text = "${address.logradouro}, ${campanha.campaignAddress?.number} - ${address.bairro}, ${address.cidade} - ${address.estado}",
                             modifier = Modifier.padding(top = 2.dp, start = 10.dp)
                         )
                     }
+
+                    Log.i("rua", address.logradouro.toString())
                     Row() {
                         Icon(
                             imageVector = Icons.Default.PinDrop,
@@ -690,15 +711,3 @@ class CampanhaDetailsActivity : ComponentActivity() {
         }
     }
 }
-
-
-
-//@Preview(
-//    showBackground = true,
-//    showSystemUi = true
-//)
-
-//@Composable
-//fun AboutCampanhaPreview() {
-//   AboutCampanha()
-//}

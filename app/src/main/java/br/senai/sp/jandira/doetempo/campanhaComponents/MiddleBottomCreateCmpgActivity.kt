@@ -524,11 +524,11 @@ fun bottom(
                             if (newCep.length == 8) {
 //                        Log.i("ds3m", newCep)
                                 buscarCep(newCep) {
-                                    cidadeState = it.cidade
-                                    ruaState = it.logradouro
-                                    estadoState = it.estado
-                                    bairroState = it.bairro
-                                    cepState = it.cep
+                                    cidadeState = it.cidade.toString()
+                                    ruaState = it.logradouro.toString()
+                                    estadoState = it.estado.toString()
+                                    bairroState = it.bairro.toString()
+                                    cepState = it.cep.toString()
                                 }.toString()
                             }
                             cepState = newCep

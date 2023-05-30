@@ -146,11 +146,11 @@ fun localScreen() {
                         if (newCep.length == 8) {
 //                        Log.i("ds3m", newCep)
                             buscarCep(newCep) {
-                                cidade = it.cidade
-                                rua = it.logradouro
-                                estado = it.estado
-                                bairro = it.bairro
-                                cep = it.cep
+                                cidade = it.cidade.toString()
+                                rua = it.logradouro.toString()
+                                estado = it.estado.toString()
+                                bairro = it.bairro.toString()
+                                cep = it.cep.toString()
                             }.toString()
                         }
                         cep = newCep

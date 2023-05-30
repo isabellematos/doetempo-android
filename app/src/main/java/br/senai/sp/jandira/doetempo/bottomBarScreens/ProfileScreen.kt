@@ -138,7 +138,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
-                    attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
+                    //attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
                 }
 
                 override fun onFailure(call: Call<Ong>, t: Throwable) {

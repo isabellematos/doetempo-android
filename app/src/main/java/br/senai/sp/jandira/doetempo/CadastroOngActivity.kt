@@ -459,10 +459,10 @@ fun CadastroOng() {
                     if (newCep.length == 8) {
 //                        Log.i("ds3m", newCep)
                         buscarCep(newCep) {
-                            cityState = it.cidade
-                            logradouroState = it.logradouro
-                            stateState = it.estado
-                            bairroState = it.bairro
+                            cityState = it.cidade.toString()
+                            logradouroState = it.logradouro.toString()
+                            stateState = it.estado.toString()
+                            bairroState = it.bairro.toString()
                             //cepState = it.cep
                         }.toString()
                     }

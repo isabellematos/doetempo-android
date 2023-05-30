@@ -3,23 +3,18 @@ package br.senai.sp.jandira.doetempo.model
 import com.google.gson.annotations.SerializedName
 
 data class Campanha(
-    var id: String? = "",
-    var title: String? = "",
-    var description: String? = "",
-    var begin_date: String? = "",
-    var end_date: String? = "",
+    var id: String? = null,
+    var title: String? = null,
+    var description: String? = null,
+    var begin_date: String? = null,
+    var end_date: String? = null,
     var home_office: Boolean? = false,
-    var how_to_contribute: String? = "",
-    var prerequisites: String? = "",
-    var id_ngo: String? = "",
-   //@SerializedName("campaign_photos") var photos: String = "",
-    @SerializedName("campaign_photos") var campaignPhotos: List<Photo>,
-    var photo_url: String? = "",
-    var address: Address? = Address(
-        number = "",
-        complement = "",
-        postalCode = ""
-    ),
+    var how_to_contribute: String? = null,
+    var prerequisites: String? = null,
+    var id_ngo: String? = null,
+    @SerializedName("campaign_photos") var campaignPhotos: List<Photo>? = null,
+    var photo_url: String? = null,
+    @SerializedName("campaign_address") var campaignAddress: Address? = null,
     //@SerializedName("campaign_causes") var causes: List<Cause>?,
     //var cause: String? = "",
     var ngo: Ong? = Ong(
