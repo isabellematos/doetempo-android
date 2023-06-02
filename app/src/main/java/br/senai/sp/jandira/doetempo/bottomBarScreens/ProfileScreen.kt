@@ -2,10 +2,7 @@ package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -88,12 +85,8 @@ fun ProfileScreen(user: User, ong: Ong) {
     }
 
 
-    val weightFocusRequester = FocusRequester()
-    val systemUi = rememberSystemUiController()
-    val navController = rememberNavController()
-
-
-    val context = LocalContext.current
+    var context = LocalContext.current
+    val scrollState = rememberScrollState()
 
     val intent = (context as HomeActivity).intent
     var nameUser = intent.getStringExtra("name")
@@ -121,14 +114,15 @@ fun ProfileScreen(user: User, ong: Ong) {
     idUser = datastore.getIdUser.collectAsState(initial = "").value.toString()
     dataType = datastore.getTypeUser.collectAsState(initial = "").value.toString()
 
-    if(dataType == "ONG") {
+    if (dataType == "ONG") {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val ongCall = retrofit.create(OngCall::class.java)
 
         val call = idUser?.let {
             Log.i("idUser", it)
-            ongCall.getById(it) }
+            ongCall.getById(it)
+        }
 
         if (call != null) {
             call.enqueue(object : Callback<Ong> {
@@ -138,7 +132,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                     stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
-                    //attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
+                    attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
                 }
 
                 override fun onFailure(call: Call<Ong>, t: Throwable) {
@@ -147,8 +141,7 @@ fun ProfileScreen(user: User, ong: Ong) {
 
             })
         }
-    }
-    else {
+    } else {
         val retrofit = RetrofitFactory.getRetrofit()
         val userCall = retrofit.create(UserCall::class.java)
         val call = idUser?.let { userCall.getById("Bearer $token", it) }
@@ -159,11 +152,11 @@ fun ProfileScreen(user: User, ong: Ong) {
                     response.body()?.let { Log.i("user", response.body()?.user.toString()) }
                     nameState = response.body()?.user?.name.toString()
                     emailState = response.body()?.user?.email.toString()
-                   // stateState = response.body()?.user?.userAddress?.address?.postalCode.toString()
+                    // stateState = response.body()?.user?.userAddress?.address?.postalCode.toString()
                     descriptionState = response.body()?.user?.description.toString()
                     photoUrlState = response.body()?.user?.photo_url.toString()
-                   // connectionState = response.body()!!.user.count?.following.toString()
-                    //attachedLink = response.body()!!.user.attachedLink?.get(0)?.attachedLink.toString()
+                    // connectionState = response.body()!!.user.count?.following.toString()
+                    //   attachedLink = response.body()!!.user?.attachedLink?.get(0)?.attachedLink.toString()
 
                 }
 
@@ -179,9 +172,7 @@ fun ProfileScreen(user: User, ong: Ong) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                color = Color.White
-            )
+            .background(color = Color.White)
     ) {
         Box(
             modifier = Modifier.height(100.dp)
@@ -213,19 +204,6 @@ fun ProfileScreen(user: User, ong: Ong) {
                     .clip(shape = RoundedCornerShape(8.dp))
                     .align(Alignment.BottomStart)
             )
-//            Image(
-//                painter = painterResource(id = R.drawable.mansmiling),
-//                contentDescription = "",
-//                modifier = Modifier
-//                    .padding(start = 20.dp)
-//                    .size(70.dp)
-//                    .border(
-//                        2.dp, color = Color(79, 121, 254),
-//                        shape = RoundedCornerShape(8.dp)
-//                    )
-//                    .clip(shape = RoundedCornerShape(8.dp))
-//                    .align(Alignment.BottomStart)
-//            )
             Text(
                 text = nameState,
                 modifier = Modifier
@@ -249,7 +227,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "21" ,
+                    text = "2",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(79, 121, 254)
@@ -272,8 +250,11 @@ fun ProfileScreen(user: User, ong: Ong) {
         }
         Column(
             modifier = Modifier
+                .verticalScroll(scrollState)
                 .fillMaxWidth()
                 .padding(top = 20.dp, start = 20.dp)
+                .size(width = 300.dp, height = 900.dp)
+
         ) {
             Text(
                 text = "Sobre:",
@@ -297,7 +278,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                     contentDescription = "PinDrop",
                     tint = Color(79, 121, 254)
                 )
-                Spacer(modifier = Modifier.width(5.dp))
+
                 Text(
                     text = emailState,
                     fontWeight = FontWeight.SemiBold,
@@ -305,16 +286,18 @@ fun ProfileScreen(user: User, ong: Ong) {
                     color = Color.Black
 
                 )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    text = attachedLink,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = Color.Black
-
-                )
-
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = attachedLink,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color.Black
+
+            )
+
 
             Text(
                 text = "Publicações",
@@ -322,18 +305,20 @@ fun ProfileScreen(user: User, ong: Ong) {
                 fontWeight = FontWeight.SemiBold
             )
 
+
+
             Column(
                 Modifier
                     .fillMaxSize()
                     .padding(top = 10.dp),
-                verticalArrangement = Arrangement.Top
             ) {
                 LazyColumn(Modifier.fillMaxSize()) {
                     if (user != null) {
                         user.postUser?.let {
                             items(it.size) {
                                 user.postUser!![it].post?.let { it1 ->
-                                    PostWidget(post = it1)
+                                    Log.i("postuser", user.postUser.toString())
+                                    PostWidget(post = it1,)
                                 }
                             }
                         }
@@ -342,11 +327,11 @@ fun ProfileScreen(user: User, ong: Ong) {
                         ong.postNgo?.let {
                             items(it.size) {
                                 ong.postNgo!![it].post?.let { it1 ->
+                                    Log.i("postngo", ong.postNgo.toString())
                                     PostWidget(post = it1)
                                 }
                             }
                         }
-
                     }
                 }
             }

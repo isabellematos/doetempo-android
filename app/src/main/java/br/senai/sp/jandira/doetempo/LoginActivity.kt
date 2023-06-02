@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
+import br.senai.sp.jandira.doetempo.model.Campanha
 import br.senai.sp.jandira.doetempo.model.CampanhaList
 import br.senai.sp.jandira.doetempo.model.LoginDto
 import br.senai.sp.jandira.doetempo.model.TokenDto
@@ -178,8 +179,11 @@ fun Login() {
             )
             val context = LocalContext.current
             var campanhasState by remember {
-                mutableStateOf(CampanhaList(listOf()))
+                mutableStateOf(listOf(Campanha()))
             }
+
+            Log.i("listateste ", campanhasState.toString())
+
             Button(
                 onClick = {
                     isUserError = userState.length == 0

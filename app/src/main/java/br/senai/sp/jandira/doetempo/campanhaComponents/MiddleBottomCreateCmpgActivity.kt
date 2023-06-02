@@ -293,11 +293,6 @@ fun bottom(
             val context = LocalContext.current
             Button(
                 onClick = {
-                    if (permissionState.status.isGranted) {
-                        galleryLauncher.launch("image/*")
-                    } else
-                        permissionState.launchPermissionRequest()
-
                     storageRef.getReference("images")
                         .child(System.currentTimeMillis().toString())
                         .putFile(state.listOfSelectedImages[0])
@@ -305,7 +300,7 @@ fun bottom(
                             task.metadata!!.reference!!.downloadUrl
                                 .addOnSuccessListener {
                                     imageItState = listOf(it.toString())
-                                    Toast.makeText(context, "$it", Toast.LENGTH_SHORT)
+                                    Toast.makeText(context, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT)
                                         .show()
                                 }
                                 .addOnFailureListener { error ->
@@ -1134,18 +1129,15 @@ fun bottom(
                                 postalCode = cepState,
                                 complement = complementoState
                             ),
-                            photo_url = listOf(state.listOfSelectedImages[0].toString()),
+                            photo_url = listOf(imageLink),
                             causes = listOf(
                                 Cause(
                                     id = idCause
                                 )
                             )
                         )
-                        val photo = Photo(
-                            photoUrl = imageLink
-                        )
 
-                        Log.i("ds3m", photo.toString())
+                       // Log.i("ds3m", photo.toString())
 
 
                         //  Log.i("ds3m", contact.title.toString())

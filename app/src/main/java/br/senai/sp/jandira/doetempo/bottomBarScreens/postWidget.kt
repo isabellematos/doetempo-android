@@ -41,8 +41,8 @@ import java.util.*
 fun PostWidget(post: Post) {
 
     var countLike by remember {
-    mutableStateOf(0)
-}
+        mutableStateOf(0)
+    }
 
     var nameOngState by remember {
         mutableStateOf("")
@@ -64,7 +64,8 @@ fun PostWidget(post: Post) {
 
     val zonedDateTime = ZonedDateTime.parse(post.created_at.toString())
     val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
-    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+    val formatterPattern =
+        DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
     val formattedDateTime = localDate.format(formatterPattern)
 
     var nameUserState by remember {
@@ -72,7 +73,6 @@ fun PostWidget(post: Post) {
     }
 
     var context = LocalContext.current
-
 
     Column(
         modifier = Modifier
@@ -82,9 +82,8 @@ fun PostWidget(post: Post) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 50.dp, start = 12.dp, end = 12.dp)
-                .size(width = 323.dp, height = 250.dp),
-
+                .requiredHeightIn(min = 200.dp, max = 750.dp)
+                .padding(top = 50.dp, start = 12.dp, end = 12.dp),
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -134,7 +133,7 @@ fun PostWidget(post: Post) {
 
                 if (post.post_photo!!.size > 0) {
                     photoPostState = post.post_photo!![0]?.photoUrl.toString()
-                    Log.i("hmm", post.post_photo!![0]?.photoUrl.toString())
+                    //Log.i("hmm", post.post_photo!![0]?.photoUrl.toString())
 
                 }
 
@@ -180,33 +179,33 @@ fun PostWidget(post: Post) {
                         post.content?.let {
                             Text(
                                 text = it,
-                                modifier = Modifier.padding(top = 15.dp, start = 10.dp)
-                                    .verticalScroll(scrollState),
+                                modifier = Modifier.padding(top = 15.dp, start = 5.dp).verticalScroll(scrollState),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.Black
                             )
                         }
+
                     }
                 }
             }
-                    if(post.post_photo!!.isNotEmpty()) {
-                        AsyncImage(
-                            model = photoPostState,
-                            contentDescription = null,
-                            Modifier
-                                .size(20.dp)
-                                .padding(start = 15.dp, top = 100.dp)
-                        )
-                    }
-
+            if (post.post_photo!!.isNotEmpty()) {
+                AsyncImage(
+                    model = photoPostState,
+                    contentDescription = "imagem dos posts",
+                    Modifier
+                        .size(height = 750.dp, width = 200.dp)
+                        .padding(start = 15.dp, top = 500.dp)
+                )
+            }
         }
+
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
             IconButton(onClick = {
-                 countLike = post.count?.postLikes!!.toInt() + 1
+                countLike = post.count?.postLikes!!.toInt() + 1
 
             })
             {
@@ -232,33 +231,7 @@ fun PostWidget(post: Post) {
                     ).putExtra("idPost", post.id)
 
                 ContextCompat.startActivity(context, newActivity, Bundle.EMPTY)
-                // newActivity.putExtra("comments", post.comment)
 
-
-//                val retrofit = RetrofitFactory.getRetrofit()
-//                val postCall = retrofit.create(PostCall::class.java)
-//                var callPosts = postCall.getAll()
-//
-//                var commentState by remember {
-//                    mutableStateOf(listOf<Comment>())
-//                }
-//
-//                callPosts.enqueue(object : Callback<CommentList> {
-//                    override fun onResponse(call: Call<CommentList>, response: Response<CommentList>) {
-//                        commentState = response.body()!!.comments
-//                    }
-//
-//                    override fun onFailure(call: Call<CommentList>, t: Throwable) {
-//                        Log.i("ds3m", t.message.toString())
-//                    }
-//
-//                })
-//
-//                LazyColumn(modifier = Modifier.padding(16.dp)) {
-//                    items(commentState) {
-//                        ListComments(comment = it)
-//                    }
-//                }
             })
             {
                 Icon(

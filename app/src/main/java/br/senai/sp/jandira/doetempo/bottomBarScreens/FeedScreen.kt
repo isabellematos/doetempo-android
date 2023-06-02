@@ -40,7 +40,7 @@ import retrofit2.create
 class FeedScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var intentFeed  = this.intent
+        var intentFeed = this.intent
         setContent {
             DoetempoTheme {
                 // A surface container using the 'background' color from the theme
@@ -124,32 +124,18 @@ fun FeedScreen(intent: Intent) {
 
         callPosts.enqueue(object : Callback<PostList> {
             override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
-             postState = response.body()!!.allPosts
+                postState = response.body()!!.allPosts!!
             }
 
             override fun onFailure(call: Call<PostList>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
+                Log.i("ds3mposts", t.message.toString())
             }
 
         })
 
-        var refreshing by remember { mutableStateOf(false) }
-        LaunchedEffect(refreshing) {
-            if (refreshing) {
-                delay(3000)
-                refreshing = false
-            }
-        }
-
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = refreshing),
-            onRefresh = { refreshing = true },
-        ) {
-
-            LazyColumn(modifier = Modifier.padding(16.dp)) {
-                items(postState.size) {index ->
-                    PostWidget(post = postState[index])
-                }
+        LazyColumn(modifier = Modifier.padding(16.dp)) {
+            items(postState.size) { index ->
+                PostWidget(post = postState[index])
             }
         }
     }

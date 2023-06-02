@@ -82,7 +82,7 @@ fun HudComentarios(intent: Intent) {
     callComments.enqueue(object : Callback<PostList> {
         override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
 
-            commentState2 = response.body()!!.allPosts[0].comment
+            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
 
         }
 
@@ -232,18 +232,6 @@ fun HudComentarios(intent: Intent) {
 
 
 //        var commentState2 = commentState1?.allPosts?.get(0)?.comment
-        var refreshing by remember { mutableStateOf(false) }
-        LaunchedEffect(refreshing) {
-            if (refreshing) {
-                delay(3000)
-                refreshing = false
-            }
-        }
-
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = refreshing),
-            onRefresh = { refreshing = true },
-        ) {
 
             var commentState1 = PostList(allPosts = listOf())
 
@@ -255,7 +243,6 @@ fun HudComentarios(intent: Intent) {
                     }
                 }
             }
-        }
     }
 }
 

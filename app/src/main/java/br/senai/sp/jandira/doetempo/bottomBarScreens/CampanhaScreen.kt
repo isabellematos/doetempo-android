@@ -106,8 +106,6 @@ fun CampanhaScreen() {
             }
         }
 
-        //LazyColumn(content = )
-
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)
         val call = campanhaCall.getAll()
@@ -116,45 +114,30 @@ fun CampanhaScreen() {
             mutableStateOf(listOf<Campanha>())
         }
 
+        Log.i("listateste ", campanhasState.toString())
 
-            call.enqueue(object : Callback<CampanhaList> {
-                override fun onResponse(
-                    call: Call<CampanhaList>,
-                    response: Response<CampanhaList>
-                ) {
-
-                    campanhasState = response.body()!!.campaigns
-                }
-
-                override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
-                    Log.i("ds3m", t.message.toString())
-                    Toast.makeText(context, "Campo de campanhas vazio!", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-            })
-
-
-            var refreshing by remember { mutableStateOf(false) }
-            LaunchedEffect(refreshing) {
-                if (refreshing) {
-                    delay(3000)
-                    refreshing = false
-                }
+        call.enqueue(object : Callback<CampanhaList> {
+            override fun onResponse(
+                call: Call<CampanhaList>,
+                response: Response<CampanhaList>
+            ) {
+                campanhasState = response.body()!!.campaigns!!
             }
 
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(isRefreshing = refreshing),
-                onRefresh = { refreshing = true },
-            ) {
+            override fun onFailure(call: Call<CampanhaList>, t: Throwable) {
+                Log.i("ds3m", t.message.toString())
 
-                LazyColumn(modifier = Modifier.padding(16.dp)) {
-                    items(campanhasState.size) { index ->
-                        cardCampanha(campanha = campanhasState[index])
-                    }
-                }
+                Toast.makeText(context, "Campo de campanhas vazio!", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
+        })
+
+        LazyColumn(modifier = Modifier.padding(16.dp)) {
+            items(campanhasState.size) { index ->
+                cardCampanha(campanha = campanhasState[index])
             }
         }
     }
+}
 

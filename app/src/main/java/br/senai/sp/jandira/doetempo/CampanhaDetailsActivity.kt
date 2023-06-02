@@ -44,6 +44,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class CampanhaDetailsActivity : ComponentActivity() {
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -53,37 +54,59 @@ class CampanhaDetailsActivity : ComponentActivity() {
             }
 
             var campaignDetailsState by remember {
-                mutableStateOf(
-                    Campanha(
-                        id = "",
-                        title = "",
-                        description = "",
-                        begin_date = "",
-                        end_date = "",
-                        home_office = false,
-                        how_to_contribute = "",
-                        prerequisites = "",
-                        ngo = Ong(
-                            id = "",
-                            name = "",
-                            email = "",
-                            password = "",
-                            cnpj = "",
-                            foundationDate = "",
-                            address = Address(postalCode = "", number = "", complement = ""),
-                            id_type = "",
-                            description = "",
-                            type = Type()
-                        ),
-                        campaign_address = Address(
-                            postalCode = "",
-                            number = "",
-                            complement = "",
-                        ),
-                        campaignPhotos = listOf(),
-                    )
-                )
+                mutableStateOf(Campanha())
             }
+
+            var idState by remember {
+                mutableStateOf("")
+            }
+
+            var addressState by remember {
+                mutableStateOf("")
+            }
+
+            val context = LocalContext.current
+            var intent = (context as CampanhaDetailsActivity).intent
+            idState = intent.getStringExtra("id").toString()
+
+            val scope = rememberCoroutineScope()
+            val datastore = DataStoreAppData(context = context)
+
+            scope.launch {
+                if (idState != null) {
+                    datastore.saveIdCampanha(idState)
+                }
+            }
+
+            Log.i("datastore", datastore.getIdCampanha.collectAsState(initial = "").value.toString())
+
+            if (idState != "") {
+
+                val retrofit = RetrofitFactory.getRetrofit()
+                val campanhaCall = retrofit.create(CampanhaCall::class.java)
+                val call = campanhaCall.getById(idState)
+                call.enqueue(object : Callback<Campanha> {
+
+                    override fun onResponse(
+                        call: Call<Campanha>,
+                        response: Response<Campanha>
+                    ) {
+                        Log.i("campanha_id", response.body().toString())
+                        idState = response.body()!!.id.toString()
+                        addressState = response.body()!!.campaignAddress?.postalCode.toString()
+                    }
+
+                    override fun onFailure(call: Call<Campanha>, t: Throwable) {
+                        Log.i("ds3m", t.message.toString())
+                    }
+
+                })
+
+            } else {
+                Log.i("ds3m", "erro: id vazio")
+
+            }
+
 
             val dataStore = DataStoreAppData(this)
             val typeUser = dataStore.getTypeUser.collectAsState(initial = "").value.toString()
@@ -92,6 +115,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                 val cep = campaignDetailsState.campaignAddress?.postalCode.toString()
                 val callViaCep =
                     RetrofitApiViaCep.getViaCepService().getAddress(cep)
+                Log.i("cepcep", cep)
 
                 callViaCep.enqueue(object : Callback<Cep> {
                     override fun onResponse(call: Call<Cep>, response: Response<Cep>) {
@@ -120,40 +144,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             )
                         }
                         AboutCampanha(
-                            campanha = Campanha(
-                                id = "",
-                                title = "",
-                                description = "",
-                                begin_date = "",
-                                end_date = "",
-                                home_office = false,
-                                how_to_contribute = "",
-                                prerequisites = "",
-                                ngo = Ong(
-                                    id = "",
-                                    name = "",
-                                    email = "",
-                                    password = "",
-                                    cnpj = "",
-                                    foundationDate = "",
-                                    address = Address(
-                                        postalCode = "",
-                                        number = "",
-                                        complement = ""
-                                    ),
-                                    id_type = "",
-                                    description = "",
-                                    type = Type()
-                                ),
-                                campaign_address = Address(
-                                    postalCode = "",
-                                    number = "",
-                                    complement = "",
-                                ),
-                                campaignPhotos = listOf(),
-                                //cause = "",
-                                //causes = listOf()
-                            ),
+                            campanha = Campanha(),
                             address = Cep(
                                 cep = "",
                                 logradouro = "",
@@ -226,6 +217,11 @@ class CampanhaDetailsActivity : ComponentActivity() {
             mutableStateOf("")
         }
 
+        var formattedDateTime by remember {
+            mutableStateOf("")
+        }
+
+
         var prerequisitesState by remember {
             mutableStateOf("")
         }
@@ -264,9 +260,17 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     ongState = response.body()!!.ngo?.name.toString()
                     idOngState = response.body()!!.ngo?.id.toString()
                     photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
-                    photoURLCampanhaState = response.body()!!.campaignPhotos?.get(0)?.photoUrl.toString()
+                    photoURLCampanhaState = response.body()!!.campaignPhotos?.get(0)?.photoURL.toString()
                     Log.i("imgcampanha", photoURLCampanhaState)
                     idState = response.body()!!.id.toString()
+                    addressState = response.body()!!.campaignAddress?.postalCode.toString()
+
+
+
+                    val zonedDateTime = ZonedDateTime.parse(beginDateState)
+                    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+                    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+                     formattedDateTime = localDate.format(formatterPattern)
                 }
 
                 override fun onFailure(call: Call<Campanha>, t: Throwable) {
@@ -356,10 +360,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
                 }
 
 
-//                val zonedDateTime = ZonedDateTime.parse(beginDateState)
-//                val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
-//                val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
-//                val formattedDateTime = localDate.format(formatterPattern)
 
                 Row(
                     verticalAlignment = Alignment.Bottom,
@@ -375,7 +375,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
                 }
                 Text(
-                    text = beginDateState,
+                    text = formattedDateTime,
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 11.sp
@@ -427,27 +427,27 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
 
-                    Row(Modifier.fillMaxWidth(), Arrangement.Start, Alignment.CenterVertically) {
-                        Icon(painter = painterResource(id = R.drawable.clock_icon), contentDescription = "icone ilustrativo", Modifier.size(27.dp))
-                        Spacer(modifier = Modifier.width(10.dp))
-                        if (campanha.end_date != null && campanha.begin_date != null ) {
-                            val expireDate =   Period.between(LocalDate.now() ,convertIsoStringToLocalDate(campanha.end_date.toString()))
-                            if (expireDate.isNegative) {
-                                Text(
-                                    text = "Campanha encerrada!",
-                                    style = MaterialTheme.typography.body1,
-                                    color = Color(0xB2000000)
-                                )
-                            } else {
-                                Text(
-                                    text = "Encerra em ${expireDate.months} mes(es) e ${expireDate.days} dia(s)",
-                                    style = MaterialTheme.typography.body1,
-                                    color = Color(0xB2000000)
-                                )
-                            }
-                            // Period.between(convertIsoStringToLocalDate(campaign.beginDate.toString()), convertIsoStringToLocalDate(campaign.endDate.toString()))
-                        }
-                    }
+//                    Row(Modifier.fillMaxWidth(), Arrangement.Start, Alignment.CenterVertically) {
+//                        Icon(painter = painterResource(id = R.drawable.clock_icon), contentDescription = "icone ilustrativo", Modifier.size(27.dp))
+//                        Spacer(modifier = Modifier.width(10.dp))
+//                        if (campanha.end_date != null && campanha.begin_date != null ) {
+//                            var expireDate =   Period.between(LocalDate.now() ,convertIsoStringToLocalDate(campanha.end_date.toString()))
+//                            if (expireDate.isNegative) {
+//                                Text(
+//                                    text = "Campanha encerrada!",
+//                                    style = MaterialTheme.typography.body1,
+//                                    color = Color(0xB2000000)
+//                                )
+//                            } else {
+//                                Text(
+//                                    text = "Encerra em ${expireDate.months} mes(es) e ${expireDate.days} dia(s)",
+//                                    style = MaterialTheme.typography.body1,
+//                                    color = Color(0xB2000000)
+//                                )
+//                            }
+//                             Period.between(convertIsoStringToLocalDate(campanha.begin_date.toString()), convertIsoStringToLocalDate(campanha.end_date.toString()))
+//                        }
+//                    }
 
                     var possibleHomeOffice = "Pode ser feito online"
                     var impossibleHomeOffice = "Não pode ser feito online"
