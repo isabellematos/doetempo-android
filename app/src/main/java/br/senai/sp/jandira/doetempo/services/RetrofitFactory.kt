@@ -1,12 +1,11 @@
 package br.senai.sp.jandira.doetempo.services
 
-import android.net.Uri
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import br.senai.sp.jandira.doetempo.constants.Constants
+import br.senai.sp.jandira.doetempo.services.campanha.CampanhaCall
+import br.senai.sp.jandira.doetempo.services.gender.GenderCall
 import br.senai.sp.jandira.doetempo.services.user.UserCall
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -40,6 +39,17 @@ class RetrofitFactory {
             instance = getRetrofit()
             return instance.create(UserCall::class.java)
         }
+
+        fun retrofitCampaignServices(): CampanhaCall {
+            instance = getRetrofit()
+            return instance.create(CampanhaCall::class.java)
+        }
+
+        fun retrofitGenderServices(): GenderCall {
+            instance = getRetrofit()
+            return instance.create(GenderCall::class.java)
+        }
+
 
     }
 }

@@ -32,8 +32,6 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -53,7 +51,6 @@ class CommentsActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     HudComentarios(intentComment)
-                    //ListComments(comment = Comment(commentNgo = listOf(), commentUser = listOf(), count = Count()))
                 }
             }
         }

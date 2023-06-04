@@ -29,11 +29,10 @@ import androidx.navigation.compose.rememberNavController
 import br.senai.sp.jandira.doetempo.HomeActivity
 import br.senai.sp.jandira.doetempo.R
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
-import br.senai.sp.jandira.doetempo.model.Ong
-import br.senai.sp.jandira.doetempo.model.User
-import br.senai.sp.jandira.doetempo.model.UserDetails
+import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
+import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.services.user.UserCall
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -147,8 +146,8 @@ fun ProfileScreen(user: User, ong: Ong) {
         val call = idUser?.let { userCall.getById("Bearer $token", it) }
 
         if (call != null) {
-            call.enqueue(object : Callback<UserDetails> {
-                override fun onResponse(call: Call<UserDetails>, response: Response<UserDetails>) {
+            call.enqueue(object : Callback<UserDetailsProfile> {
+                override fun onResponse(call: Call<UserDetailsProfile>, response: Response<UserDetailsProfile>) {
                     response.body()?.let { Log.i("user", response.body()?.user.toString()) }
                     nameState = response.body()?.user?.name.toString()
                     emailState = response.body()?.user?.email.toString()
@@ -160,7 +159,7 @@ fun ProfileScreen(user: User, ong: Ong) {
 
                 }
 
-                override fun onFailure(call: Call<UserDetails>, t: Throwable) {
+                override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
                     Log.i("ds3m", t.message.toString())
                 }
             })
@@ -298,14 +297,30 @@ fun ProfileScreen(user: User, ong: Ong) {
 
             )
 
-
             Text(
                 text = "Publicações",
                 modifier = Modifier.padding(start = 135.dp, top = 40.dp),
                 fontWeight = FontWeight.SemiBold
             )
 
+            val retrofit = RetrofitFactory.getRetrofit()
+            val postCall = retrofit.create(PostCall::class.java)
+            var callPosts = postCall.getAll()
 
+            var postState by remember {
+                mutableStateOf(listOf<Post>())
+            }
+
+            callPosts.enqueue(object : Callback<PostList> {
+                override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+                    postState = response.body()!!.allPosts!!
+                }
+
+                override fun onFailure(call: Call<PostList>, t: Throwable) {
+                    Log.i("ds3mposts", t.message.toString())
+                }
+
+            })
 
             Column(
                 Modifier
@@ -313,30 +328,14 @@ fun ProfileScreen(user: User, ong: Ong) {
                     .padding(top = 10.dp),
             ) {
                 LazyColumn(Modifier.fillMaxSize()) {
-                    if (user != null) {
-                        user.postUser?.let {
-                            items(it.size) {
-                                user.postUser!![it].post?.let { it1 ->
-                                    Log.i("postuser", user.postUser.toString())
-                                    PostWidget(post = it1,)
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        ong.postNgo?.let {
-                            items(it.size) {
-                                ong.postNgo!![it].post?.let { it1 ->
-                                    Log.i("postngo", ong.postNgo.toString())
-                                    PostWidget(post = it1)
-                                }
-                            }
-                        }
+                    items(postState.size) { index ->
+                        PostWidget(post = postState[index])
                     }
                 }
-            }
 
+            }
         }
     }
 }
+
 

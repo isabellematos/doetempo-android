@@ -14,10 +14,7 @@ interface UserCall {
     fun save(@Body contact: CreateUser): Call<CreatedUser>
 
     @GET("/user/{id}")
-    fun getById(@Header("Authorization") auth: String, @Path("id")id: String): Call<UserDetails>
-
-    @DELETE("user/{id}")
-    fun delete(@Path("id") id: Long): Call<String>
+    fun getById(@Header("Authorization") auth: String, @Path("id")id: String): Call<UserDetailsProfile>
 
     @POST("user/campaign/")
     fun registerUserInCampaign(@Header("Authorization") token: String, @Query("idCampaign") idCampaign: String): Call<RegisterUserInCampaignResponse>

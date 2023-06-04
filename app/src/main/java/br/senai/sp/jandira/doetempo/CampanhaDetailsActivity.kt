@@ -69,31 +69,31 @@ class CampanhaDetailsActivity : ComponentActivity() {
             var intent = (context as CampanhaDetailsActivity).intent
             idState = intent.getStringExtra("id").toString()
 
-            val scope = rememberCoroutineScope()
-            val datastore = DataStoreAppData(context = context)
+            val dataStore = DataStoreAppData(this)
 
-            scope.launch {
-                if (idState != null) {
-                    datastore.saveIdCampanha(idState)
-                }
-            }
-
-            Log.i("datastore", datastore.getIdCampanha.collectAsState(initial = "").value.toString())
+//            val scope = rememberCoroutineScope()
+//            val datastore = DataStoreAppData(context = context)
+//
+//            scope.launch {
+//                if (idState != null) {
+//                    datastore.saveIdCampanha(idState)
+//                }
+//            }
+//
+//            Log.i("datastore", datastore.getIdCampanha.collectAsState(initial = "").value.toString())
 
             if (idState != "") {
 
-                val retrofit = RetrofitFactory.getRetrofit()
-                val campanhaCall = retrofit.create(CampanhaCall::class.java)
-                val call = campanhaCall.getById(idState)
+                val call = RetrofitFactory.retrofitCampaignServices().getById(idState)
                 call.enqueue(object : Callback<Campanha> {
 
                     override fun onResponse(
                         call: Call<Campanha>,
                         response: Response<Campanha>
                     ) {
-                        Log.i("campanha_id", response.body().toString())
+                        Log.i("campanha", response.body().toString())
                         idState = response.body()!!.id.toString()
-                        addressState = response.body()!!.campaignAddress?.postalCode.toString()
+                        campaignDetailsState = response.body() ?: Campanha()
                     }
 
                     override fun onFailure(call: Call<Campanha>, t: Throwable) {
@@ -108,7 +108,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
             }
 
 
-            val dataStore = DataStoreAppData(this)
             val typeUser = dataStore.getTypeUser.collectAsState(initial = "").value.toString()
 
             if (campaignDetailsState.campaignAddress != null) {

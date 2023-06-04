@@ -8,7 +8,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Favorite
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,10 +24,17 @@ import java.util.*
 @Composable
 fun ListComments(comment: Comment){
 
-    val zonedDateTime = ZonedDateTime.parse(comment.createdAt.toString())
-    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
-    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
-    val formattedDateTime = localDate.format(formatterPattern)
+    var createdState by remember {
+        mutableStateOf("")
+    }
+
+//    createdState = comment.createdAt.toString()
+//
+//
+//    val zonedDateTime = ZonedDateTime.parse(createdState)
+//    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
+//    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+//    val formattedDateTime = localDate.format(formatterPattern)
 
     Column(
         modifier = Modifier
@@ -77,15 +84,6 @@ fun ListComments(comment: Comment){
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-//                        if (post.verified == true) {
-//                            Text(
-//                                text = post.name,
-//                                fontSize = 20.sp,
-//                                fontWeight = FontWeight.Bold
-//                            )
-//                            Spacer(modifier = Modifier.padding(3.dp))
-//                            Icon(imageVector = Icons.TwoTone.Verified, contentDescription = "Verified", modifier = Modifier.size(20.dp), tint = Color(69,201,165))
-//                        } else {
                             if (!comment.commentNgo.isNullOrEmpty()) {
                                 comment.commentNgo?.get(0)?.ngo?.name?.let {
                                     Text(
@@ -105,7 +103,7 @@ fun ListComments(comment: Comment){
                                 }
                             }
                         }
-                        formattedDateTime.toString()?.let {
+                        comment.createdAt?.let {
                             Text(
                                 text = it,
                                 fontSize = 13.sp

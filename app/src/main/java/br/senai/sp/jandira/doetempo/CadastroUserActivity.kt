@@ -56,13 +56,31 @@ class CadastroUserActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            var allGenders by rememberSaveable {
+                mutableStateOf(listOf(Gender()))
+            }
+            val gendersCall = RetrofitFactory.retrofitGenderServices().getGenders()
+            gendersCall.enqueue(object :Callback<AllGenders> {
+                override fun onResponse(call: Call<AllGenders>, response: Response<AllGenders>) {
+                    if (response.isSuccessful) {
+                        Log.i("generos", response.body().toString())
+                        allGenders = response.body()?.genders!!
+                    }
+                }
+
+                override fun onFailure(call: Call<AllGenders>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+
             DoetempoTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CadastroUser()
+                    CadastroUser(allGenders)
                 }
             }
         }
@@ -71,14 +89,8 @@ class CadastroUserActivity : ComponentActivity() {
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Preview
 @Composable
-fun CadastroUser() {
-
+fun CadastroUser(allGenders: List<Gender>) {
 
     var nameState by rememberSaveable() {
         mutableStateOf("")
@@ -181,6 +193,10 @@ fun CadastroUser() {
     }
 
     var resultState by remember {
+        mutableStateOf("")
+    }
+
+    var genderState by remember {
         mutableStateOf("")
     }
 
@@ -463,6 +479,40 @@ fun CadastroUser() {
                 color = Color.White
             )
 
+            if (allGenders.isNotEmpty()) {
+                val (selectedOption, onOptionSelected) = remember { mutableStateOf(allGenders[0]) }
+                Column(Modifier.selectableGroup()) {
+                    allGenders.forEach { text ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .selectable(
+                                    selected = (text == selectedOption),
+                                    onClick = {
+                                        onOptionSelected(text)
+                                        genderState = text.id.toString()
+                                        Log.i("ds3m", genderState)
+                                    },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (text == selectedOption),
+                                onClick = { genderState = text.id.toString() }
+                            )
+                            Text(text = text.name.toString())
+                        }
+                    }
+                }
+            }
+
+
+
+
+            /*
             var genderList by remember {
                 mutableStateOf(listOf<Gender>())
             }
@@ -526,6 +576,8 @@ fun CadastroUser() {
                     }
                 }
             }
+            */
+
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
@@ -832,7 +884,7 @@ fun CadastroUser() {
                                 postalCode = cepState,
                                 complement = null
                                 ),
-                            gender = genderStateString,
+                            gender = genderState,
                             type = Type()
                         )
 
@@ -882,12 +934,5 @@ fun CadastroUser() {
 }
 
 
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Preview
-@Composable
-fun CadastroUserPreview() {
-    CadastroUser()
-}
+
+
