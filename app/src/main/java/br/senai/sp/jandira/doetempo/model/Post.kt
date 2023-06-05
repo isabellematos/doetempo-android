@@ -10,6 +10,6 @@ data class Post(
 //    @SerializedName("PostNgo") var tbl_ngo: List<Ong>? = listOf(),
     @SerializedName("post_ngo") var ngo: List<OngDetails?>? = null,
     @SerializedName("post_user") var user: List<UserDetails?>? = null,
-    var comment: List<Comment>,
-    @SerializedName("_count") var count: Count?
+    var comment: List<Comment>? = null,
+    @SerializedName("_count") var count: Count? = null
 )

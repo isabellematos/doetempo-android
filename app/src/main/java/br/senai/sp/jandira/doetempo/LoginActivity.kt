@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -162,6 +163,7 @@ fun Login() {
                 modifier = Modifier
                     .align(CenterHorizontally)
                     .padding(top = 24.dp),
+                visualTransformation = PasswordVisualTransformation(),
                 label = {
                     Text(
                         text = stringResource(id = R.string.password),
@@ -182,7 +184,7 @@ fun Login() {
                 mutableStateOf(listOf(Campanha()))
             }
 
-            Log.i("listateste ", campanhasState.toString())
+           // Log.i("listateste ", campanhasState.toString())
 
             Button(
                 onClick = {

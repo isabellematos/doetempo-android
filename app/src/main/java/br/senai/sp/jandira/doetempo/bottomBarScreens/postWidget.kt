@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -82,7 +83,7 @@ fun PostWidget(post: Post) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .requiredHeightIn(min = 200.dp, max = 750.dp)
+                //.requiredHeightIn(min = 200.dp, max = 750.dp)
                 .padding(top = 50.dp, start = 12.dp, end = 12.dp),
             backgroundColor = Color(244, 244, 244),
             shape = RoundedCornerShape(15.dp)
@@ -179,7 +180,7 @@ fun PostWidget(post: Post) {
                         post.content?.let {
                             Text(
                                 text = it,
-                                modifier = Modifier.padding(top = 15.dp, start = 5.dp).verticalScroll(scrollState),
+                                modifier = Modifier.padding(top = 15.dp, start = 5.dp),
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.Black
@@ -189,15 +190,16 @@ fun PostWidget(post: Post) {
                     }
                 }
             }
-            if (post.post_photo!!.isNotEmpty()) {
-                AsyncImage(
-                    model = photoPostState,
-                    contentDescription = "imagem dos posts",
-                    Modifier
-                        .size(height = 750.dp, width = 200.dp)
-                        .padding(start = 15.dp, top = 500.dp)
-                )
-            }
+//            if (post.post_photo!!.isNotEmpty()) {
+//                AsyncImage(
+//                    model = photoPostState,
+//                    contentDescription = "imagem dos posts",
+//                    //Modifier
+//                        //.size(height = 220.dp, width = 200.dp),
+//                       // .padding(start = 15.dp, top = 500.dp),
+//                    contentScale = ContentScale.Fit
+//                )
+//            }
         }
 
         Row(

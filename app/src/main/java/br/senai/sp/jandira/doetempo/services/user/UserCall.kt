@@ -16,6 +16,9 @@ interface UserCall {
     @GET("/user/{id}")
     fun getById(@Header("Authorization") auth: String, @Path("id")id: String): Call<UserDetailsProfile>
 
+    @PUT("/user/{id}")
+    fun update(@Header("Authorization") auth: String, @Path("id")id: String): Call<UpdateUser>
+
     @POST("user/campaign/")
     fun registerUserInCampaign(@Header("Authorization") token: String, @Query("idCampaign") idCampaign: String): Call<RegisterUserInCampaignResponse>
 

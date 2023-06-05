@@ -37,8 +37,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.time.Period
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -110,24 +108,30 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
             val typeUser = dataStore.getTypeUser.collectAsState(initial = "").value.toString()
 
-            if (campaignDetailsState.campaignAddress != null) {
-                val cep = campaignDetailsState.campaignAddress?.postalCode.toString()
-                val callViaCep =
-                    RetrofitApiViaCep.getViaCepService().getAddress(cep)
-                Log.i("cepcep", cep)
+            if(idState != "") {
+                if (campaignDetailsState.campaignAddress != null) {
+                    val cep = campaignDetailsState.campaignAddress?.address?.postalCode.toString()
+                    val callViaCep =
+                        RetrofitApiViaCep.getViaCepService().getAddress(cep)
+                    Log.i("cepcep", cep)
 
-                callViaCep.enqueue(object : Callback<Cep> {
-                    override fun onResponse(call: Call<Cep>, response: Response<Cep>) {
-                        Log.i("viacep", response.body().toString())
-                        if (response.isSuccessful) {
-                            address = response.body()!!
+                    callViaCep.enqueue(object : Callback<Cep> {
+                        override fun onResponse(call: Call<Cep>, response: Response<Cep>) {
+                            Log.i("viacep", response.body().toString())
+                            if (response.isSuccessful) {
+                                address = response.body()!!
+                            }
                         }
-                    }
 
-                    override fun onFailure(call: Call<Cep>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
-                })
+                        override fun onFailure(call: Call<Cep>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+                }
+            }
+            else {
+                Log.i("ds3m", "erro: id vazio")
+
             }
 
                 DoetempoTheme {
@@ -144,15 +148,9 @@ class CampanhaDetailsActivity : ComponentActivity() {
                         }
                         AboutCampanha(
                             campanha = Campanha(),
-                            address = Cep(
-                                cep = "",
-                                logradouro = "",
-                                complemento = "",
-                                bairro = "",
-                                cidade = "",
-                                estado = ""
-                            ),
+                            address,
                             typeUser,
+                            idState
                         )
                     }
                 }
@@ -162,7 +160,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
     //@Preview(showBackground = true, showSystemUi = true)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     @Composable
-    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String) {
+    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String, idState: String,  ) {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)
@@ -262,7 +260,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     photoURLCampanhaState = response.body()!!.campaignPhotos?.get(0)?.photoURL.toString()
                     Log.i("imgcampanha", photoURLCampanhaState)
                     idState = response.body()!!.id.toString()
-                    addressState = response.body()!!.campaignAddress?.postalCode.toString()
+                    addressState = response.body()!!.campaignAddress?.address?.postalCode.toString()
 
 
 
@@ -465,7 +463,8 @@ class CampanhaDetailsActivity : ComponentActivity() {
                             modifier = Modifier.padding(bottom = 15.dp)
                         )
                         Text(
-                            text = "${address.logradouro}, ${campanha.campaignAddress?.number} - ${address.bairro}, ${address.cidade} - ${address.estado}",
+                            text = "${address.logradouro}, ${campanha.campaignAddress?.address?.number} - ${address.bairro}, ${address.cidade} - ${address.estado}",
+                            //text = "Rua das Pitas,33, Vila das Flores",
                             modifier = Modifier.padding(top = 2.dp, start = 10.dp)
                         )
                     }
@@ -571,142 +570,145 @@ class CampanhaDetailsActivity : ComponentActivity() {
 //                    modifier = Modifier.padding(start = 185.dp, top = 5.dp),
 //                    fontSize = 12.sp
 //                )
-
-                    OpenSubscribedScreen(
-                        viewModel = CreateCampanhaViewModel(),
-                        campanha.id.toString(),
-                        typeUser
-
-                    )
-
-                }
-            }
-        }
-    }
-
-    fun handleClickButtonSubscribe(
-        viewModel: CreateCampanhaViewModel,
-        context: Context,
-        campaignId: String,
-        userId: String
-    ) {
-        viewModel.onAddClickCampanha()
-        Log.i("id_campaign", campaignId)
-        Log.i("id_user", userId)
-    }
-
-    @Composable
-    fun OpenSubscribedScreen(
-        viewModel: CreateCampanhaViewModel,
-        campanhaId: String,
-        typeUser: String
-    ) {
+                    var buttonState by remember {
+                        mutableStateOf(ButtonState.IDLE)
+                    }
 
 
-        var buttonState by remember {
-            mutableStateOf(ButtonState.IDLE)
-        }
+                    val context = LocalContext.current
+                    val dataStorelocal = DataStoreAppData(context = context)
+                    val token = dataStorelocal.getToken.collectAsState(initial = "").value.toString()
 
+                    val datastore = DataStoreAppData(context)
+                    val userId = datastore.getIdUser.collectAsState(initial = "").value.toString()
 
-        val context = LocalContext.current
-        val dataStorelocal = DataStoreAppData(context = context)
-        val token = dataStorelocal.getToken.collectAsState(initial = "").value.toString()
+                    if (typeUser == "USER") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp), contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Button(
+                                onClick = {
+                                    //handleClickButtonSubscribe(viewModel, context, campanhaId, userId = userId)
+                                    buttonState = ButtonState.LOADING
+                                    Log.i("token", token)
+                                    val registerUserInCampaign = RetrofitFactory
+                                        .retrofitUserServices()
+                                        .registerUserInCampaign("Bearer $token", idState)
 
-        val datastore = DataStoreAppData(context)
-        val userId = datastore.getIdUser.collectAsState(initial = "").value.toString()
+                                    registerUserInCampaign.enqueue(object :
+                                        Callback<RegisterUserInCampaignResponse> {
+                                        override fun onResponse(
+                                            call: Call<RegisterUserInCampaignResponse>,
+                                            response: Response<RegisterUserInCampaignResponse>
+                                        ) {
+                                            if (response.isSuccessful) {
+                                                Log.i("Inscrito com sucesso!", response.body().toString())
+                                                Toast.makeText(
+                                                    context,
+                                                    response.body()?.message,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                buttonState = ButtonState.DONE
+                                            } else {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Erro!!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                buttonState = ButtonState.IDLE
+                                            }
+                                        }
 
-        if (typeUser == "USER") {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp), contentAlignment = Alignment.BottomCenter
-            ) {
-                Button(
-                    onClick = {
-                        //handleClickButtonSubscribe(viewModel, context, campanhaId, userId = userId)
-                        buttonState = ButtonState.LOADING
-                        Log.i("token", token)
-                        val registerUserInCampaign = RetrofitFactory
-                            .retrofitUserServices()
-                            .registerUserInCampaign("Bearer $token", campanhaId)
-
-                        registerUserInCampaign.enqueue(object :
-                            Callback<RegisterUserInCampaignResponse> {
-                            override fun onResponse(
-                                call: Call<RegisterUserInCampaignResponse>,
-                                response: Response<RegisterUserInCampaignResponse>
+                                        override fun onFailure(
+                                            call: Call<RegisterUserInCampaignResponse>,
+                                            t: Throwable
+                                        ) {
+                                            Toast.makeText(
+                                                context,
+                                                "Erro!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            buttonState = ButtonState.IDLE
+                                        }
+                                    })
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(50.dp)
+                                    .size(30.dp),
+                                colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
                             ) {
-                                if (response.isSuccessful) {
-                                    Log.i("inscrito", response.body().toString())
-                                    Toast.makeText(
-                                        context,
-                                        response.body()?.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    buttonState = ButtonState.DONE
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        "Algo deu errado! Tente novamente mais tarde.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    buttonState = ButtonState.IDLE
+                                when (buttonState) {
+                                    ButtonState.IDLE -> Text(
+                                        text = "Inscrever-se",
+                                        Modifier.padding(6.dp),
+                                        style = MaterialTheme.typography.button,
+                                        color = Color.White
+                                    )
+                                    ButtonState.LOADING -> CircularProgressIndicator()
+                                    ButtonState.DONE -> Text(
+                                        text = "Você ja está inscrito!",
+                                        Modifier.padding(8.dp),
+                                        style = MaterialTheme.typography.button,
+                                        color = Color.White
+                                    )
                                 }
+//                                if (viewModel.isDialogShownCampanha) {
+//                                    subscribedCampanhaScreen(
+//                                        onDismiss = {
+//                                            viewModel.onDismissDialogCampanha()
+//                                        },
+//                                        onConfirm = {
+//                                            context.startActivity(Intent(context, HomeActivity::class.java))
+//                                        })
+//                                }
+                                Icon(
+                                    painter = painterResource(id = R.drawable.hearticon),
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .padding(end = 10.dp),
+                                    contentDescription = "",
+                                    tint = Color.White
+                                )
                             }
-
-                            override fun onFailure(
-                                call: Call<RegisterUserInCampaignResponse>,
-                                t: Throwable
-                            ) {
-                                Toast.makeText(
-                                    context,
-                                    "Não foi possivel fazer isso agora, tente novamente mais tarde!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                buttonState = ButtonState.IDLE
-                            }
-                        })
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(50.dp)
-                        .size(30.dp),
-                    colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-                ) {
-                    when (buttonState) {
-                        ButtonState.IDLE -> Text(
-                            text = "Inscrever-se",
-                            Modifier.padding(6.dp),
-                            style = MaterialTheme.typography.button,
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        ButtonState.LOADING -> CircularProgressIndicator()
-                        ButtonState.DONE -> Text(
-                            text = "Você ja está inscrito!",
-                            Modifier.padding(8.dp),
-                            style = MaterialTheme.typography.button,
-                            color = MaterialTheme.colors.primary
-                        )
+                        }
                     }
-                    if (viewModel.isDialogShownCampanha) {
-                        subscribedCampanhaScreen(
-                            onDismiss = {
-                                viewModel.onDismissDialogCampanha()
-                            },
-                            onConfirm = {
-                                context.startActivity(Intent(context, HomeActivity::class.java))
-                            })
-                    }
-                    Icon(
-                        painter = painterResource(id = R.drawable.hearticon),
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(start = 20.dp),
-                        contentDescription = "",
-                        tint = Color.White
-                    )
                 }
             }
         }
     }
 }
+
+
+
+
+//                    OpenSubscribedScreen(
+//                        viewModel = CreateCampanhaViewModel(),
+//                        campanha.id.toString(),
+//                        typeUser
+//
+//                    )
+
+
+//
+//    fun handleClickButtonSubscribe(
+//        viewModel: CreateCampanhaViewModel,
+//        context: Context,
+//        campaignId: String,
+//        userId: String
+//    ) {
+//        viewModel.onAddClickCampanha()
+//        Log.i("id_campaign", campaignId)
+//        Log.i("id_user", userId)
+//    }
+//
+//    @Composable
+//    fun OpenSubscribedScreen(
+//        viewModel: CreateCampanhaViewModel,
+//        campanhaId: String,
+//        typeUser: String
+//    ) {
+
+

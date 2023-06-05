@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Composable
-fun ListComments(comment: Comment){
+fun ListComments(comment: Comment) {
 
     var createdState by remember {
         mutableStateOf("")
@@ -31,7 +31,7 @@ fun ListComments(comment: Comment){
 //    createdState = comment.createdAt.toString()
 //
 //
-//    val zonedDateTime = ZonedDateTime.parse(createdState)
+//    val zonedDateTime = ZonedDateTime.parse(comment.createdAt.toString())
 //    val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
 //    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
 //    val formattedDateTime = localDate.format(formatterPattern)
@@ -75,51 +75,51 @@ fun ListComments(comment: Comment){
 //                                .size(60.dp)
 //                                .padding(start = 12.dp, top = 12.dp)
 //                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            if (!comment.commentNgo.isNullOrEmpty()) {
-                                comment.commentNgo?.get(0)?.ngo?.name?.let {
-                                    Text(
-                                        text = it,
-                                        modifier = Modifier.padding(bottom = 5.dp),
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            } else {
-                                comment.commentUser?.get(0)?.user?.name?.let {
-                                    Text(
-                                        text = it,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
+                        if (!comment.commentNgo.isNullOrEmpty()) {
+                            comment.commentNgo?.get(0)?.ngo?.name?.let {
+                                Text(
+                                    text = it,
+                                    modifier = Modifier.padding(bottom = 5.dp),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        } else {
+                            comment.commentUser?.get(0)?.user?.name?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
-                        comment.createdAt?.let {
-                            Text(
-                                text = it,
-                                fontSize = 13.sp
-                            )
-                        }
-                        comment.content?.let {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(top = 12.dp),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
                     }
-
+                    comment.createdAt.toString().let {
+                        Text(
+                            text = it,
+                            fontSize = 13.sp
+                        )
+                    }
+                    comment.content?.let {
+                        Text(
+                            text = it,
+                            modifier = Modifier.padding(top = 12.dp),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
+
+            }
 //        Column(
 //            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
 //        ) {
@@ -128,6 +128,7 @@ fun ListComments(comment: Comment){
 //                color = Color.LightGray
 //            )
 //        }
-            }
         }
-    } //nao apaga esse
+    }
+}
+     //nao apaga esse

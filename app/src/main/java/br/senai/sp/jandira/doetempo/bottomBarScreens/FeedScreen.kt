@@ -81,6 +81,12 @@ fun FeedScreen(intent: Intent) {
         }
     }
 
+    var comentsState by remember {
+        mutableStateOf(listOf(Comment()))
+    }
+
+     Log.i("listateste ", comentsState.toString())
+
 //CONTENT
 
     Column(

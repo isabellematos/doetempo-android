@@ -12,7 +12,7 @@ data class CreateUser(
     var birthdate: String? = null,
     var address: Address? = null,
     var gender: String? = null,
-    var photo_url: String? = "",
+    var photo_url: String? = null,
     var type: Type?,
 //    @SerializedName("user_phone")
 //    var userPhone: UserPhone? = null,

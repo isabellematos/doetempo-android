@@ -13,7 +13,7 @@ data class Campanha(
     var how_to_contribute: String? = null,
     var prerequisites: String? = null,
     @SerializedName("campaign_photos") var campaignPhotos: List<CampaignPhoto>? = null,
-    @SerializedName("campaign_address") var campaignAddress: Address? = null,
+    @SerializedName("campaign_address") var campaignAddress: AddressDTO? = null,
     @SerializedName("campaign_causes") var campaignCauses: List<CampaignCause>? = null,
 
     //@SerializedName("campaign_causes") var causes: List<Cause>?,

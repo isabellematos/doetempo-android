@@ -10,7 +10,7 @@ interface PostCall {
     fun getAll(): Call<PostList>
 
     @GET("/post/{id}")
-    fun getById(@Path("id")id: String): Call<Post>
+    fun getById(@Path("id")id: String): Call<PayloadPost>
 
     @POST("/post/{id}/comment")
     fun saveComment(@Header("Authorization") token: String, @Path("id")id: String, @Body() contact: SendComment ): Call<ResponseComment>

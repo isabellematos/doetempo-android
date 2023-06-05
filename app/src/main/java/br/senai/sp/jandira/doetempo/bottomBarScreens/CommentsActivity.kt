@@ -72,21 +72,24 @@ fun HudComentarios(intent: Intent) {
         mutableStateOf(listOf(Comment()))
     }
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val postCall = retrofit.create(PostCall::class.java)
-    var callComments = postCall.getAll()
+//    val retrofit = RetrofitFactory.getRetrofit()
+//    val postCall = retrofit.create(PostCall::class.java)
+//    var callComments = postCall.getAll()
+//
+//    callComments.enqueue(object : Callback<PostList> {
+//        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+//
+//            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
+//            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
+//
+//        }
+//
+//        override fun onFailure(call: Call<PostList>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//    })
 
-    callComments.enqueue(object : Callback<PostList> {
-        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
 
-            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
-
-        }
-
-        override fun onFailure(call: Call<PostList>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-    })
 
 
     var context = LocalContext.current
@@ -95,6 +98,30 @@ fun HudComentarios(intent: Intent) {
     Log.i("idpost", idPost.toString())
     val datastore = DataStoreAppData(context)
     val token = datastore.getToken.collectAsState(initial = "").value.toString()
+
+    val retrofit1 = RetrofitFactory.getRetrofit()
+    val postCall1 = retrofit1.create(PostCall::class.java)
+    var callCommentsId = idPost?.let { postCall1.getById(it) }
+
+    if (idPost != "") {
+        if (callCommentsId != null) {
+            callCommentsId.enqueue(object : Callback<PayloadPost> {
+                override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
+
+                    Log.i("comments", response.body()!!.payload?.comment!!.toString() )
+                    commentState2 = response.body()!!.payload?.comment!!
+
+                }
+
+                override fun onFailure(call: Call<PayloadPost>, t: Throwable) {
+                    Log.i("ds3m", t.message.toString())
+                }
+            })
+        }
+    }
+
+
+
 
     val scrollState = rememberScrollState()
 

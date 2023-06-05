@@ -128,10 +128,10 @@ fun ProfileScreen(user: User, ong: Ong) {
                 override fun onResponse(call: Call<Ong>, response: Response<Ong>) {
                     nameState = response.body()!!.name.toString()
                     emailState = response.body()!!.email.toString()
-                    stateState = response.body()!!.address?.postalCode.toString()
+                    //stateState = response.body()!!.address?.postalCode.toString()
                     descriptionState = response.body()!!.description.toString()
                     photoUrlState = response.body()!!.photo_url.toString()
-                    attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
+//                    attachedLink = response.body()!!.attachedLink?.get(0)?.attachedLink.toString()
                 }
 
                 override fun onFailure(call: Call<Ong>, t: Throwable) {
@@ -154,8 +154,8 @@ fun ProfileScreen(user: User, ong: Ong) {
                     // stateState = response.body()?.user?.userAddress?.address?.postalCode.toString()
                     descriptionState = response.body()?.user?.description.toString()
                     photoUrlState = response.body()?.user?.photo_url.toString()
-                    // connectionState = response.body()!!.user.count?.following.toString()
-                    //   attachedLink = response.body()!!.user?.attachedLink?.get(0)?.attachedLink.toString()
+                    // connectionState = response.body()!!.user?.count?.following.toString()
+                     //attachedLink = response.body()!!.user?.attachedLink?.get(0)?.attachedLink.toString()
 
                 }
 
