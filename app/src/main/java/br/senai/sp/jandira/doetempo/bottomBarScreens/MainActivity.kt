@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import br.senai.sp.jandira.doetempo.bottomBarScreens.EditDataActivity
+import br.senai.sp.jandira.doetempo.model.User
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -42,6 +44,6 @@ class MainActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun MainScreen() {
-        EditData()
+        EditDataActivity()
     }
 }

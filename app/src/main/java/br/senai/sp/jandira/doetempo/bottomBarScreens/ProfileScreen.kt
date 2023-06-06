@@ -1,7 +1,11 @@
 package br.senai.sp.jandira.doetempo.bottomBarScreens
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +15,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Comment
+import androidx.compose.material.icons.outlined.EditAttributes
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.twotone.*
 import androidx.compose.runtime.*
@@ -34,6 +39,7 @@ import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.ong.OngCall
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.services.user.UserCall
+import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
@@ -41,6 +47,22 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+class ProfileScreenActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            DoetempoTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    ProfileScreen(user = User(), ong = Ong())
+                }
+            }
+        }
+    }
+}
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
@@ -84,7 +106,7 @@ fun ProfileScreen(user: User, ong: Ong) {
     }
 
 
-    var context = LocalContext.current
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     val intent = (context as HomeActivity).intent
@@ -166,7 +188,6 @@ fun ProfileScreen(user: User, ong: Ong) {
         }
     }
 
-
 //CONTENT
     Column(
         modifier = Modifier
@@ -184,11 +205,16 @@ fun ProfileScreen(user: User, ong: Ong) {
                     .background(Color(79, 254, 199))
             ) {
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+
+                        context.startActivity(Intent(context, EditDataActivity()::class.java))
+
+
+                              },
                     modifier = Modifier.padding(start = 350.dp, top = 10.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Settings,
+                        imageVector = Icons.Outlined.EditAttributes,
                         contentDescription = "",
                         tint = Color.DarkGray
                     )
@@ -337,5 +363,6 @@ fun ProfileScreen(user: User, ong: Ong) {
         }
     }
 }
+
 
 

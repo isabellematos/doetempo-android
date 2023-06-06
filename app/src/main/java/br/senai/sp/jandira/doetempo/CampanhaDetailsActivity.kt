@@ -160,7 +160,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
     //@Preview(showBackground = true, showSystemUi = true)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     @Composable
-    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String, idState: String,  ) {
+    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String, idState: String  ) {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)

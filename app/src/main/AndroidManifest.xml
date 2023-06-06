@@ -74,6 +74,16 @@
             android:label="@string/title_activity_feed_screen"
             android:theme="@style/Theme.Doetempo" />
         <activity
+            android:name=".bottomBarScreens.EditDataActivity"
+            android:exported="false"
+            android:label="@string/title_activity_feed_screen"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
+            android:name=".bottomBarScreens.ProfileScreenActivity"
+            android:exported="false"
+            android:label="@string/title_activity_profile_screen"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
             android:name=".SelectionActivity"
             android:exported="true"
             android:label="@string/title_activity_selection"

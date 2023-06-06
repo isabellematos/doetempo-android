@@ -22,5 +22,7 @@ data class User(
     @SerializedName("attached_link")
     val attachedLink: List<AttachedLink?>? = null,
     @SerializedName("_count")
-    val count: Count? = null
+    val count: Count? = null,
+
+    var supported_campaigns: List<SupportedCampaignsUser>? = null
 )

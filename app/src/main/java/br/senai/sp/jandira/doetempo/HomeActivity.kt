@@ -72,16 +72,6 @@ fun MainScreen() {
 //            onClickAction =  clickAction(context, Intent(context, CreateCampanha::class.java)), //context.startActivity(Intent(context, CreateCampanha::class.java)),
             identifier = ""
         ),
-        MinFabItem(
-            label = "Nova Publicação",
-            identifier = "",
-            //onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
-        ),
-        MinFabItem(
-            label = "Achar vagas",
-            identifier = "",
-//            onClickAction = clickAction(context, Intent(context, CreateCampanha::class.java))
-        ),
     )
 
     val navigationItem = listOf(
