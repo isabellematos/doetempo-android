@@ -68,7 +68,7 @@ fun MainScreen() {
 
     val items = listOf(
         MinFabItem(
-            label = "Nova Campanha",
+            label = "Suas Campanhas",
 //            onClickAction =  clickAction(context, Intent(context, CreateCampanha::class.java)), //context.startActivity(Intent(context, CreateCampanha::class.java)),
             identifier = ""
         ),

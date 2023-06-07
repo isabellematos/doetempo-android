@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -269,15 +271,17 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                 )
                 OutlinedTextField(
                     value = editName,
-                    onValueChange = { newEditName ->
-                        if (newEditName.length == 0) {
-                            editNameisError = true
-                            newEditName
-                        } else {
-                            editNameisError = false
-                        }
-                        editName = newEditName
-                    },
+                    onValueChange = {editName = it },
+
+ //                           newEditName ->
+ //                       if (newEditName.length == 0) {
+  //                          editNameisError = true
+  //                          newEditName
+   //                     } else {
+   //                         editNameisError = false
+    //                    }
+    //                    editName = newEditName
+    //                },
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
@@ -295,6 +299,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             contentDescription = ""
                         )
                     },
+                    singleLine = true,
                 )
 
                 Text(
@@ -330,6 +335,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             contentDescription = ""
                         )
                     },
+                    singleLine = true,
                 )
 
                 //ENDEREÇO
@@ -367,6 +373,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             contentDescription = ""
                         )
                     },
+                    singleLine = true,
                 )
 
                 //TELEFONE
@@ -403,6 +410,8 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             contentDescription = ""
                         )
                     },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
                 )
 
                 //SOBRE
@@ -426,7 +435,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 110.dp)
+                        .size(width = 100.dp, height = 220.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
@@ -439,6 +448,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             contentDescription = ""
                         )
                     },
+                    singleLine = true,
                 )
 //                Column(
 //                    modifier = Modifier.fillMaxWidth(),
@@ -457,6 +467,31 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 //                            )
 //                            .clip(shape = RoundedCornerShape(8.dp))
 //                    )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "Adcionar Imagem"
+                        )
+                        Text(
+                            text = "Carregar foto",
+                            modifier = Modifier.padding(bottom = 10.dp, start = 6.dp, top = 3.dp),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -615,6 +650,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         }
                     }
 
+                editName = editEmail
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -624,7 +660,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         Button(
                             onClick = {
                                 val contact = UpdateUser(
-                                    name = editName,
+                                    name = editName ,
                                     email = editEmail,
                                     password = editPassword,
                                     type = Type(),

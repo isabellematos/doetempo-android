@@ -142,7 +142,7 @@ fun Fab(
                 MinFab(
                     item = it,
                     onMinFabItemClick = {
-                        val intent = Intent(context, CreateCampanha::class.java)
+                        val intent = Intent(context, SupportedCampaignsActivity::class.java)
                         context.startActivity(intent)
                     },
                     alpha = alpha
