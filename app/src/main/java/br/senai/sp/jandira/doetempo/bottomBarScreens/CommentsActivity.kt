@@ -101,7 +101,7 @@ fun HudComentarios(intent: Intent) {
 
     val retrofit1 = RetrofitFactory.getRetrofit()
     val postCall1 = retrofit1.create(PostCall::class.java)
-    var callCommentsId = idPost?.let { postCall1.getById(it) }
+    var callCommentsId = idPost?.let { postCall1.getById("Bearer $token", it) }
 
     if (idPost != "") {
         if (callCommentsId != null) {

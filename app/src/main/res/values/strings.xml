@@ -30,6 +30,7 @@
     <string name="title_activity_cadastro_ong">CadastroOngActivity</string>
     <string name="title_activity_campanha_details">CampanhaDetailsActivity</string>
     <string name="title_activity_feed_screen">FeedScreenActivity</string>
+    <string name="title_activity_supportedcampaigns_activity">SupportedCampaignsActivity</string>
     <string name="title_activity_editdata_scren">EditDataScreen</string>
     <string name="title_activity_profile_screen">ProfileScreenActivity</string>
     <string name="title_acttivity_new_post">NewPostActivity</string>

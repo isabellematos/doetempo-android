@@ -79,6 +79,11 @@
             android:label="@string/title_activity_feed_screen"
             android:theme="@style/Theme.Doetempo" />
         <activity
+            android:name=".SupportedCampaignsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_feed_screen"
+            android:theme="@style/Theme.Doetempo" />
+        <activity
             android:name=".bottomBarScreens.ProfileScreenActivity"
             android:exported="false"
             android:label="@string/title_activity_profile_screen"

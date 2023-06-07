@@ -618,39 +618,9 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             }
                         }
                     }
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                            Icon(imageVector = Icons.Outlined.Add, contentDescription = "Adcionar Imagem")
-                            Text(
-                                text = "Carregar foto",
-                            modifier = Modifier.padding(bottom = 10.dp, start = 6.dp, top = 3.dp),
-                            fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                            Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Excluir imagem")
-                            Text(
-                                text = "Excluir foto",
-                                modifier = Modifier.padding(bottom = 10.dp, start = 6.dp, top = 3.dp),
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                            Icon(imageVector = Icons.Outlined.InsertEmoticon, contentDescription = "Excluir imagem")
-                            Text(
-                                text = "Escolher Icone",
-                                modifier = Modifier.padding(bottom = 10.dp, start = 6.dp, top = 3.dp),
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
+ 
 
-                editName = editEmail
+               // editName = editEmail
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
