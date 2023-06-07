@@ -10,7 +10,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,14 +25,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.doetempo.LoginActivity
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,6 +60,15 @@ fun HudComentarios(intent: Intent) {
     var commentState by remember {
         mutableStateOf("")
     }
+
+    var commentStateResult by remember {
+        mutableStateOf("")
+    }
+
+    var result by remember {
+        mutableStateOf(listOf(Post()))
+    }
+
     var commentIsError by remember {
         mutableStateOf(false)
     }
@@ -72,26 +77,9 @@ fun HudComentarios(intent: Intent) {
         mutableStateOf(listOf(Comment()))
     }
 
-//    val retrofit = RetrofitFactory.getRetrofit()
-//    val postCall = retrofit.create(PostCall::class.java)
-//    var callComments = postCall.getAll()
-//
-//    callComments.enqueue(object : Callback<PostList> {
-//        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
-//
-//            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
-//            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
-//
-//        }
-//
-//        override fun onFailure(call: Call<PostList>, t: Throwable) {
-//            Log.i("ds3m", t.message.toString())
-//        }
-//    })
-
-
-
-
+    var searchQuery by remember {
+        mutableStateOf(Post().id)
+    }
     var context = LocalContext.current
 
     val idPost = intent.getStringExtra("idPost")
@@ -99,16 +87,53 @@ fun HudComentarios(intent: Intent) {
     val datastore = DataStoreAppData(context)
     val token = datastore.getToken.collectAsState(initial = "").value.toString()
 
+    val retrofit = RetrofitFactory.getRetrofit()
+    val postCall = retrofit.create(PostCall::class.java)
+    var callComments = postCall.getAll()
+
+    callComments.enqueue(object : Callback<PostList> {
+        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+
+            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
+            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
+
+//                 result = response.body()!!.allPosts?.filter { post ->
+//                     post.id?.contains(post.toString())
+//
+//                     if (post.id == idPost ) {
+//                         return post
+//                     }
+//
+//                 }!!
+//
+//            result[0].comment.toString()
+
+        }
+
+        override fun onFailure(call: Call<PostList>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+    })
+
+
+
+
+
+
+
     val retrofit1 = RetrofitFactory.getRetrofit()
     val postCall1 = retrofit1.create(PostCall::class.java)
-    var callCommentsId = idPost?.let { postCall1.getById("Bearer $token", it) }
+    var callCommentsId = result.let { postCall1.getById("Bearer $token", it) }
 
-    if (idPost != "") {
+    if (result != null) {
         if (callCommentsId != null) {
             callCommentsId.enqueue(object : Callback<PayloadPost> {
                 override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
 
-                    Log.i("comments", response.body()!!.payload?.comment!!.toString() )
+                   Log.i( "result", result[0].comment.toString())
+
+                    commentStateResult = result[0].comment.toString()
+                    Log.i("comments", response.body()?.payload.toString() )
                     commentState2 = response.body()!!.payload?.comment!!
 
                 }
@@ -258,7 +283,6 @@ fun HudComentarios(intent: Intent) {
 //        var commentState2 = commentState1?.allPosts?.get(0)?.comment
 
             var commentState1 = PostList(allPosts = listOf())
-
 
             LazyColumn(modifier = Modifier.padding(16.dp)) {
                 commentState2?.let {

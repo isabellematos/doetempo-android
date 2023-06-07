@@ -20,9 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.InsertEmoticon
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,8 +43,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.senai.sp.jandira.doetempo.*
 import br.senai.sp.jandira.doetempo.R
-import br.senai.sp.jandira.doetempo.bottomBarScreens.ProfileScreen
-import br.senai.sp.jandira.doetempo.bottomBarScreens.ProfileScreenActivity
 import br.senai.sp.jandira.doetempo.datastore.DataStoreAppData
 import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
@@ -56,12 +52,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class EditDataActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +79,10 @@ class EditDataActivity : ComponentActivity() {
 fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 
     var editName by remember {
+        mutableStateOf("")
+    }
+
+    var editNameOriginal by remember {
         mutableStateOf("")
     }
 
@@ -173,25 +170,55 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 
     val retrofit = RetrofitFactory.getRetrofit()
     val userCall = retrofit.create(UserCall::class.java)
+    val callB = userCall.getById("Bearer $tokenState",userIdState)
+
+    callB.enqueue(object : Callback<UserDetailsProfile>{
+        override fun onResponse(
+            call: Call<UserDetailsProfile>,
+            response: Response<UserDetailsProfile>
+        ) {
+
+            if (response.isSuccessful){
+                val perfil = response.body()!!.user!!
+
+                editName = perfil.name!!
+            }
+
+
+        }
+
+        override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+    })
     val call = userIdState?.let { userCall.getById("Bearer $tokenState", it) }
 
-    if (call != null) {
-        call.enqueue(object : Callback<UserDetailsProfile> {
-            override fun onResponse(call: Call<UserDetailsProfile>, response: Response<UserDetailsProfile>) {
-                response.body()?.let { Log.i("user", response.body()?.user.toString()) }
-                editName = response.body()?.user?.name.toString()
-                editEmail = response.body()?.user?.email.toString()
-                editPassword = response.body()?.user?.password.toString()
-                editTel = response.body()?.user?.userPhone?.phone.toString()
-                editAbout = response.body()?.user?.description.toString()
-                // = response.body()?.user?.photo_url.toString()
-            }
+//    if (call != null) {
+//
+//    }
 
-            override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
-                Log.i("ds3m", t.message.toString())
-            }
-        })
-    }
+
+
+    call!!.enqueue(object : Callback<UserDetailsProfile> {
+        override fun onResponse(call: Call<UserDetailsProfile>, response: Response<UserDetailsProfile>) {
+            //response.body()?.let { Log.i("user", response.body()?.user.toString()) }
+//            editName = response.body()?.user?.name.toString()
+            editEmail = response.body()?.user?.email.toString()
+            editPassword = response.body()?.user?.password.toString()
+            editTel = response.body()?.user?.userPhone?.phone.toString()
+            editAbout = response.body()?.user?.description.toString()
+            // = response.body()?.user?.photo_url.toString()
+
+//                editNameOriginal = editName
+//                Log.i("editname", editName)
+        }
+
+        override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
+            Log.i("ds3m", t.message.toString())
+        }
+    })
+
+
 
 
     var galleryLauncher =
@@ -261,7 +288,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 30.dp)
+                    .padding(start = 32.dp, end = 32.dp)
             ) {
                 //NOME COMPLETO
                 Text(
@@ -271,7 +298,12 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                 )
                 OutlinedTextField(
                     value = editName,
-                    onValueChange = {editName = it },
+                    onValueChange = {editName = it
+
+                       // editName = editNameOriginal
+
+                                    },
+
 
  //                           newEditName ->
  //                       if (newEditName.length == 0) {
@@ -286,13 +318,12 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 40.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
-                        .clip(shape = RoundedCornerShape(10.dp)),
+                        .clip(shape = RoundedCornerShape(16.dp)),
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
@@ -322,13 +353,12 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 40.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
-                        .clip(shape = RoundedCornerShape(10.dp)),
+                        .clip(shape = RoundedCornerShape(16.dp)),
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
@@ -359,16 +389,15 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 40.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
-                        .clip(shape = RoundedCornerShape(10.dp)),
+                        .clip(shape = RoundedCornerShape(16.dp)),
                     visualTransformation = PasswordVisualTransformation(),
                     trailingIcon = {
-                        if (editPasswordIsError) Icon(
+                        if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
                             contentDescription = ""
                         )
@@ -397,20 +426,18 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 40.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
-                        .clip(shape = RoundedCornerShape(10.dp)),
+                        .clip(shape = RoundedCornerShape(16.dp)),
                     trailingIcon = {
-                        if (editTelIsError) Icon(
+                        if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
                             contentDescription = ""
                         )
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                 )
 
@@ -435,15 +462,14 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         .fillMaxWidth()
                         .focusRequester(weightFocusRequester)
                         .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .size(width = 100.dp, height = 220.dp)
                         .border(
                             width = 1.dp,
                             color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(16.dp)
                         )
-                        .clip(shape = RoundedCornerShape(10.dp)),
+                        .clip(shape = RoundedCornerShape(16.dp)),
                     trailingIcon = {
-                        if (editAboutIsError) Icon(
+                        if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
                             contentDescription = ""
                         )
@@ -618,9 +644,9 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             }
                         }
                     }
- 
 
-               // editName = editEmail
+
+                editNameOriginal = editName
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
