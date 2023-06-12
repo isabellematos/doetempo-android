@@ -118,13 +118,12 @@ fun ListComments(comment: Comment) {
                         )
                     }
                 }
-
             }
 //        Column(
 //            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
 //        ) {
 //            Text(
-//                text = "────────────────────────────────────────",
+//                text = "───────────────────────────────────────",
 //                color = Color.LightGray
 //            )
 //        }

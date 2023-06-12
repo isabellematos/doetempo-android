@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -82,10 +83,6 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
         mutableStateOf("")
     }
 
-    var editNameOriginal by remember {
-        mutableStateOf("")
-    }
-
     var editNameisError by remember {
         mutableStateOf(false)
     }
@@ -118,7 +115,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
         mutableStateOf(false)
     }
 
-    var editPassword by remember {
+    var editAddress by remember {
         mutableStateOf("")
     }
 
@@ -141,6 +138,11 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
     var tokenState by remember {
         mutableStateOf("")
     }
+
+    var perfil by remember {
+        mutableStateOf(UserDetailsProfile())
+    }
+
 
     val context = LocalContext.current
 
@@ -179,9 +181,9 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
         ) {
 
             if (response.isSuccessful){
-                val perfil = response.body()!!.user!!
+                 perfil = response.body()!!
 
-                editName = perfil.name!!
+               // editName = perfil.name!!
             }
 
 
@@ -198,27 +200,27 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 //    }
 
 
-
-    call!!.enqueue(object : Callback<UserDetailsProfile> {
-        override fun onResponse(call: Call<UserDetailsProfile>, response: Response<UserDetailsProfile>) {
-            //response.body()?.let { Log.i("user", response.body()?.user.toString()) }
-//            editName = response.body()?.user?.name.toString()
-            editEmail = response.body()?.user?.email.toString()
-            editPassword = response.body()?.user?.password.toString()
-            editTel = response.body()?.user?.userPhone?.phone.toString()
-            editAbout = response.body()?.user?.description.toString()
-            // = response.body()?.user?.photo_url.toString()
-
-//                editNameOriginal = editName
-//                Log.i("editname", editName)
-        }
-
-        override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
-            Log.i("ds3m", t.message.toString())
-        }
-    })
-
-
+//
+//    call!!.enqueue(object : Callback<UserDetailsProfile> {
+//        override fun onResponse(call: Call<UserDetailsProfile>, response: Response<UserDetailsProfile>) {
+//            //response.body()?.let { Log.i("user", response.body()?.user.toString()) }
+////            editName = response.body()?.user?.name.toString()
+//            editEmail = response.body()?.user?.email.toString()
+//            editPassword = response.body()?.user?.password.toString()
+//            editTel = response.body()?.user?.userPhone?.phone.toString()
+//            editAbout = response.body()?.user?.description.toString()
+//            // = response.body()?.user?.photo_url.toString()
+//
+////                editNameOriginal = editName
+////                Log.i("editname", editName)
+//        }
+//
+//        override fun onFailure(call: Call<UserDetailsProfile>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//    })
+//
+//
 
 
     var galleryLauncher =
@@ -324,6 +326,17 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(shape = RoundedCornerShape(16.dp)),
+                    placeholder ={
+                        perfil.user?.name?.let {
+                            Text(
+                                text = it,
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    color = Color.Black,
+                                )
+                            )
+                        }
+                    },
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
@@ -359,6 +372,17 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(shape = RoundedCornerShape(16.dp)),
+                    placeholder ={
+                        perfil.user?.email?.let {
+                            Text(
+                                text = it,
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    color = Color.Black,
+                                )
+                            )
+                        }
+                    },
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
@@ -369,41 +393,51 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                 )
 
                 //ENDEREÇO
-                Text(
-                    text = "Senha",
-                    modifier = Modifier.padding(start = 32.dp),
-                    fontWeight = FontWeight.W500
-                )
-                OutlinedTextField(
-                    value = editPassword,
-                    onValueChange = { newEditAdress ->
-                        if (newEditAdress.length == 0) {
-                            editPasswordIsError = true
-                            newEditAdress
-                        } else {
-                            editNameisError = false
-                        }
-                        editPassword = newEditAdress
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(weightFocusRequester)
-                        .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .clip(shape = RoundedCornerShape(16.dp)),
-                    visualTransformation = PasswordVisualTransformation(),
-                    trailingIcon = {
-                        if (editNameisError) Icon(
-                            imageVector = Icons.Rounded.Warning,
-                            contentDescription = ""
-                        )
-                    },
-                    singleLine = true,
-                )
+//                Text(
+//                    text = "CEP",
+//                    modifier = Modifier.padding(start = 32.dp),
+//                    fontWeight = FontWeight.W500
+//                )
+//                OutlinedTextField(
+//                    value = editAddress,
+//                    onValueChange = { newEditAdress ->
+//                        if (newEditAdress.length == 0) {
+//                            editPasswordIsError = true
+//                            newEditAdress
+//                        } else {
+//                            editNameisError = false
+//                        }
+//                        editAddress = newEditAdress
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .focusRequester(weightFocusRequester)
+//                        .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
+//                        .border(
+//                            width = 1.dp,
+//                            color = Color(79, 121, 254),
+//                            shape = RoundedCornerShape(16.dp)
+//                        )
+//                        .clip(shape = RoundedCornerShape(16.dp)),
+//                    placeholder ={
+//                        perfil.user?.address?.postalCode?.let {
+//                            Text(
+//                                text = it,
+//                                textAlign = TextAlign.Center,
+//                                style = TextStyle(
+//                                    color = Color.Black,
+//                                )
+//                            )
+//                        }
+//                    },
+//                    trailingIcon = {
+//                        if (editNameisError) Icon(
+//                            imageVector = Icons.Rounded.Warning,
+//                            contentDescription = ""
+//                        )
+//                    },
+//                    singleLine = true,
+//                )
 
                 //TELEFONE
                 Text(
@@ -432,12 +466,24 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(shape = RoundedCornerShape(16.dp)),
+                    placeholder ={
+                        perfil.user?.userPhone?.phone?.toString().let {
+                            Text(
+                                text = it.toString(),
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    color = Color.Black,
+                                )
+                            )
+                        }
+                    },
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
                             contentDescription = ""
                         )
                     },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                 )
 
@@ -468,6 +514,17 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(shape = RoundedCornerShape(16.dp)),
+                    placeholder ={
+                        perfil.user?.description?.let {
+                            Text(
+                                text = it,
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    color = Color.Black,
+                                )
+                            )
+                        }
+                    },
                     trailingIcon = {
                         if (editNameisError) Icon(
                             imageVector = Icons.Rounded.Warning,
@@ -580,7 +637,6 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                                 }
                             }
 
-
                             val context = LocalContext.current
                             Button(
                                 onClick = {
@@ -646,7 +702,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                     }
 
 
-                editNameOriginal = editName
+                //editNameOriginal = editName
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -658,7 +714,9 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                                 val contact = UpdateUser(
                                     name = editName ,
                                     email = editEmail,
-                                    password = editPassword,
+//                                    address = Address(
+//                                        postalCode = editAddress
+//                                    ),
                                     type = Type(),
                                     description = editAbout,
                                     userPhone = UserPhone(
@@ -676,21 +734,28 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 
 
                                 if (callContactPost != null) {
-                                    callContactPost.enqueue(object : Callback<PayloadUserUpdate> {
+                                    callContactPost.enqueue(object : Callback<String> {
                                         override fun onResponse(
-                                            call: Call<PayloadUserUpdate>,
-                                            response: Response<PayloadUserUpdate>
+                                            call: Call<String>,
+                                            response: Response<String>
                                         ) {
-                                            Log.i("ds3m", response.body()!!.toString())
+                                            response.body()?.toString()?.let { Log.i("success", it) }
 
-                                            context.startActivity(Intent(context, ProfileScreenActivity()::class.java))
+                                            Toast.makeText(
+                                                context,
+                                                "Dados atualizados com sucesso!",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                                .show()
+
+                                            //.startActivity(Intent(context, ProfileScreenActivity()::class.java))
                                         }
 
                                         override fun onFailure(
-                                            call: Call<PayloadUserUpdate>,
+                                            call: Call<String>,
                                             t: Throwable
                                         ) {
-                                            Log.i("ds3m", t.message.toString())
+                                            t.message?.toString()?.let { Log.i("failure", it) }
 
                                         }
                                     })

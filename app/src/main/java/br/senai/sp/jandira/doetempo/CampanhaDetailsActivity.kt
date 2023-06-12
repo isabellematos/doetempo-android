@@ -604,7 +604,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
                                             response: Response<RegisterUserInCampaignResponse>
                                         ) {
                                             if (response.isSuccessful) {
-                                                Log.i("Inscrito com sucesso!", response.body().toString())
+                                                Log.i("Inscrito com sucesso! Cheque seu email.", response.body().toString())
                                                 Toast.makeText(
                                                     context,
                                                     response.body()?.message,

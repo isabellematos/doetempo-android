@@ -66,7 +66,7 @@ fun HudComentarios(intent: Intent) {
     }
 
     var result by remember {
-        mutableStateOf(listOf(Post()))
+        mutableStateOf(emptyList<Post>())
     }
 
     var commentIsError by remember {
@@ -77,37 +77,82 @@ fun HudComentarios(intent: Intent) {
         mutableStateOf(listOf(Comment()))
     }
 
-    var searchQuery by remember {
-        mutableStateOf(Post().id)
-    }
-    var context = LocalContext.current
 
-    val idPost = intent.getStringExtra("idPost")
-    Log.i("idpost", idPost.toString())
-    val datastore = DataStoreAppData(context)
-    val token = datastore.getToken.collectAsState(initial = "").value.toString()
 
-    val retrofit = RetrofitFactory.getRetrofit()
-    val postCall = retrofit.create(PostCall::class.java)
-    var callComments = postCall.getAll()
 
-    callComments.enqueue(object : Callback<PostList> {
-        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
 
-            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
-            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
-
+//    callComments.enqueue(object : Callback<PostList> {
+//        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+//
+//            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
+//            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
+//
 //                 result = response.body()!!.allPosts?.filter { post ->
 //                     post.id?.contains(post.toString())
 //
-//                     if (post.id == idPost ) {
+//                     if (idPostResult == idPost ) {
 //                         return post
 //                     }
 //
 //                 }!!
 //
 //            result[0].comment.toString()
+//
+//        }
+//
+//        override fun onFailure(call: Call<PostList>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//    })
 
+    var context = LocalContext.current
+
+    var idPost = intent.getStringExtra("idPost").toString()
+    Log.i("idpost", idPost)
+    val datastore = DataStoreAppData(context)
+    val token = datastore.getToken.collectAsState(initial = "").value.toString()
+
+
+    val retrofit = RetrofitFactory.getRetrofit()
+    val postCall = retrofit.create(PostCall::class.java)
+
+// Primeira chamada assíncrona para obter a lista de posts
+    val callPosts = postCall.getAll()
+    callPosts.enqueue(object : Callback<PostList> {
+        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+            if (response.isSuccessful) {
+                val postList = response.body()
+                val filteredPosts = postList?.allPosts?.filter { post ->
+                    post.id == idPost
+                }
+
+                if (!filteredPosts.isNullOrEmpty()) {
+                    val firstPost = filteredPosts?.firstOrNull()?.id ?: ""
+
+                    // Segunda chamada assíncrona usando o resultado do filtro
+                    val callComments = postCall.getById("Bearer $token", firstPost)
+                    callComments.enqueue(object : Callback<PayloadPost> {
+                        override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
+                            if (response.isSuccessful) {
+                                val payloadPost = response.body()
+
+                                commentState2 = payloadPost?.payload?.comment!!
+                                Log.i("comentario", commentState2.toString())
+
+                                // Faça algo com o comentário retornado
+                            } else {
+                                Log.i("ds3m", response.message())
+                            }
+                        }
+
+                        override fun onFailure(call: Call<PayloadPost>, t: Throwable) {
+                            Log.i("ds3m", t.message.toString())
+                        }
+                    })
+                }
+            } else {
+                Log.i("ds3m", response.message())
+            }
         }
 
         override fun onFailure(call: Call<PostList>, t: Throwable) {
@@ -116,36 +161,54 @@ fun HudComentarios(intent: Intent) {
     })
 
 
-
-
-
-
-
-    val retrofit1 = RetrofitFactory.getRetrofit()
-    val postCall1 = retrofit1.create(PostCall::class.java)
-    var callCommentsId = result.let { postCall1.getById("Bearer $token", it) }
-
-    if (result != null) {
-        if (callCommentsId != null) {
-            callCommentsId.enqueue(object : Callback<PayloadPost> {
-                override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
-
-                   Log.i( "result", result[0].comment.toString())
-
-                    commentStateResult = result[0].comment.toString()
-                    Log.i("comments", response.body()?.payload.toString() )
-                    commentState2 = response.body()!!.payload?.comment!!
-
-                }
-
-                override fun onFailure(call: Call<PayloadPost>, t: Throwable) {
-                    Log.i("ds3m", t.message.toString())
-                }
-            })
-        }
-    }
-
-
+//    callComments.enqueue(object : Callback<PostList> {
+//        override fun onResponse(call: Call<PostList>, response: Response<PostList>) {
+//
+//            Log.i("comments", response.body()!!.allPosts?.get(0)?.comment!!.toString())
+//            commentState2 = response.body()!!.allPosts?.get(0)?.comment!!
+//
+//            result = response.body()!!.allPosts?.filter { post ->
+//                post.id?.contains(post.toString())
+//
+//                if (idPostResult == idPost ) {
+//                    return post
+//                }
+//
+//            }!!
+//
+//            result[0].comment.toString()
+//
+//        }
+//
+//        override fun onFailure(call: Call<PostList>, t: Throwable) {
+//            Log.i("ds3m", t.message.toString())
+//        }
+//    })
+//
+//
+//    val retrofit1 = RetrofitFactory.getRetrofit()
+//    val postCall1 = retrofit1.create(PostCall::class.java)
+//    var callCommentsId = result.let { postCall1.getById("Bearer $token", it) }
+//
+//    if (result != null) {
+//        if (callCommentsId != null) {
+//            callCommentsId.enqueue(object : Callback<PayloadPost> {
+//                override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
+//
+//                    Log.i( "result", result[0].comment.toString())
+//
+//                    commentStateResult = result[0].comment.toString()
+//                    Log.i("comments", response.body()?.payload.toString() )
+//                    commentState2 = response.body()!!.payload?.comment!!
+//
+//                }
+//
+//                override fun onFailure(call: Call<PayloadPost>, t: Throwable) {
+//                    Log.i("ds3m", t.message.toString())
+//                }
+//            })
+//        }
+//    }
 
 
     val scrollState = rememberScrollState()

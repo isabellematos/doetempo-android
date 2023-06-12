@@ -40,6 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import br.senai.sp.jandira.doetempo.bottomBarScreens.EditData
+import br.senai.sp.jandira.doetempo.bottomBarScreens.EditDataActivity
 import br.senai.sp.jandira.doetempo.campanhaComponents.addCampanhaHeader
 import br.senai.sp.jandira.doetempo.campanhaComponents.bottom
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
@@ -142,7 +144,7 @@ fun Fab(
                 MinFab(
                     item = it,
                     onMinFabItemClick = {
-                        val intent = Intent(context, SupportedCampaignsActivity::class.java)
+                        val intent = Intent(context, EditDataActivity()::class.java)
                         context.startActivity(intent)
                     },
                     alpha = alpha

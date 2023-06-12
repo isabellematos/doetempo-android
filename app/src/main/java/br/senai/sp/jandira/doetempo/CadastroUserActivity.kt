@@ -459,6 +459,7 @@ fun CadastroUser(allGenders: List<Gender>) {
                         fontSize = 18.sp,
                     )
                 },
+
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = isCpfError,
                 singleLine = true,
