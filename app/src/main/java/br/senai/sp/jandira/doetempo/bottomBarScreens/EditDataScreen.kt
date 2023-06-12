@@ -164,7 +164,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 //        }
 //    }
 
-    Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
+   // Log.i("datastore", datastore.getIdUser.collectAsState(initial = "").value.toString())
 
     userIdState = datastore.getIdUser.collectAsState(initial = "").value.toString()
     tokenState = datastore.getToken.collectAsState(initial = "").value.toString()
@@ -183,7 +183,6 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
             if (response.isSuccessful){
                  perfil = response.body()!!
 
-               // editName = perfil.name!!
             }
 
 
@@ -193,7 +192,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
             Log.i("ds3m", t.message.toString())
         }
     })
-    val call = userIdState?.let { userCall.getById("Bearer $tokenState", it) }
+   // val call = userIdState?.let { userCall.getById("Bearer $tokenState", it) }
 
 //    if (call != null) {
 //
@@ -301,9 +300,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                 OutlinedTextField(
                     value = editName,
                     onValueChange = {editName = it
-
                        // editName = editNameOriginal
-
                                     },
 
 
@@ -439,53 +436,53 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
 //                    singleLine = true,
 //                )
 
-                //TELEFONE
-                Text(
-                    text = "Telefone",
-                    modifier = Modifier.padding(start = 32.dp),
-                    fontWeight = FontWeight.W500
-                )
-                OutlinedTextField(
-                    value = editTel,
-                    onValueChange = { newEditTel ->
-                        if (newEditTel.length == 0) {
-                            editTelIsError = true
-                            newEditTel
-                        } else {
-                            editTelIsError = false
-                        }
-                        editTel = newEditTel
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(weightFocusRequester)
-                        .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Color(79, 121, 254),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .clip(shape = RoundedCornerShape(16.dp)),
-                    placeholder ={
-                        perfil.user?.userPhone?.phone?.toString().let {
-                            Text(
-                                text = it.toString(),
-                                textAlign = TextAlign.Center,
-                                style = TextStyle(
-                                    color = Color.Black,
-                                )
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        if (editNameisError) Icon(
-                            imageVector = Icons.Rounded.Warning,
-                            contentDescription = ""
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                )
+//                //TELEFONE
+//                Text(
+//                    text = "Telefone",
+//                    modifier = Modifier.padding(start = 32.dp),
+//                    fontWeight = FontWeight.W500
+//                )
+//                OutlinedTextField(
+//                    value = editTel,
+//                    onValueChange = { newEditTel ->
+//                        if (newEditTel.length == 0) {
+//                            editTelIsError = true
+//                            newEditTel
+//                   } else {
+//                            editTelIsError = false
+//                        }
+//                        editTel = newEditTel
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .focusRequester(weightFocusRequester)
+//                        .padding(start = 32.dp, end = 32.dp, bottom = 25.dp)
+//                        .border(
+//                            width = 1.dp,
+//                            color = Color(79, 121, 254),
+//                            shape = RoundedCornerShape(16.dp)
+//                        )
+//                        .clip(shape = RoundedCornerShape(16.dp)),
+//                    placeholder ={
+//                        perfil.user?.userPhone?.phone?.toString().let {
+//                            Text(
+//                                text = it.toString(),
+//                                textAlign = TextAlign.Center,
+//                                style = TextStyle(
+//                                    color = Color.Black,
+//                                )
+//                            )
+//                        }
+//                    },
+//                    trailingIcon = {
+//                        if (editNameisError) Icon(
+//                            imageVector = Icons.Rounded.Warning,
+//                            contentDescription = ""
+//                        )
+//                    },
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//                    singleLine = true,
+//                )
 
                 //SOBRE
                 Text(
@@ -612,7 +609,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                                             .align(Alignment.Center)
                                     ) {
                                         itemsIndexed(state.listOfSelectedImages) { index: Int, item: Uri ->
-                                            Log.i("ds3m", item.toString())
+                                            //Log.i("ds3m", item.toString())
                                             ImagePreviewItem(
                                                 uri = item,
                                                 height = screenHeight * 0.5f,
@@ -674,7 +671,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                                     }.addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             imageLink = task.result.toString()
-                                            Log.i("imagelink", imageLink)
+                                          //  Log.i("imagelink", imageLink)
                                         } else {
 
                                         }
@@ -712,34 +709,36 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                         Button(
                             onClick = {
                                 val contact = UpdateUser(
-                                    name = editName ,
+                                    name = editName,
                                     email = editEmail,
 //                                    address = Address(
 //                                        postalCode = editAddress
 //                                    ),
-                                    type = Type(),
+                                    //type = Type(),
                                     description = editAbout,
-                                    userPhone = UserPhone(
-                                        phone = Phone(
-                                            number = editTel
-                                        )
-                                    ),
-                                photo_url = imageLink
+//                                    userPhone = UserPhone(
+//                                        phone = Phone(
+//                                            number = editTel
+//                                        )
+//                                    ),
+                                photoURL = imageLink
                                 )
 
+                                Log.i("socorro", contact.toString())
 
                                 val retrofit = RetrofitFactory.getRetrofit()
                                 val userCall = retrofit.create(UserCall::class.java)
-                                val callContactPost =  userIdState?.let { userCall.update("Bearer $tokenState", it, contact) }
+                                val callContactPost = userCall.update("Bearer $tokenState", userIdState, contact)
 
 
                                 if (callContactPost != null) {
-                                    callContactPost.enqueue(object : Callback<String> {
+                                    callContactPost.enqueue(object : Callback<PayloadUserUpdate> {
                                         override fun onResponse(
-                                            call: Call<String>,
-                                            response: Response<String>
+                                            call: Call<PayloadUserUpdate>,
+                                            response: Response<PayloadUserUpdate>
                                         ) {
                                             response.body()?.toString()?.let { Log.i("success", it) }
+
 
                                             Toast.makeText(
                                                 context,
@@ -752,7 +751,7 @@ fun EditData(viewModel: CreateCampanhaViewModel = viewModel(), user: User) {
                                         }
 
                                         override fun onFailure(
-                                            call: Call<String>,
+                                            call: Call<PayloadUserUpdate>,
                                             t: Throwable
                                         ) {
                                             t.message?.toString()?.let { Log.i("failure", it) }

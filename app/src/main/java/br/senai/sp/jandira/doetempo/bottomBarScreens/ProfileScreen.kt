@@ -252,7 +252,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "2",
+                    text = "0",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(79, 121, 254)
@@ -287,7 +287,7 @@ fun ProfileScreen(user: User, ong: Ong) {
                 fontSize = 16.sp
             )
             Text(
-                text = descriptionState,
+                text = "Ola! Eu uso DoeTempo!",
                 modifier = Modifier.padding(end = 10.dp)
             )
             Row(

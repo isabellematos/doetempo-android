@@ -30,6 +30,9 @@ import br.senai.sp.jandira.doetempo.model.*
 import br.senai.sp.jandira.doetempo.services.RetrofitFactory
 import br.senai.sp.jandira.doetempo.services.post.PostCall
 import br.senai.sp.jandira.doetempo.ui.theme.DoetempoTheme
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -76,9 +79,6 @@ fun HudComentarios(intent: Intent) {
     var commentState2 by remember {
         mutableStateOf(listOf(Comment()))
     }
-
-
-
 
 
 //    callComments.enqueue(object : Callback<PostList> {
@@ -132,7 +132,10 @@ fun HudComentarios(intent: Intent) {
                     // Segunda chamada assíncrona usando o resultado do filtro
                     val callComments = postCall.getById("Bearer $token", firstPost)
                     callComments.enqueue(object : Callback<PayloadPost> {
-                        override fun onResponse(call: Call<PayloadPost>, response: Response<PayloadPost>) {
+                        override fun onResponse(
+                            call: Call<PayloadPost>,
+                            response: Response<PayloadPost>
+                        ) {
                             if (response.isSuccessful) {
                                 val payloadPost = response.body()
 
@@ -345,7 +348,20 @@ fun HudComentarios(intent: Intent) {
 
 //        var commentState2 = commentState1?.allPosts?.get(0)?.comment
 
-            var commentState1 = PostList(allPosts = listOf())
+        var commentState1 = PostList(allPosts = listOf())
+
+        var refreshing by remember { mutableStateOf(false) }
+        LaunchedEffect(refreshing) {
+            if (refreshing) {
+                delay(3000)
+                refreshing = false
+            }
+        }
+
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshing),
+            onRefresh = { refreshing = true },
+        ) {
 
             LazyColumn(modifier = Modifier.padding(16.dp)) {
                 commentState2?.let {
@@ -354,6 +370,7 @@ fun HudComentarios(intent: Intent) {
                     }
                 }
             }
+        }
     }
 }
 

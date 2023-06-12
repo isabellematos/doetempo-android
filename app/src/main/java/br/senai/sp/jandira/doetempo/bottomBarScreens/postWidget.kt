@@ -190,16 +190,16 @@ fun PostWidget(post: Post) {
                     }
                 }
             }
-//            if (post.post_photo!!.isNotEmpty()) {
-//                AsyncImage(
-//                    model = photoPostState,
-//                    contentDescription = "imagem dos posts",
-//                    //Modifier
-//                        //.size(height = 220.dp, width = 200.dp),
-//                       // .padding(start = 15.dp, top = 500.dp),
-//                    contentScale = ContentScale.Fit
-//                )
-//            }
+            if (post.post_photo!!.isNotEmpty()) {
+                AsyncImage(
+                    model = photoPostState,
+                    contentDescription = "imagem dos posts",
+                    Modifier
+                        .size(height = 290.dp, width = 190.dp)
+                        .padding(start = 15.dp, top = 140.dp, end = 10.dp),
+                    //contentScale = ContentScale.Fit
+                )
+            }
         }
 
         Row(

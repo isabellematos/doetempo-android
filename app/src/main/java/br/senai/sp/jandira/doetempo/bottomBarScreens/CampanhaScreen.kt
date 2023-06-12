@@ -133,11 +133,26 @@ fun CampanhaScreen() {
 
         })
 
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(campanhasState.size) { index ->
-                cardCampanha(campanha = campanhasState[index])
+        var refreshing by remember { mutableStateOf(false) }
+        LaunchedEffect(refreshing) {
+            if (refreshing) {
+                delay(3000)
+                refreshing = false
+            }
+        }
+
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = refreshing),
+            onRefresh = { refreshing = true },
+        ) {
+
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                items(campanhasState.size) { index ->
+                    cardCampanha(campanha = campanhasState[index])
+                }
             }
         }
     }
 }
+
 

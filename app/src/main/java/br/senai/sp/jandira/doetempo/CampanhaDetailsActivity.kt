@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -108,7 +109,7 @@ class CampanhaDetailsActivity : ComponentActivity() {
 
             val typeUser = dataStore.getTypeUser.collectAsState(initial = "").value.toString()
 
-            if(idState != "") {
+            if (idState != "") {
                 if (campaignDetailsState.campaignAddress != null) {
                     val cep = campaignDetailsState.campaignAddress?.address?.postalCode.toString()
                     val callViaCep =
@@ -128,39 +129,38 @@ class CampanhaDetailsActivity : ComponentActivity() {
                         }
                     })
                 }
-            }
-            else {
+            } else {
                 Log.i("ds3m", "erro: id vazio")
 
             }
 
-                DoetempoTheme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
-                    ) {
-                        val systemUi = rememberSystemUiController()
-                        SideEffect {
-                            systemUi.setStatusBarColor(
-                                color = Color(79, 121, 254),
-                                darkIcons = true
-                            )
-                        }
-                        AboutCampanha(
-                            campanha = Campanha(),
-                            address,
-                            typeUser,
-                            idState
+            DoetempoTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
+                ) {
+                    val systemUi = rememberSystemUiController()
+                    SideEffect {
+                        systemUi.setStatusBarColor(
+                            color = Color(79, 121, 254),
+                            darkIcons = true
                         )
                     }
+                    AboutCampanha(
+                        campanha = Campanha(),
+                        address,
+                        typeUser,
+                        idState
+                    )
                 }
             }
         }
+    }
 
     //@Preview(showBackground = true, showSystemUi = true)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     @Composable
-    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String, idState: String  ) {
+    fun AboutCampanha(campanha: Campanha, address: Cep, typeUser: String, idState: String) {
 
         val retrofit = RetrofitFactory.getRetrofit()
         val campanhaCall = retrofit.create(CampanhaCall::class.java)
@@ -257,17 +257,18 @@ class CampanhaDetailsActivity : ComponentActivity() {
                     ongState = response.body()!!.ngo?.name.toString()
                     idOngState = response.body()!!.ngo?.id.toString()
                     photoURlNGOState = response.body()!!.ngo?.photo_url.toString()
-                    photoURLCampanhaState = response.body()!!.campaignPhotos?.get(0)?.photoURL.toString()
+                    photoURLCampanhaState =
+                        response.body()!!.campaignPhotos?.get(0)?.photoURL.toString()
                     Log.i("imgcampanha", photoURLCampanhaState)
                     idState = response.body()!!.id.toString()
                     addressState = response.body()!!.campaignAddress?.address?.postalCode.toString()
 
 
-
                     val zonedDateTime = ZonedDateTime.parse(beginDateState)
                     val localDate = zonedDateTime.toLocalDateTime().minusHours(3)
-                    val formatterPattern = DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
-                     formattedDateTime = localDate.format(formatterPattern)
+                    val formatterPattern =
+                        DateTimeFormatter.ofPattern("dd 'de' MMMM 'às' HH:mm", Locale("pt", "BR"))
+                    formattedDateTime = localDate.format(formatterPattern)
                 }
 
                 override fun onFailure(call: Call<Campanha>, t: Throwable) {
@@ -280,8 +281,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
             Log.i("ds3m", "erro: id vazio")
 
         }
-
-
 
 
         val scrollState = rememberScrollState()
@@ -527,134 +526,146 @@ class CampanhaDetailsActivity : ComponentActivity() {
                         }
                         // cardCategoria()
                     }
+                }
 
-                    //COMO CONTRIBUIR
-                    Text(
-                        text = "Como contribuir",
-                        modifier = Modifier.padding(top = 36.dp, bottom = 14.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
-                    )
+                //COMO CONTRIBUIR
+                Text(
+                    text = "Como contribuir",
+                    modifier = Modifier.padding(top = 36.dp, bottom = 14.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
 
-                    Text(
-                        text = howToContributeState,
-                        modifier = Modifier.padding(10.dp),
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Justify
+                Text(
+                    text = howToContributeState,
+                    modifier = Modifier.padding(10.dp),
+                    fontSize = 17.sp,
+                    textAlign = TextAlign.Justify
+                )
+                Text(
+                    text = "Pré-requisitos:",
+                    modifier = Modifier.padding(top = 14.dp),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = prerequisitesState,
+                    modifier = Modifier.padding(start = 12.dp, top = 20.dp, bottom = 15.dp),
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Justify,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Card(
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    LinearProgressIndicator(
+                        progress = 0.3f,
+                        modifier = Modifier.size(295.dp, 13.dp),
+                        color = Color(79, 121, 254),
+                        backgroundColor = Color(217, 217, 217)
                     )
-                    Text(
-                        text = "Pré-requisitos:",
-                        modifier = Modifier.padding(top = 14.dp),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 20.sp
-                    )
-                    Text(
-                        text = prerequisitesState,
-                        modifier = Modifier.padding(start = 12.dp, top = 20.dp, bottom = 15.dp),
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Justify,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Card(
-                        shape = RoundedCornerShape(50.dp)
-                    ) {
-                        LinearProgressIndicator(
-                            progress = 0.3f,
-                            modifier = Modifier.size(295.dp, 13.dp),
-                            color = Color(79, 121, 254),
-                            backgroundColor = Color(217, 217, 217)
-                        )
-                    }
+                }
 //                Text(
 //                    text = "X vagas Disponíveis",
 //                    modifier = Modifier.padding(start = 185.dp, top = 5.dp),
 //                    fontSize = 12.sp
 //                )
-                    var buttonState by remember {
-                        mutableStateOf(ButtonState.IDLE)
-                    }
+                var buttonState by remember {
+                    mutableStateOf(ButtonState.IDLE)
+                }
 
 
-                    val context = LocalContext.current
-                    val dataStorelocal = DataStoreAppData(context = context)
-                    val token = dataStorelocal.getToken.collectAsState(initial = "").value.toString()
+                val context = LocalContext.current
+                val dataStorelocal = DataStoreAppData(context = context)
+                val token = dataStorelocal.getToken.collectAsState(initial = "").value.toString()
 
-                    val datastore = DataStoreAppData(context)
-                    val userId = datastore.getIdUser.collectAsState(initial = "").value.toString()
+                val datastore = DataStoreAppData(context)
+                val userId = datastore.getIdUser.collectAsState(initial = "").value.toString()
 
-                    if (typeUser == "USER") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp), contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Button(
-                                onClick = {
-                                    //handleClickButtonSubscribe(viewModel, context, campanhaId, userId = userId)
-                                    buttonState = ButtonState.LOADING
-                                    Log.i("token", token)
-                                    val registerUserInCampaign = RetrofitFactory
-                                        .retrofitUserServices()
-                                        .registerUserInCampaign("Bearer $token", idState)
+                if (typeUser == "USER") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(30.dp), contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Button(
+                            onClick = {
+                                //handleClickButtonSubscribe(viewModel, context, campanhaId, userId = userId)
+                                buttonState = ButtonState.LOADING
+                                Log.i("token", token)
+                                val registerUserInCampaign = RetrofitFactory
+                                    .retrofitUserServices()
+                                    .registerUserInCampaign("Bearer $token", idState)
 
-                                    registerUserInCampaign.enqueue(object :
-                                        Callback<RegisterUserInCampaignResponse> {
-                                        override fun onResponse(
-                                            call: Call<RegisterUserInCampaignResponse>,
-                                            response: Response<RegisterUserInCampaignResponse>
-                                        ) {
-                                            if (response.isSuccessful) {
-                                                Log.i("Inscrito com sucesso! Cheque seu email.", response.body().toString())
-                                                Toast.makeText(
-                                                    context,
-                                                    response.body()?.message,
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                buttonState = ButtonState.DONE
-                                            } else {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Erro!!",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                                buttonState = ButtonState.IDLE
-                                            }
-                                        }
-
-                                        override fun onFailure(
-                                            call: Call<RegisterUserInCampaignResponse>,
-                                            t: Throwable
-                                        ) {
+                                registerUserInCampaign.enqueue(object :
+                                    Callback<RegisterUserInCampaignResponse> {
+                                    override fun onResponse(
+                                        call: Call<RegisterUserInCampaignResponse>,
+                                        response: Response<RegisterUserInCampaignResponse>
+                                    ) {
+                                        if (response.isSuccessful) {
+                                            Log.i(
+                                                "Inscrito com sucesso! Cheque seu email.",
+                                                response.body().toString()
+                                            )
                                             Toast.makeText(
                                                 context,
-                                                "Erro!",
+                                                response.body()!!.message,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            buttonState = ButtonState.DONE
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Erro!!",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                             buttonState = ButtonState.IDLE
                                         }
-                                    })
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(50.dp)
-                                    .size(30.dp),
-                                colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
-                            ) {
-                                when (buttonState) {
-                                    ButtonState.IDLE -> Text(
-                                        text = "Inscrever-se",
-                                        Modifier.padding(6.dp),
-                                        style = MaterialTheme.typography.button,
-                                        color = Color.White
-                                    )
-                                    ButtonState.LOADING -> CircularProgressIndicator()
-                                    ButtonState.DONE -> Text(
-                                        text = "Você ja está inscrito!",
-                                        Modifier.padding(8.dp),
-                                        style = MaterialTheme.typography.button,
-                                        color = Color.White
-                                    )
-                                }
+                                    }
+
+                                    override fun onFailure(
+                                        call: Call<RegisterUserInCampaignResponse>,
+                                        t: Throwable
+                                    ) {
+                                        Toast.makeText(
+                                            context,
+                                            "Erro!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        buttonState = ButtonState.IDLE
+                                    }
+                                })
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(15.dp)
+                                .size(50.dp),
+                            colors = ButtonDefaults.buttonColors(Color(79, 121, 254))
+                        ) {
+
+                            Text(
+                                text = "Inscrever-se",
+                                color = Color.White,
+                                fontSize = 18.sp
+                            )
+
+//                                when (buttonState) {
+//                                    ButtonState.IDLE -> Text(
+//                                        text = "Inscreva-se",
+//                                        Modifier.padding(6.dp),
+//                                        style = MaterialTheme.typography.button,
+//                                        color = Color.White,
+//                                        //fontSize = 20.dp
+//                                    )
+//                                    ButtonState.LOADING -> CircularProgressIndicator()
+//                                    ButtonState.DONE -> Text(
+//                                        text = "Você ja está inscrito!",
+//                                        Modifier.padding(8.dp),
+//                                        style = MaterialTheme.typography.button,
+//                                        color = Color.White
+//                                    )
+//                                }
 //                                if (viewModel.isDialogShownCampanha) {
 //                                    subscribedCampanhaScreen(
 //                                        onDismiss = {
@@ -664,15 +675,14 @@ class CampanhaDetailsActivity : ComponentActivity() {
 //                                            context.startActivity(Intent(context, HomeActivity::class.java))
 //                                        })
 //                                }
-                                Icon(
-                                    painter = painterResource(id = R.drawable.hearticon),
-                                    modifier = Modifier
-                                        .size(100.dp)
-                                        .padding(end = 10.dp),
-                                    contentDescription = "",
-                                    tint = Color.White
-                                )
-                            }
+                            Icon(
+                                painter = painterResource(id = R.drawable.hearticon),
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(start = 10.dp, end = 10.dp),
+                                contentDescription = "",
+                                tint = Color.White
+                            )
                         }
                     }
                 }
@@ -680,8 +690,6 @@ class CampanhaDetailsActivity : ComponentActivity() {
         }
     }
 }
-
-
 
 
 //                    OpenSubscribedScreen(
